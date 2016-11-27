@@ -9,7 +9,7 @@
 
 module cpu(
 	input wire clk,
-	input wire reset,
+	input wire reset
 	// Memory ports
 	/*output wire mem_enable,
 	output wire mem_rw,
@@ -34,16 +34,18 @@ module cpu(
 	output reg [31:0] new_pc
 	);
 */
+
 pc pc(
 	.clk(clk),
 	.is_jump(),
-	.is_branch,
-	.is_exception,
+	.is_branch(),
+	.is_exception(),
 	.reset(reset),
-	
-	.pc_jump,()
+	.pc_jump(),
 	.pc_branch(),
 	.old_pc(),
 	.new_pc()
 );
-	
+
+endmodule
+`endif
