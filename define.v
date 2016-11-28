@@ -1,6 +1,8 @@
 `ifndef _define
 `define _define
 
+`define INSTR_SIZE 32
+
 //Initial PC
 `define INITIAL_PC 32'h1000
 `define EXCEPTION_PC 32'h2000

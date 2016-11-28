@@ -1,3 +1,5 @@
+`include "define.v"
+
 module if_id(
 	clk,		// Clock signal
 	stall, 		// Stall signal, when it is true it means that the processor is stalled
