@@ -2,6 +2,7 @@
 `define _define
 
 `define INSTR_SIZE 32
+`define ADDR_SIZE 32
 
 //Initial PC
 `define INITIAL_PC 32'h1000
