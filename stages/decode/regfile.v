@@ -5,7 +5,6 @@
 
 module regfile(
 	input wire clk,
-	input wire reset,
 	input wire [`REG_ADDR-1:0] rreg1, rreg2,
 	output reg [`REG_SIZE-1:0] rdata1 = {`REG_SIZE{1'b0}},
 	output reg [`REG_SIZE-1:0] rdata2 = {`REG_SIZE{1'b0}},

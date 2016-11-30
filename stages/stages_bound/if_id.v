@@ -9,31 +9,40 @@ module if_id(
 	qinstruction	// Instruction to DECODE
 );
 	// Input port declaration
-	input clk;
-	input stall;
-	input [15:0] pc;
-	input [15:0] instruction;
+	input wire clk;
+	input wire stall;
+	input wire [`ADDR_SIZE-1:0] pc;
+	input wire [`INSTR_SIZE-1:0] instruction;
 
 	// Output port declaration
-	output [15:0] qpc;
-	output [15:0] qinstruction;
+	output reg [`ADDR_SIZE-1:0] qpc;
+	output reg [`INSTR_SIZE-1:0] qinstruction;
 
 	// Internal variables
-	reg [15:0] qpc;
-	reg [15:0] qinstruction;
+	reg [`ADDR_SIZE-1:0] reg_qpc;
+	reg [`INSTR_SIZE-1:0] reg_qinstruction;
+
+	// Net declaration
+
+	always @* 
+	begin
+		qpc <= reg_qpc;
+		qinstruction <= reg_qinstruction;
+	end
+
 
 	// Behavior
 	always @(posedge clk) 
 	begin
 		if (!stall) 
 		begin
-			qpc <= pc;
-			qinstruction = instruction;
+			reg_qpc <= pc;
+			reg_qinstruction <= instruction;
 		end
 		else 
 		begin
-			qpc = 16'b0;
-			qinstruction = 16'b0;
+			reg_qpc <= {`ADDR_SIZE{1'b0}};
+			reg_qinstruction <= {`INSTR_SIZE{1'b0}};
 		end
 	end
 endmodule
