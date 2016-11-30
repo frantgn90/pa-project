@@ -1,14 +1,20 @@
 `ifndef _define
 `define _define
 
+// Instructions
+
 `define INSTR_SIZE 32
+
+// regfile
+
+`define REG_N 32
+`define REG_SIZE 32
+`define REG_ADDR 5
 
 //Initial PC
 `define INITIAL_PC 32'h1000
 `define EXCEPTION_PC 32'h2000
 
-//Number of registers
-`define REG_SIZE 32
 //`define REG_BITS 5
 
 //OPERATIONS CODE
