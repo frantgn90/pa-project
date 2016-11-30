@@ -8,6 +8,9 @@
 `define INITIAL_PC 32'h1000
 `define EXCEPTION_PC 32'h2000
 
+//Cache defines
+`define MEMORY_WIDTH 128'
+
 //Number of registers
 `define REG_SIZE 32
 //`define REG_BITS 5
