@@ -4,6 +4,7 @@
 // Instructions
 
 `define INSTR_SIZE 32
+`define ADDR_SIZE 32
 
 // regfile
 
