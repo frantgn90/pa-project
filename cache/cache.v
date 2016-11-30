@@ -66,7 +66,7 @@ wire do_sth = do_read | do_write;
 always @(mem_write_req, mem_write_ack, mem_read_req, mem_read_ack) begin
 	if (mem_write_ack) mem_write_req = 1'b0;
 	if (mem_read_ack & ~mem_write_req) begin
-		`INFO(("[%s] Fill %x <= %x", ALIAS, mem_read_addr[15:0], mem_read_data))
+		//`INFO(("[%s] Fill %x <= %x", ALIAS, mem_read_addr[15:0], mem_read_data))
 		lines[mem_read_index]     = mem_read_data;
 		tags[mem_read_index]      = mem_read_tag;
 		validbits[mem_read_index] = 1'b1;
@@ -101,15 +101,16 @@ always @(posedge clk) begin
 					else if (WIDTH == 32) lines[index] = data_in;
 					else lines[index][(addr[WB-1:2]+1)*32-1-:32] = data_in;
 					dirtybits[index] = 1'b1;
-					`INFO(("[%s] Write %x <= %x", ALIAS, addr[15:0], data_in))
-				end else `INFO(("[%s] Read %x => %x", ALIAS, addr[15:0], data_out))
+					//`INFO(("[%s] Write %x <= %x", ALIAS, addr[15:0], data_in))
+				end else 
+				;//`INFO(("[%s] Read %x => %x", ALIAS, addr[15:0], data_out))
 			end else if (~mem_read_req & ~mem_write_req) begin
-				`INFO(("[%s] Miss %x", ALIAS, addr[15:0]))
+				//`INFO(("[%s] Miss %x", ALIAS, addr[15:0]))
 				// Save line if necessary
 				if (validbits[index] & dirtybits[index]) begin
 					mem_write_addr = {tags[index], index, {WB{1'b0}}};
 					mem_write_data = lines[index];
-					`INFO(("[%s] Evict %x => %x", ALIAS, mem_write_addr[15:0], mem_write_data))
+					//`INFO(("[%s] Evict %x => %x", ALIAS, mem_write_addr[15:0], mem_write_data))
 					mem_write_req = 1'b1;
 				end
 				validbits[index] = 1'b0;
