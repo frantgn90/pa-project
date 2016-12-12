@@ -50,9 +50,13 @@ set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name VERILOG_FILE cache/cache.v
-set_global_assignment -name VERILOG_FILE stages/exec/exec2.v
 set_global_assignment -name VERILOG_FILE stages/exec/exec1.v
+set_global_assignment -name VERILOG_FILE stages/exec/M5.v
+set_global_assignment -name VERILOG_FILE stages/exec/M4.v
+set_global_assignment -name VERILOG_FILE stages/exec/M3.v
+set_global_assignment -name VERILOG_FILE stages/exec/M2.v
+set_global_assignment -name VERILOG_FILE stages/exec/M1.v
+set_global_assignment -name VERILOG_FILE cache/cache.v
 set_global_assignment -name VERILOG_FILE stages/exec/alucontrol.v
 set_global_assignment -name VERILOG_FILE stages/exec/alu.v
 set_global_assignment -name VERILOG_FILE stages/stages_bound/mem_wb.v
