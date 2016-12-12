@@ -49,6 +49,6 @@
 //MASKS
 
 `define MASK_WORD 32'hFFFC
-`endif
 
-`define WARNING(M) begin $write("%5t [warning] ", $time); $display M ; end
+`define WARNING(M) begin $write("%5t [warning] ", $time); $display M ; 
+`endif

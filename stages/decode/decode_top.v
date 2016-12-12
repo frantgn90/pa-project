@@ -42,10 +42,10 @@ module decode_top(
 	output wire [`ADDR_SIZE-1:0] out_pc;
 
 	// Internal wires
-	wire opcode;	// To be connected to control
-	wire src1;	// To be connected to regfile src1
-	wire src2;	// To be connected to regfile src2
-	wire dst;
+	wire [5:0] 	     opcode;	// To be connected to control
+	wire [`REG_ADDR-1:0] src1;	// To be connected to regfile src1
+	wire [`REG_ADDR-1:0] src2;	// To be connected to regfile src2
+	wire [`REG_ADDR-1:0] dst;
 
 	// Instruction decode
 	opcode 	<= instruction[31:25];
