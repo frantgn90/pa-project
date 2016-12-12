@@ -14,12 +14,12 @@ module M4(
    output reg                  overflow = 1'd0,
    output reg [4:0]            dst
              );
-
-   assign m4result = pre_m3result;
-   assign zero = pre_zero;
-   assign overflow = pre_overflow;
-   assign dst = pre_dst;
-
+	always @* begin
+		m4result = pre_m3result;
+		zero = pre_zero;
+		overflow = pre_overflow;
+		dst = pre_dst;
+	end
 
 endmodule
 `endif

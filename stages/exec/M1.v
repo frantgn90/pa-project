@@ -19,7 +19,7 @@ module M1(
    always @* begin
       case (aluop)
 	`ALUOP_MUL: begin
-	   zero <= 0;
+	   m1zero <= 0;
 	   temp <= src1 * src2;
 	   m1result <= temp[`REG_SIZE-1:0];
 	   m1overflow <= 0;

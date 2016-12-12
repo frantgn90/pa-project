@@ -12,14 +12,15 @@ module M5(
    output reg [`REG_SIZE-1:0]  m5result,
    output reg                  zero = 1'd0,
    output reg                  overflow = 1'd0,
-   output reg [`ADDR_SIZE-1:0] new_pc = 32'h0000,
    output reg [4:0]            dst
              );
 
-   assign m5result = pre_m4result;
-   assign zero = pre_zero;
-   assign overflow = pre_overflow;
-   assign dst = pre_dst;
+	always @* begin
+		m5result = pre_m4result;
+		zero = pre_zero;
+		overflow = pre_overflow;
+		dst = pre_dst;
+	end
 
 endmodule
 `endif

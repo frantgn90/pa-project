@@ -3,7 +3,6 @@
 
 `include "define.v"
 `include "stages/fetch/pc.v"
-`include "stages/exec/alu.v"
 `include "stages/exec/exec1.v"
 `include "stages/exec/M1.v"
 `include "stages/exec/M2.v"
@@ -66,7 +65,7 @@ exec1 exec1(
    .aluresult(aluresult),
    .zero(zero),
    .overflow(oveflow),
-   .new_pc(new_pc),
+   .pc_branch(pc_branch),
    .dst(dst)
 );
 

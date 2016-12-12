@@ -1,0 +1,3 @@
+Warning (10268): Verilog HDL information at cache.v(78): always construct contains both blocking and non-blocking assignments File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cache/cache.v Line: 78
+Warning (10268): Verilog HDL information at cache.v(87): always construct contains both blocking and non-blocking assignments File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cache/cache.v Line: 87
+Warning (10268): Verilog HDL information at if_id.v(26): always construct contains both blocking and non-blocking assignments File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/stages_bound/if_id.v Line: 26

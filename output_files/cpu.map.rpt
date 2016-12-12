@@ -1,5 +1,5 @@
 Analysis & Synthesis report for cpu
-Mon Dec 12 15:16:49 2016
+Mon Dec 12 15:55:16 2016
 Quartus Prime Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
 
 
@@ -10,7 +10,18 @@ Quartus Prime Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
   2. Analysis & Synthesis Summary
   3. Analysis & Synthesis Settings
   4. Parallel Compilation
-  5. Analysis & Synthesis Messages
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. General Register Statistics
+  9. Port Connectivity Checks: "M5:M5"
+ 10. Port Connectivity Checks: "M1:M1"
+ 11. Port Connectivity Checks: "exec1:exec1|alu:alu"
+ 12. Port Connectivity Checks: "exec1:exec1"
+ 13. Post-Synthesis Netlist Statistics for Top Partition
+ 14. Elapsed Time Per Partition
+ 15. Analysis & Synthesis Messages
+ 16. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -37,26 +48,26 @@ agreement for further details.
 +---------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                    ;
 +-----------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status       ; Failed - Mon Dec 12 15:16:49 2016           ;
+; Analysis & Synthesis Status       ; Successful - Mon Dec 12 15:55:16 2016       ;
 ; Quartus Prime Version             ; 16.0.0 Build 211 04/27/2016 SJ Lite Edition ;
 ; Revision Name                     ; cpu                                         ;
 ; Top-level Entity Name             ; cpu                                         ;
 ; Family                            ; Arria II GX                                 ;
-; Logic utilization                 ; N/A until Partition Merge                   ;
-;     Combinational ALUTs           ; N/A until Partition Merge                   ;
-;     Memory ALUTs                  ; N/A until Partition Merge                   ;
-;     Dedicated logic registers     ; N/A until Partition Merge                   ;
-; Total registers                   ; N/A until Partition Merge                   ;
-; Total pins                        ; N/A until Partition Merge                   ;
-; Total virtual pins                ; N/A until Partition Merge                   ;
-; Total block memory bits           ; N/A until Partition Merge                   ;
-; DSP block 18-bit elements         ; N/A until Partition Merge                   ;
-; Total GXB Receiver Channel PCS    ; N/A until Partition Merge                   ;
-; Total GXB Receiver Channel PMA    ; N/A until Partition Merge                   ;
-; Total GXB Transmitter Channel PCS ; N/A until Partition Merge                   ;
-; Total GXB Transmitter Channel PMA ; N/A until Partition Merge                   ;
-; Total PLLs                        ; N/A until Partition Merge                   ;
-; Total DLLs                        ; N/A until Partition Merge                   ;
+; Logic utilization                 ; N/A                                         ;
+;     Combinational ALUTs           ; 0                                           ;
+;     Memory ALUTs                  ; 0                                           ;
+;     Dedicated logic registers     ; 0                                           ;
+; Total registers                   ; 0                                           ;
+; Total pins                        ; 2                                           ;
+; Total virtual pins                ; 0                                           ;
+; Total block memory bits           ; 0                                           ;
+; DSP block 18-bit elements         ; 0                                           ;
+; Total GXB Receiver Channel PCS    ; 0                                           ;
+; Total GXB Receiver Channel PMA    ; 0                                           ;
+; Total GXB Transmitter Channel PCS ; 0                                           ;
+; Total GXB Transmitter Channel PMA ; 0                                           ;
+; Total PLLs                        ; 0                                           ;
+; Total DLLs                        ; 0                                           ;
 +-----------------------------------+---------------------------------------------+
 
 
@@ -158,13 +169,178 @@ Parallel compilation was disabled, but you have multiple processors available. E
 +----------------------------+--------+
 
 
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                          ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                                            ; Library ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------------------------+---------+
+; stages/exec/exec1.v              ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v ;         ;
+; stages/exec/M5.v                 ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M5.v    ;         ;
+; stages/exec/M4.v                 ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M4.v    ;         ;
+; stages/exec/M3.v                 ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M3.v    ;         ;
+; stages/exec/M2.v                 ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M2.v    ;         ;
+; stages/exec/M1.v                 ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v    ;         ;
+; stages/exec/alu.v                ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v   ;         ;
+; stages/fetch/pc.v                ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/fetch/pc.v   ;         ;
+; define.v                         ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/define.v            ;         ;
+; cpu.v                            ; yes             ; User Verilog HDL File  ; /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v               ;         ;
++----------------------------------+-----------------+------------------------+-------------------------------------------------------------------------+---------+
+
+
++-------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary           ;
++-----------------------------------------------+-------+
+; Resource                                      ; Usage ;
++-----------------------------------------------+-------+
+; Estimated ALUTs Used                          ; 0     ;
+;     -- Combinational ALUTs                    ; 0     ;
+;     -- Memory ALUTs                           ; 0     ;
+;     -- LUT_REGs                               ; 0     ;
+; Dedicated logic registers                     ; 0     ;
+;                                               ;       ;
+; Estimated ALUTs Unavailable                   ; 0     ;
+;     -- Due to unpartnered combinational logic ; 0     ;
+;     -- Due to Memory ALUTs                    ; 0     ;
+;                                               ;       ;
+; Total combinational functions                 ; 0     ;
+; Combinational ALUT usage by number of inputs  ;       ;
+;     -- 7 input functions                      ; 0     ;
+;     -- 6 input functions                      ; 0     ;
+;     -- 5 input functions                      ; 0     ;
+;     -- 4 input functions                      ; 0     ;
+;     -- <=3 input functions                    ; 0     ;
+;                                               ;       ;
+; Combinational ALUTs by mode                   ;       ;
+;     -- normal mode                            ; 0     ;
+;     -- extended LUT mode                      ; 0     ;
+;     -- arithmetic mode                        ; 0     ;
+;     -- shared arithmetic mode                 ; 0     ;
+;                                               ;       ;
+; Estimated ALUT/register pairs used            ; 0     ;
+;                                               ;       ;
+; Total registers                               ; 0     ;
+;     -- Dedicated logic registers              ; 0     ;
+;     -- I/O registers                          ; 0     ;
+;     -- LUT_REGs                               ; 0     ;
+;                                               ;       ;
+;                                               ;       ;
+; I/O pins                                      ; 2     ;
+;                                               ;       ;
+; DSP block 18-bit elements                     ; 0     ;
+;                                               ;       ;
+; Maximum fan-out node                          ; clk   ;
+; Maximum fan-out                               ; 1     ;
+; Total fan-out                                 ; 2     ;
+; Average fan-out                               ; 0.50  ;
++-----------------------------------------------+-------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                     ;
++----------------------------+-------------------+--------------+-------------------+--------------+---------+-----------+-----------+-----------+------+--------------+---------------------+-------------+--------------+
+; Compilation Hierarchy Node ; LC Combinationals ; LC Registers ; Block Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 12x12 ; DSP 18x18 ; DSP 36x36 ; Pins ; Virtual Pins ; Full Hierarchy Name ; Entity Name ; Library Name ;
++----------------------------+-------------------+--------------+-------------------+--------------+---------+-----------+-----------+-----------+------+--------------+---------------------+-------------+--------------+
+; |cpu                       ; 0 (0)             ; 0 (0)        ; 0                 ; 0            ; 0       ; 0         ; 0         ; 0         ; 2    ; 0            ; |cpu                ; cpu         ; work         ;
++----------------------------+-------------------+--------------+-------------------+--------------+---------+-----------+-----------+-----------+------+--------------+---------------------+-------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 0     ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 0     ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 0     ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++--------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "M5:M5"                                                                                  ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+; Port     ; Type   ; Severity ; Details                                                                             ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+; m5result ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; zero     ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; overflow ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; dst      ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "M1:M1"                                                                                                                                         ;
++-------+-------+----------+------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port  ; Type  ; Severity ; Details                                                                                                                                        ;
++-------+-------+----------+------------------------------------------------------------------------------------------------------------------------------------------------+
+; aluop ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (5 bits) it drives.  Extra input bit(s) "aluop[4..1]" will be connected to GND.  ;
+; src1  ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "src1[31..1]" will be connected to GND. ;
+; src2  ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "src2[31..1]" will be connected to GND. ;
++-------+-------+----------+------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "exec1:exec1|alu:alu"                                                                                                     ;
++------+--------+----------+--------------------------------------------------------------------------------------------------------------------------+
+; Port ; Type   ; Severity ; Details                                                                                                                  ;
++------+--------+----------+--------------------------------------------------------------------------------------------------------------------------+
+; out  ; Output ; Warning  ; Output or bidir port (32 bits) is wider than the port expression (1 bits) it drives; bit(s) "out[31..1]" have no fanouts ;
++------+--------+----------+--------------------------------------------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "exec1:exec1"                                                                                                                                            ;
++-----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port      ; Type   ; Severity ; Details                                                                                                                                            ;
++-----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+; aluop     ; Input  ; Warning  ; Input port expression (1 bits) is smaller than the input port (5 bits) it drives.  Extra input bit(s) "aluop[4..1]" will be connected to GND.      ;
+; src1      ; Input  ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "src1[31..1]" will be connected to GND.     ;
+; reg2      ; Input  ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "reg2[31..1]" will be connected to GND.     ;
+; immediat  ; Input  ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "immediat[31..1]" will be connected to GND. ;
+; old_pc    ; Input  ; Warning  ; Input port expression (1 bits) is smaller than the input port (32 bits) it drives.  Extra input bit(s) "old_pc[31..1]" will be connected to GND.   ;
+; aluresult ; Output ; Warning  ; Output or bidir port (32 bits) is wider than the port expression (1 bits) it drives; bit(s) "aluresult[31..1]" have no fanouts                     ;
+; aluresult ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                                ;
+; zero      ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                                ;
+; overflow  ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                                ;
+; pc_branch ; Output ; Warning  ; Output or bidir port (32 bits) is wider than the port expression (1 bits) it drives; bit(s) "pc_branch[31..1]" have no fanouts                     ;
+; pc_branch ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                                ;
+; dst       ; Output ; Warning  ; Output or bidir port (5 bits) is wider than the port expression (1 bits) it drives; bit(s) "dst[4..1]" have no fanouts                             ;
+; dst       ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed.                                                                ;
++-----------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-------------------+---------------------------------+
+; Type              ; Count                           ;
++-------------------+---------------------------------+
+; boundary_port     ; 2                               ;
+;                   ;                                 ;
+; Max LUT depth     ; 0.00                            ;
+; Average LUT depth ; 0.00                            ;
++-------------------+---------------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
 +-------------------------------+
 ; Analysis & Synthesis Messages ;
 +-------------------------------+
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
-    Info: Processing started: Mon Dec 12 15:16:37 2016
+    Info: Processing started: Mon Dec 12 15:55:03 2016
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off PA_processor -c cpu
 Warning (20028): Parallel compilation is not licensed and has been disabled
 Info (12021): Found 2 design units, including 2 entities, in source file stages/exec/exec1.v
@@ -196,31 +372,184 @@ Info (12021): Found 1 design units, including 1 entities, in source file stages/
     Info (12023): Found entity 1: decode_top File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/decode/decode_top.v Line: 6
 Info (12021): Found 0 design units, including 0 entities, in source file define.v
 Info (12021): Found 1 design units, including 1 entities, in source file cpu.v
-    Info (12023): Found entity 1: cpu File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 18
+    Info (12023): Found entity 1: cpu File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 17
 Info (12021): Found 1 design units, including 1 entities, in source file stages/fetch/fetch.v
     Info (12023): Found entity 1: fetch File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/fetch/fetch.v Line: 7
-Warning (10236): Verilog HDL Implicit Net warning at M3.v(18): created implicit net for "m1result" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M3.v Line: 18
 Warning (10236): Verilog HDL Implicit Net warning at pc.v(22): created implicit net for "pc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/fetch/pc.v Line: 22
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(60): created implicit net for "alusrc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 60
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(61): created implicit net for "aluop" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 61
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(62): created implicit net for "src1" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 62
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(63): created implicit net for "reg2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 63
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(64): created implicit net for "immediat" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 64
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(65): created implicit net for "old_pc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 65
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(66): created implicit net for "aluresult" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 66
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(67): created implicit net for "zero" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 67
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(68): created implicit net for "oveflow" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 68
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(69): created implicit net for "new_pc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 69
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(70): created implicit net for "dst" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 70
-Warning (10236): Verilog HDL Implicit Net warning at cpu.v(81): created implicit net for "src2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 81
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(59): created implicit net for "alusrc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 59
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(60): created implicit net for "aluop" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 60
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(61): created implicit net for "src1" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 61
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(62): created implicit net for "reg2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 62
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(63): created implicit net for "immediat" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 63
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(64): created implicit net for "old_pc" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 64
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(65): created implicit net for "aluresult" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 65
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(66): created implicit net for "zero" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 66
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(67): created implicit net for "oveflow" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 67
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(68): created implicit net for "pc_branch" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 68
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(69): created implicit net for "dst" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 69
+Warning (10236): Verilog HDL Implicit Net warning at cpu.v(80): created implicit net for "src2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 80
 Warning (10236): Verilog HDL Implicit Net warning at fetch.v(52): created implicit net for "instc_hit" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/fetch/fetch.v Line: 52
-Error (10048): Verilog HDL error at exec1.v(23): values cannot be assigned directly to all or part of array "src2" - assignments must be made to individual elements only File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v Line: 23
-Error (10219): Verilog HDL Continuous Assignment error at exec1.v(24): object "new_pc" on left-hand side of assignment must have a net type File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v Line: 24
-Error (10044): Verilog HDL error at exec1.v(29): expression cannot reference entire array "src2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v Line: 29
-Error: Quartus Prime Analysis & Synthesis was unsuccessful. 3 errors, 16 warnings
-    Error: Peak virtual memory: 1213 megabytes
-    Error: Processing ended: Mon Dec 12 15:16:49 2016
-    Error: Elapsed time: 00:00:12
-    Error: Total CPU time (on all processors): 00:00:30
+Info (12127): Elaborating entity "cpu" for the top level hierarchy
+Info (12128): Elaborating entity "exec1" for hierarchy "exec1:exec1" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 70
+Warning (10034): Output port "dst" at exec1.v(19) has no driver File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v Line: 19
+Info (12128): Elaborating entity "alu" for hierarchy "exec1:exec1|alu:alu" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/exec1.v Line: 35
+Warning (10199): Verilog HDL Case Statement warning at alu.v(82): case item expression never matches the case expression File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 82
+Warning (10199): Verilog HDL Case Statement warning at alu.v(88): case item expression never matches the case expression File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 88
+Warning (10199): Verilog HDL Case Statement warning at alu.v(92): case item expression never matches the case expression File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 92
+Warning (10199): Verilog HDL Case Statement warning at alu.v(96): case item expression never matches the case expression File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 96
+Warning (10175): Verilog HDL warning at alu.v(100): ignoring unsupported system task File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 100
+Warning (10272): Verilog HDL Case Statement warning at alu.v(48): case item expression covers a value already covered by a previous case item File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 48
+Warning (10240): Verilog HDL Always Construct warning at alu.v(20): inferring latch(es) for variable "zero", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at alu.v(20): inferring latch(es) for variable "out", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at alu.v(20): inferring latch(es) for variable "temp", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at alu.v(20): inferring latch(es) for variable "overflow", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "overflow" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[2]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[3]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[4]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[5]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[6]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[7]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[8]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[9]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[10]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[11]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[12]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[13]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[14]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "temp[15]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[0]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[1]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[2]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[3]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[4]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[5]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[6]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[7]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[8]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[9]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[10]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[11]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[12]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[13]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[14]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[15]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[16]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[17]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[18]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[19]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[20]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[21]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[22]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[23]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[24]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[25]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[26]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[27]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[28]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[29]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[30]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "out[31]" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (10041): Inferred latch for "zero" at alu.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/alu.v Line: 20
+Info (12128): Elaborating entity "M1" for hierarchy "M1:M1" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 85
+Warning (10240): Verilog HDL Always Construct warning at M1.v(20): inferring latch(es) for variable "m1zero", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at M1.v(20): inferring latch(es) for variable "temp", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at M1.v(20): inferring latch(es) for variable "m1result", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Warning (10240): Verilog HDL Always Construct warning at M1.v(20): inferring latch(es) for variable "m1overflow", which holds its previous value in one or more paths through the always construct File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Warning (10034): Output port "dst" at M1.v(15) has no driver File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 15
+Info (10041): Inferred latch for "m1overflow" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[0]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[1]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[2]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[3]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[4]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[5]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[6]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[7]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[8]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[9]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[10]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[11]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[12]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[13]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[14]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[15]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[16]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[17]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[18]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[19]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[20]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[21]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[22]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[23]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[24]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[25]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[26]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[27]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[28]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[29]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[30]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1result[31]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[0]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[1]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[2]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[3]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[4]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[5]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[6]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[7]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[8]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[9]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[10]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[11]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[12]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[13]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[14]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[15]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[16]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[17]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[18]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[19]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[20]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[21]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[22]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[23]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[24]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[25]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[26]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[27]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[28]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[29]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[30]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "temp[31]" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (10041): Inferred latch for "m1zero" at M1.v(20) File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/stages/exec/M1.v Line: 20
+Info (12128): Elaborating entity "M2" for hierarchy "M2:M2" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 102
+Info (12128): Elaborating entity "M3" for hierarchy "M3:M3" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 119
+Info (12128): Elaborating entity "M4" for hierarchy "M4:M4" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 136
+Info (12128): Elaborating entity "M5" for hierarchy "M5:M5" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 154
+Warning (12011): Net is missing source, defaulting to GND
+    Warning (12110): Net "aluop" is missing source, defaulting to GND File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 60
+    Warning (12110): Net "src1" is missing source, defaulting to GND File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 61
+Warning (12241): 3 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Info (144001): Generated suppressed messages file /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/output_files/cpu.map.smsg
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 2 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "clk" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 18
+    Warning (15610): No output dependent on input pin "reset" File: /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/cpu.v Line: 27
+Info (21057): Implemented 2 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 2 input pins
+    Info (21059): Implemented 0 output pins
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 38 warnings
+    Info: Peak virtual memory: 1271 megabytes
+    Info: Processing ended: Mon Dec 12 15:55:16 2016
+    Info: Elapsed time: 00:00:13
+    Info: Total CPU time (on all processors): 00:00:31
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in /home/salcaide/Dropbox/MIRI/PA/Project/pa_processor/output_files/cpu.map.smsg.
 
 

@@ -14,21 +14,31 @@
     output reg [`REG_SIZE-1:0]  aluresult,
     output reg                  zero = 1'd0,
     output reg                  overflow = 1'd0,
-    output reg [`ADDR_SIZE-1:0] new_pc = 32'h0000,
+    output reg [`ADDR_SIZE-1:0] pc_branch = 32'h0000,
     output reg [4:0]            dst
               );
  
-    wire src2 [`REG_SIZE-1:0];
- 
+    wire [`REG_SIZE-1:0] src2;
+ //assign just used on combinational parts, on wires
     assign src2 = alusrc ? reg2 : immediat;
-    assign new_pc = old_pc + (immediat << 2);
- 
- alu alu(
+	 wire alu_zero;
+	 wire alu_overflow;
+	 wire alu_result;
+    
+alu alu(
  	.aluop(aluop),
  	.src1(src1),
  	.src2(src2),
- 	.zero(zero),
- 	.overflow(overflow),
- 	.out(aluresult));
+ 	.zero(alu_zero),
+ 	.overflow(alu_overflow),
+ 	.out(alu_result)
+	);
+	
+	always @* begin
+		pc_branch = old_pc + (immediat << 2);
+		zero = alu_zero;
+		overflow = alu_overflow;
+		aluresult = alu_result;
+	end
  endmodule
  `endif
