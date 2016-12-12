@@ -30,6 +30,5 @@ alu alu(
 	.zero(zero),
 	.overflow(overflow),
 	.out(aluresult));
-
 endmodule // exec1
 `endif
