@@ -3,4 +3,10 @@
 *.wlf
 *.mti
 *.swp
+*.qpf
+*.rpt
+*.wlf
 work/
+db/
+incremental_db/
+output_files/

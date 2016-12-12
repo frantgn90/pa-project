@@ -30,14 +30,14 @@ module alu(
 					if ((src1[`REG_SIZE-1] != src2[`REG_SIZE-1]) && (out[`REG_SIZE-1] != src1[`REG_SIZE-1])) overflow <= 1;
 					else overflow <= 0;		
 			end
-		`ALUOP_MUL: begin
-					zero <= 0;
-					temp <= src1 * src2;
-					out <= temp[`REG_SIZE-1:0];
+		//`ALUOP_MUL: begin
+		//			zero <= 0;
+		//			temp <= src1 * src2;
+		//			out <= temp[`REG_SIZE-1:0];
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
 					//else
-					overflow <= 0;
-			end
+		//			overflow <= 0;
+		//	end
 		`ALUOP_LDB: begin
 					zero <= 0;
 					out <= src1 + src2;
