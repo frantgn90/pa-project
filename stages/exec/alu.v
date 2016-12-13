@@ -13,7 +13,7 @@ module alu(
 	output reg [`REG_SIZE-1:0] out = {`REG_SIZE{1'b0}}
 	);
 	
-	//temporal register of 64 bits (for multiplication)
+	//temporal register of 64 bits (for multiplication) and memory operations
 	reg [((`REG_SIZE*2)-1):0] temp = 0;
 	
 	always @* begin
@@ -97,7 +97,8 @@ module alu(
 		
 			end
 		default:
-			`WARNING(("[ALU] Unknown ALUOP signal %x", aluop))
+			`WARNING(("[ALU] Unknown ALUOP signal %x", aluop));
+		end
 		endcase
 	end
 endmodule
