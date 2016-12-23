@@ -56,5 +56,5 @@
 
 `define MASK_WORD 32'hFFFC
 
-`define WARNING(M) begin $write("%5t [warning] ", $time); $display M ; 
+`define WARN(M) begin $write("%5t [warning] ", $time); $display M; 
 `endif
