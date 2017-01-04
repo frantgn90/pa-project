@@ -30,39 +30,28 @@ module cpu(
 	          output wire [BWDITH-1:0] mem_data_in*/
            );
 
+   wire               if_is_jump;
+   wire               if_is_branch;
+   wire               if_is_exception;
+   wire               reset;
+   wire [`ADDR_SIZE-1:0] if_pc_jump;
+   wire [`ADDR_SIZE-1:0] if_branch;
+   wire [`ADDR_SIZE-1:0] if_old_pc;
+   wire [`ADDR_SIZE-1:0] if_new_pc;
 
-   /*module pc(
-	  input wire clk,
-	  
-	  input wire is_jump,
-	  input wire is_branch,
-	  input wire is_exception,
-	  input wire reset,
-	  
-	  input wire [31:0] pc_jump,
-	  input wire [31:0] pc_branch,
-	  input wire [31:0] old_pc,
-	  output reg [31:0] new_pc
-	  );
-    */
-   /*
-    
+ fetch fetch(
+             .clk(clk),
+             .is_jump(if_is_jump),
+             .is_branch(if_is_branch),
+             .is_exception(if_is_exception),
+             .reset(reset),
+             .pc_jump(if_pc_jump),
+             .pc_branch(if_branch),
+             .old_pc(if_old_pc),
+             .new_pc(if_new_pc),
+             );
 
-    pc pc(
-	  .clk(clk),
-	  .is_jump(),
-	  .is_branch(),
-	  .is_exception(),
-	  .reset(reset),
-	  .pc_jump(),
-	  .pc_branch(),
-	  .old_pc(),
-	  .new_pc()
-    );
-
-    */
-   
-   wire               ic_is_byte;
+   wire                  ic_is_byte;
    wire [`REG_SIZE-1:0] ic_data_out;
    wire [`REG_SIZE-1:0] ic_memresult;
    wire                 ic_hit;
@@ -75,7 +64,7 @@ module cpu(
    cache Icache(
                 .clk(clk),
                 .reset(reset),
-                .addr(aluresult),
+                .addr(if_new_pc),
 	              .do_read(1'b1),
 	              .is_byte(ic_is_byte),
 	              .do_write(1'b0),
