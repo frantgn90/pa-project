@@ -22,12 +22,12 @@ module cpu(
 	         input wire clk,
 	         input wire reset
 	         // Memory ports
-	         /*output wire mem_enable,
-	          output wire mem_rw,
-	          input wire mem_ack,
-	          output wire [31:0]  mem_addr,
-	          input wire [BWDITH-1:0] mem_data_out,
-	          output wire [BWDITH-1:0] mem_data_in*/
+	         output wire mem_enable,
+	         output wire mem_rw,
+	         input wire mem_ack,
+	         output wire [31:0]  mem_addr,
+	         input wire [BWDITH-1:0] mem_data_out,
+	         output wire [BWDITH-1:0] mem_data_in
            );
 
 
@@ -286,10 +286,35 @@ module cpu(
 	              .mem_read_data(dc_mem_read_data),
 	              .mem_read_ack(dc_mem_read_ack)
                 );
-   
+   //ARBITER
 
+   Arbiter Arbiter(
+                .clk(clk),
+		.reset(reset),
+		
+		.ic_read_req(ic_read_req),
+		.ic_read_ack(ic_read_ack),
+		.ic_read_addr(ic_read_addr),
+		.ic_read_data(ic_read_data),
 
-   
+		.dc_read_req(dc_read_req),
+		.dc_read_ack(dc_read_ack),
+		.dc_read_addr(dc_read_addr),
+		.dc_read_data(dc_read_data),
+
+		.dc_write_req(dc_write_req),
+		.dc_write_ack(dc_write_ack),
+		.dc_write_addr(dc_write_addr),
+		.dc_write_data(dc_write_data),
+
+		.mem_enable(mem_enable),
+		.mem_rw(mem_rw),
+		.mem_ack(mem_ack),
+		.mem_addr(mem_addr),
+		.mem_data_in(mem_data_out),
+		.mem_data_out(mem_data_in)
+
+   //WRITE BACK STAGE
    wire [`REG_ADDR-1:0]  wreg; //destination register
    wire [`REG_SIZE-1:0]  wdata; //result to write
    wire                  regwrite; //write permission
