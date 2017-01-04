@@ -1,7 +1,7 @@
 `ifndef _cache
 `define _cache
 
-`include "define.v"
+`include "../define.v"
 
 /////////////////////////////
 //                         //
@@ -24,17 +24,17 @@ module cache (
 	// Memory ports
 	output reg mem_write_req = 0,
 	output reg [31:0] mem_write_addr = 0,
-	output reg [WIDTH-1:0] mem_write_data = 0,
+	output reg [`WIDTH-1:0] mem_write_data = 0,
 	input wire mem_write_ack,
 	output reg mem_read_req = 0,
 	output reg [31:0] mem_read_addr = 0,
-	input wire [WIDTH-1:0] mem_read_data,
+	input wire [`WIDTH-1:0] mem_read_data,
 	input wire mem_read_ack
 );
 
-parameter WIDTH = `MEMORY_WIDTH; // Bits in cache line
+//parameter WIDTH = `MEMORY_WIDTH; // Bits in cache line
 parameter DEPTH = 4; // Number of cache lines
-localparam WB   = $clog2(WIDTH) - 3; // Width bits
+localparam WB   = $clog2(`WIDTH) - 3; // Width bits
 localparam DB   = $clog2(DEPTH); // Depth bits
 
 parameter ALIAS = "cache";
@@ -50,10 +50,10 @@ wire [31-WB-DB:0] mem_read_tag   = mem_read_addr[31:WB+DB];
 reg [DEPTH-1:0]  validbits = {DEPTH{1'b0}};
 reg [DEPTH-1:0]  dirtybits = {DEPTH{1'b0}};
 reg [31-WB-DB:0] tags [0:DEPTH-1];
-reg [WIDTH-1:0]  lines [0:DEPTH-1];
+reg [`WIDTH-1:0]  lines [0:DEPTH-1];
 
-wire [WIDTH-1:0] line_out = lines[index];
-wire [31:0]      word_out = (WIDTH == 32) ?
+wire [`WIDTH-1:0] line_out = lines[index];
+wire [31:0]      word_out = (`WIDTH == 32) ?
 	line_out :
 	line_out[(addr[WB-1:2]+1)*32-1-:32];
 wire [7:0]       byte_out = line_out[(offset+1)*8-1-:8];
@@ -98,7 +98,7 @@ always @(posedge clk) begin
 			if (hit_int) begin
 				if (do_write) begin
 					if (is_byte) lines[index][(offset+1)*8-1-:8] = data_in[7:0];
-					else if (WIDTH == 32) lines[index] = data_in;
+					else if (`WIDTH == 32) lines[index] = data_in;
 					else lines[index][(addr[WB-1:2]+1)*32-1-:32] = data_in;
 					dirtybits[index] = 1'b1;
 					//`INFO(("[%s] Write %x <= %x", ALIAS, addr[15:0], data_in))
