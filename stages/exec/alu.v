@@ -89,16 +89,15 @@ module alu(
 					zero <= 0;
 					out <= 32'd0;
 			end
-		`ALUOP_TLBWRITE: begin
+		//`ALUOP_TLBWRITE: begin
 		
-			end
+		//	end
 		
-		`ALUOP_IRET: begin
-		
-			end
-		default:
-			`WARNING(("[ALU] Unknown ALUOP signal %x", aluop));
-		end
+		//`ALUOP_IRET: begin
+		//
+		//	end
+		//default:
+			//`WARN(("[ALU] Unknown ALUOP signal %x", aluop))
 		endcase
 	end
 endmodule
