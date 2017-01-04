@@ -3,13 +3,17 @@
 
  `include "define.v"
  `include "stages/fetch/pc.v"
+ `include "stages/fetch/fetch.v"
  `include "stages/exec/exec1.v"
  `include "stages/exec/M1.v"
  `include "stages/exec/M2.v"
  `include "stages/exec/M3.v"
  `include "stages/exec/M4.v"
  `include "stages/exec/M5.v"
-
+ `include "memory/memory_sync.v"
+ `include "cache/cache.v"
+ `include "stages/decode/decode_top.v"
+ `include "stages/decode/regfile.v"
 
 
 
@@ -57,6 +61,34 @@ module cpu(
     );
 
     */
+   
+   wire               ic_is_byte;
+   wire [`REG_SIZE-1:0] ic_data_out;
+   wire [`REG_SIZE-1:0] ic_memresult;
+   wire                 ic_hit;
+   wire                 ic_mem_read_req;
+   wire [`REG_SIZE-1:0] ic_mem_read_addr;
+   wire [`WIDTH-1:0]    ic_mem_read_data;
+   wire                 ic_mem_read_ack;
+
+
+   cache Icache(
+                .clk(clk),
+                .reset(reset),
+                .addr(aluresult),
+	              .do_read(1'b1),
+	              .is_byte(ic_is_byte),
+	              .do_write(1'b0),
+	              .data_in(0),
+	              .data_out(ic_memresult),
+	              .hit(ic_hit),
+                .	
+	              .mem_read_req(ic_mem_read_req),
+	              .mem_read_addr(ic_mem_read_addr),
+	              .mem_read_data(ic_mem_read_data),
+	              .mem_read_ack(ic_mem_read_ack)
+                );
+   
 
    regfile registers(
                      .clk(clk),
@@ -68,6 +100,9 @@ module cpu(
                      .rdata1(), //Data form register1
                      .radat2()
                      );
+
+
+
 
    //WIRE TO COME FROM DECODE TO EXEC1 AND M1:
    //exec1
@@ -84,6 +119,7 @@ module cpu(
    wire [`REG_SIZE-1:0]  src2;
    wire [`REG_ADDR-1:0]  wreg_in;
    wire [4:0]            aluop;
+   wire [`REG_SIZE-1:0]  regwrite_alu;
 
    exec1 exec1(
 	             .clk(clk),
@@ -96,7 +132,7 @@ module cpu(
                .old_pc(old_pc),
 	             .wreg_in(wreg_in),
 	    
-	             .regwrite_out(regwrite_out),
+	             .regwrite_out(regwrite_alu),
                .zero(zero),
                .overflow(oveflow),
                .aluresult(aluresult),
@@ -211,13 +247,56 @@ module cpu(
          .wreg_out(M5wreg_out)
 	       );
 
+   //FROM DECODE
+   wire                  dc_do_read;
+   wire                  dc_is_byte;
+   wire                  dc_is_write;
+   wire [`REG_SIZE-1:0]    dc_data_in;
+   wire [`REG_SIZE-1:0]    dc_data_out;
+   wire [`REG_SIZE-1:0]    dc_memresult;
+   wire                  dc_hit;
+
+   wire                  dc_mem_write_req;
+   wire [`REG_SIZE-1:0]  dc_mem_write_addr;
+   wire [`WIDTH-1:0]     dc_mem_write_data;
+   wire                  dc_mem_write_ack;
+
+   wire                  dc_mem_read_req;
+   wire [`REG_SIZE-1:0]  dc_mem_read_addr;
+   wire [`WIDTH-1:0]     dc_mem_read_data;
+   wire                  dc_mem_read_ack;
+
+   cache Dcache(
+                .clk(clk),
+                .reset(reset),
+                .addr(aluresult),
+	              .do_read(dc_do_read),
+	              .is_byte(dc_is_byte),
+	              .do_write(dc_is_write),
+	              .data_in(dc_data_in),
+	              .data_out(dc_memresult),
+	              .hit(dc_hit),
+                .	
+	              .mem_write_req(dc_mem_write_req),
+	              .mem_write_addr(dc_mem_write_addr),
+	              .mem_write_data(dc_mem_write_data),
+	              .mem_write_ack(dc_mem_write_ack),
+	              .mem_read_req(dc_mem_read_req),
+	              .mem_read_addr(dc_mem_read_addr),
+	              .mem_read_data(dc_mem_read_data),
+	              .mem_read_ack(dc_mem_read_ack)
+                );
+   
+
+
+   
    wire [`REG_ADDR-1:0]  wreg; //destination register
    wire [`REG_SIZE-1:0]  wdata; //result to write
    wire                  regwrite; //write permission
-   
-   assign wreg = regwrite_out? wreg_out : M5wreg_out;
-   assign wdata = regwrite_out? memresult : m5result;
-   assign regwrite = regwrite_out5 or regwrite_out;
+
+   assign wreg = regwrite_alu_mem? wreg_out : M5wreg_out;
+   assign wdata = regwrite_alu_mem? dc_memresult : m5result;
+   assign regwrite = regwrite_out5 | regwrite_alu_mem;
 
 endmodule
 `endif
