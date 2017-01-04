@@ -8,12 +8,12 @@
 module memory_sync (
 	input wire clk,
 	input wire reset,
-	input wire [31:0] addr,
+	input wire [`REG_SIZE-1:0] addr,
 	input wire do_read,
 	input wire do_write,
 	input wire is_byte,
-	input wire [31:0] data_in,
-	output reg [31:0] data_out = 0
+	input wire [`REG_SIZE-1:0] data_in,
+	output reg [`REG_SIZE-1:0] data_out = 0
 );
 
 //parameter WIDTH = `MEMORY_WIDTH;
