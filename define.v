@@ -56,5 +56,23 @@
 
 `define MASK_WORD 32'hFFFC
 
-`define WARN(M) begin $write("%5t [warning] ", $time); $display M; 
+`define WARN(M) begin $write("%5t [warning] ", $time); $display M;
+
+//MEMORY AND CACHE
+`define MEMORY_WIDTH 128	//MEMORY LINE WIDTH
+`define MEMORY_DEPTH 2048	//MEMORY LINES
+`define WIDTH 128		//CACHE LINE WIDTH
+`define MEMORY_DATA "../memory_init/memory.raw"
+`ifndef MEMORY_LATENCY
+	`define MEMORY_LATENCY 27
+`endif
+
+
+// Debug macros
+`ifdef DEBUG
+	`define INFO(M) begin $write("%5t ", $time); $display M ; end
+`else
+	`define INFO(M) begin end
+`endif
+
 `endif
