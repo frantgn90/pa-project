@@ -19,46 +19,52 @@
 
 
 module cpu(
-	         input wire clk,
-	         input wire reset
+	         input wire                  clk,
+	         input wire                  reset,
 	         // Memory ports
-	         output wire mem_enable,
-	         output wire mem_rw,
-	         input wire mem_ack,
-	         output wire [31:0]  mem_addr,
-	         input wire [BWDITH-1:0] mem_data_out,
-	         output wire [BWDITH-1:0] mem_data_in
+	         output wire                 mem_enable,
+	         output wire                 mem_rw,
+	         input wire                  mem_ack,
+	         output wire [`REG_SIZE-1:0] mem_addr,
+	         input wire [`WIDTH-1:0]     mem_data_out,
+	         output wire [`WIDTH-1:0]    mem_data_in
            );
 
-   wire               if_is_jump;
-   wire               if_is_branch;
-   wire               if_is_exception;
-   wire               reset;
-   wire [`ADDR_SIZE-1:0] if_pc_jump;
-   wire [`ADDR_SIZE-1:0] if_branch;
-   wire [`ADDR_SIZE-1:0] if_old_pc;
-   wire [`ADDR_SIZE-1:0] if_new_pc;
+   //WRITE BACK STAGE
+   wire [`REG_ADDR-1:0]                wreg; //destination register
+   wire [`REG_SIZE-1:0]                wdata; //result to write
+   wire                                regwrite; //write permission
 
- fetch fetch(
-             .clk(clk),
-             .is_jump(if_is_jump),
-             .is_branch(if_is_branch),
-             .is_exception(if_is_exception),
-             .reset(reset),
-             .pc_jump(if_pc_jump),
-             .pc_branch(if_branch),
-             .old_pc(if_old_pc),
-             .new_pc(if_new_pc),
-             );
 
-   wire                  ic_is_byte;
-   wire [`REG_SIZE-1:0] ic_data_out;
-   wire [`REG_SIZE-1:0] ic_memresult;
-   wire                 ic_hit;
-   wire                 ic_mem_read_req;
-   wire [`REG_SIZE-1:0] ic_mem_read_addr;
-   wire [`WIDTH-1:0]    ic_mem_read_data;
-   wire                 ic_mem_read_ack;
+
+   wire                                if_is_jump;
+   wire                                if_is_branch;
+   wire                                if_is_exception;
+   wire [`ADDR_SIZE-1:0]               if_pc_jump;
+   wire [`ADDR_SIZE-1:0]               if_branch;
+   wire [`ADDR_SIZE-1:0]               if_old_pc;
+   wire [`ADDR_SIZE-1:0]               if_new_pc;
+
+   fetch fetch(
+               .clk(clk),
+               .is_jump(if_is_jump),
+               .is_branch(if_is_branch),
+               .is_exception(if_is_exception),
+               .reset(reset),
+               .pc_jump(if_pc_jump),
+               .pc_branch(if_branch),
+               .old_pc(if_old_pc),
+               .new_pc(if_new_pc)
+               );
+
+   wire                                ic_is_byte;
+   wire [`REG_SIZE-1:0]                ic_data_out;
+   wire [`REG_SIZE-1:0]                ic_memresult;
+   wire                                ic_hit;
+   wire                                ic_mem_read_req;
+   wire [`REG_SIZE-1:0]                ic_mem_read_addr;
+   wire [`WIDTH-1:0]                   ic_mem_read_data;
+   wire                                ic_mem_read_ack;
 
 
    cache Icache(
@@ -71,13 +77,11 @@ module cpu(
 	              .data_in(0),
 	              .data_out(ic_memresult),
 	              .hit(ic_hit),
-                .	
 	              .mem_read_req(ic_mem_read_req),
 	              .mem_read_addr(ic_mem_read_addr),
 	              .mem_read_data(ic_mem_read_data),
 	              .mem_read_ack(ic_mem_read_ack)
                 );
-   
 
    regfile registers(
                      .clk(clk),
@@ -95,20 +99,20 @@ module cpu(
 
    //WIRE TO COME FROM DECODE TO EXEC1 AND M1:
    //exec1
-   wire               regwrite_in;
-   wire               alusrc;
-   wire [`REG_SIZE-1:0] immediat;
-   wire [`ADDR_SIZE-1:0] old_pc;
+   wire                                regwrite_in;
+   wire                                alusrc;
+   wire [`REG_SIZE-1:0]                immediat;
+   wire [`ADDR_SIZE-1:0]               old_pc;
 
    //M1:
-   wire                  regwrite_mult_in;
+   wire                                regwrite_mult_in;
 
    //M1 and exec1
-   wire [`REG_SIZE-1:0]  src1;
-   wire [`REG_SIZE-1:0]  src2;
-   wire [`REG_ADDR-1:0]  wreg_in;
-   wire [4:0]            aluop;
-   wire [`REG_SIZE-1:0]  regwrite_alu;
+   wire [`REG_SIZE-1:0]                src1;
+   wire [`REG_SIZE-1:0]                src2;
+   wire [`REG_ADDR-1:0]                alu_wreg_in;
+   wire [4:0]                          aluop;
+   wire [`REG_SIZE-1:0]                alu_regwrite;
 
    exec1 exec1(
 	             .clk(clk),
@@ -119,22 +123,22 @@ module cpu(
                .reg2(reg2),
                .immediat(immediat),
                .old_pc(old_pc),
-	             .wreg_in(wreg_in),
-	    
-	             .regwrite_out(regwrite_alu),
+	             .wreg_in(alu_wreg_in),
+
+	             .regwrite_out(alu_regwrite),
                .zero(zero),
                .overflow(oveflow),
-               .aluresult(aluresult),
+               .alu_result(alu_result),
                .pc_branch(pc_branch),
-               .wreg_out(wreg_out)
+               .wreg_out(alu_wreg_out)
                );
 
 
-   wire                  regwrite_out1;
-   wire                  m1zero;
-   wire                  m1overflow;
-   wire [`REG_ADDR-1:0]  M1wreg_out;
-   wire [`REG_SIZE-1:0]  m1result;
+   wire                                regwrite_out1;
+   wire                                m1zero;
+   wire                                m1overflow;
+   wire [`REG_ADDR-1:0]                M1wreg_out;
+   wire [`REG_SIZE-1:0]                m1result;
 
    M1 M1(
 	       .clk(clk),
@@ -151,11 +155,11 @@ module cpu(
 	       .m1result(m1result)
          );
 
-   wire                  regwrite_out2;
-   wire                  m2zero;
-   wire                  m2overflow;
-   wire [`REG_SIZE-1:0]  m2result;
-   wire [`REG_ADDR-1:0]  M2wreg_out;
+   wire                                regwrite_out2;
+   wire                                m2zero;
+   wire                                m2overflow;
+   wire [`REG_SIZE-1:0]                m2result;
+   wire [`REG_ADDR-1:0]                M2wreg_out;
 
    M2 M2(
 	       .clk(clk),
@@ -172,11 +176,11 @@ module cpu(
          .wreg_out(M2wreg_out)
 	       );
 
-   wire                  regwrite_out3;
-   wire                  m3zero;
-   wire                  m3overflow;
-   wire [`REG_SIZE-1:0]  m3result;
-   wire [`REG_ADDR-1:0]  M3wreg_out;
+   wire                                regwrite_out3;
+   wire                                m3zero;
+   wire                                m3overflow;
+   wire [`REG_SIZE-1:0]                m3result;
+   wire [`REG_ADDR-1:0]                M3wreg_out;
 
    M3 M3(
 	       .clk(clk),
@@ -193,11 +197,11 @@ module cpu(
          .wreg_out(M3wreg_out)
 	       );
 	 
-   wire                  regwrite_out4;
-   wire                  m4zero;
-   wire                  m4overflow;
-   wire [`REG_SIZE-1:0]  m4result;
-   wire [`REG_ADDR-1:0]  M4wreg_out;
+   wire                                regwrite_out4;
+   wire                                m4zero;
+   wire                                m4overflow;
+   wire [`REG_SIZE-1:0]                m4result;
+   wire [`REG_ADDR-1:0]                M4wreg_out;
 
    M4 M4(
 	       .clk(clk),
@@ -214,11 +218,11 @@ module cpu(
          .wreg_out(M4wreg_out)
 	       );
 
-   wire                  regwrite_out5;
-   wire                  m5zero;
-   wire                  m5overflow;
-   wire [`REG_SIZE-1:0]  m5result;
-   wire [`REG_ADDR-1:0]  M5wreg_out;
+   wire                                regwrite_out5;
+   wire                                m5zero;
+   wire                                m5overflow;
+   wire [`REG_SIZE-1:0]                m5result;
+   wire [`REG_ADDR-1:0]                M5wreg_out;
 
 	 
    M5 M5(
@@ -236,36 +240,40 @@ module cpu(
          .wreg_out(M5wreg_out)
 	       );
 
-   //FROM DECODE
-   wire                  dc_do_read;
-   wire                  dc_is_byte;
-   wire                  dc_is_write;
-   wire [`REG_SIZE-1:0]    dc_data_in;
-   wire [`REG_SIZE-1:0]    dc_data_out;
-   wire [`REG_SIZE-1:0]    dc_memresult;
-   wire                  dc_hit;
+   //MEM STAGE
+   reg [`REG_ADDR-1:0]                     dc_wreg_out;
+   reg [`REG_SIZE-1:0]                     dc_wdata;
+   reg                                 dc_regwrite;
 
-   wire                  dc_mem_write_req;
-   wire [`REG_SIZE-1:0]  dc_mem_write_addr;
-   wire [`WIDTH-1:0]     dc_mem_write_data;
-   wire                  dc_mem_write_ack;
 
-   wire                  dc_mem_read_req;
-   wire [`REG_SIZE-1:0]  dc_mem_read_addr;
-   wire [`WIDTH-1:0]     dc_mem_read_data;
-   wire                  dc_mem_read_ack;
+   wire                                dc_do_read;
+   wire                                dc_is_byte;
+   wire                                dc_is_write;
+   wire [`REG_SIZE-1:0]                dc_data_in;
+   wire [`REG_SIZE-1:0]                dc_data_out;
+   wire [`REG_SIZE-1:0]                dc_memresult;
+   wire                                dc_hit;
+
+   wire                                dc_mem_write_req;
+   wire [`REG_SIZE-1:0]                dc_mem_write_addr;
+   wire [`WIDTH-1:0]                   dc_mem_write_data;
+   wire                                dc_mem_write_ack;
+
+   wire                                dc_mem_read_req;
+   wire [`REG_SIZE-1:0]                dc_mem_read_addr;
+   wire [`WIDTH-1:0]                   dc_mem_read_data;
+   wire                                dc_mem_read_ack;
 
    cache Dcache(
                 .clk(clk),
                 .reset(reset),
-                .addr(aluresult),
+                .addr(alu_result),
 	              .do_read(dc_do_read),
 	              .is_byte(dc_is_byte),
 	              .do_write(dc_is_write),
 	              .data_in(dc_data_in),
 	              .data_out(dc_memresult),
 	              .hit(dc_hit),
-                .	
 	              .mem_write_req(dc_mem_write_req),
 	              .mem_write_addr(dc_mem_write_addr),
 	              .mem_write_data(dc_mem_write_data),
@@ -276,41 +284,42 @@ module cpu(
 	              .mem_read_ack(dc_mem_read_ack)
                 );
    //ARBITER
-
    Arbiter Arbiter(
-                .clk(clk),
-		.reset(reset),
-		
-		.ic_read_req(ic_read_req),
-		.ic_read_ack(ic_read_ack),
-		.ic_read_addr(ic_read_addr),
-		.ic_read_data(ic_read_data),
+                   .clk(clk),
+		               .reset(reset),
+		               .ic_read_req(ic_read_req),
+		               .ic_read_ack(ic_read_ack),
+		               .ic_read_addr(ic_read_addr),
+		               .ic_read_data(ic_read_data),
 
-		.dc_read_req(dc_read_req),
-		.dc_read_ack(dc_read_ack),
-		.dc_read_addr(dc_read_addr),
-		.dc_read_data(dc_read_data),
+		               .dc_read_req(dc_read_req),
+		               .dc_read_ack(dc_read_ack),
+		               .dc_read_addr(dc_read_addr),
+		               .dc_read_data(dc_read_data),
 
-		.dc_write_req(dc_write_req),
-		.dc_write_ack(dc_write_ack),
-		.dc_write_addr(dc_write_addr),
-		.dc_write_data(dc_write_data),
+		               .dc_write_req(dc_write_req),
+		               .dc_write_ack(dc_write_ack),
+		               .dc_write_addr(dc_write_addr),
+		               .dc_write_data(dc_write_data),
 
-		.mem_enable(mem_enable),
-		.mem_rw(mem_rw),
-		.mem_ack(mem_ack),
-		.mem_addr(mem_addr),
-		.mem_data_in(mem_data_out),
-		.mem_data_out(mem_data_in)
+		               .mem_enable(mem_enable),
+		               .mem_rw(mem_rw),
+		               .mem_ack(mem_ack),
+		               .mem_addr(mem_addr),
+		               .mem_data_in(mem_data_out),
+		               .mem_data_out(mem_data_in)
+                   );
 
-   //WRITE BACK STAGE
-   wire [`REG_ADDR-1:0]  wreg; //destination register
-   wire [`REG_SIZE-1:0]  wdata; //result to write
-   wire                  regwrite; //write permission
+always @(posedge clk) begin
+   dc_wreg_out <= alu_wreg_out;
+   dc_regwrite <= alu_regwrite;
+   dc_wdata <= dc_do_read? dc_data_out : alu_result;
 
-   assign wreg = regwrite_alu_mem? wreg_out : M5wreg_out;
-   assign wdata = regwrite_alu_mem? dc_memresult : m5result;
-   assign regwrite = regwrite_out5 | regwrite_alu_mem;
+end
+
+   assign wb_wreg = dc_regwrite? dc_wreg_out : M5wreg_out;
+   assign wb_wdata = dc_regwrite? dc_memresult : m5result;
+   assign regwrite = regwrite_out5 | dc_regwrite;
 
 endmodule
 `endif

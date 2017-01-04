@@ -5,19 +5,17 @@
  `include "cache/cache.v"
 
 module fetch(
-	           input wire                  clk,
-
-	           input wire                  is_jump,
-	           input wire                  is_branch,
-	           input wire                  is_exception,
-	           input wire                  reset,
-
-	           input wire [`ADDR_SIZE-1:0] pc_jump,
-	           input wire [`ADDR_SIZE-1:0] pc_branch,
-	           input wire [`ADDR_SIZE-1:0] old_pc,
-	           output reg [`ADDR_SIZE-1:0] new_pc,
+	           input wire                   clk,
+	           input wire                   is_jump,
+	           input wire                   is_branch,
+	           input wire                   is_exception,
+	           input wire                   reset,
+	           input wire [`ADDR_SIZE-1:0]  pc_jump,
+	           input wire [`ADDR_SIZE-1:0]  pc_branch,
+	           input wire [`ADDR_SIZE-1:0]  old_pc,
+	           output wire [`ADDR_SIZE-1:0] new_pc
 	           );
-   
+
 	 pc pc(
 	       .clk(clk),
 	       .is_jump(is_jump),
