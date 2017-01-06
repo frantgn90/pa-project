@@ -13,38 +13,38 @@
  *****************************************************/
 
 module decode_top(
-	 // INPUT SIGNALS
-	 clk,		// Clock signal
-	 reset,		// Reset signal
-	 pc,		// PC to be bypassed directly to the next stage
-	 instruction,	// Instruction to be decoded
-	 out_pc,
+    // INPUT SIGNALS
+    clk,		    // Clock signal
+    reset,		    // Reset signal
+    pc,		        // PC to be bypassed directly to the next stage
+    instruction,	// Instruction to be decoded
+    out_pc,
 
-	 // Need to communicate with the external register bank
-	 src_reg1,		// Address for register 1
-	 src_reg2,		// Address for register 2
-	 rin_reg1,	// Readed register 1
-	 rin_reg2,	// Readed register 2
+    // Need to communicate with the external register bank
+    src_reg1,		// Address for register 1
+    src_reg2,		// Address for register 2
+    rin_reg1,	    // Readed register 1
+    rin_reg2,	    // Readed register 2
 
-	 rout_reg1,
-	 rout_reg2,
+    rout_reg1,
+    rout_reg2,
 
-         // Instruction decoded signals
-	 dest_reg,	// Destination register
-	 mimmediat,	// Memory type instructions immediat
+     // Instruction decoded signals
+    dest_reg,	    // Destination register
+    mimmediat,	    // Memory type instructions immediat
 
-	 // Instruction control signals
-	 regwrite,	// WB Stage: Permission write
-	 memtoreg,	// WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
+    // Instruction control signals
+    regwrite,	    // WB Stage: Permission write
+    memtoreg,	    // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
 
-	 branch,	// M Stage: Govern the Fetch stage mux for PC
-	 memwrite,	// M Stage: If the memory will be written or not
-	 memread,	// M Stage: If the memory will be readed or not
-	 byteword,	// M Stage: If it is a byte (0) or world (1) load/store
+    branch,	        // M Stage: Govern the Fetch stage mux for PC
+    memwrite,	    // M Stage: If the memory will be written or not
+    memread,	    // M Stage: If the memory will be readed or not
+    byteword,	    // M Stage: If it is a byte (0) or world (1) load/store
 
-	 alusrc,	// EX stage: src2 source mux govern
-	 aluop,		// EX stage: ALU operation
-	 // regdst: This signal is not neede for our ISA
+    alusrc,	// EX stage: src2 source mux govern
+    aluop,		// EX stage: ALU operation
+    // regdst: This signal is not neede for our ISA
 );
 
 	// Input signals
