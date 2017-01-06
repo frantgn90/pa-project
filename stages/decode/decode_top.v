@@ -2,10 +2,15 @@
  `define _decode_top
 
  `include "../../define.v"
- `include "regfile.v"
  `include "control.v"
  `include "hazard_control.v"
 
+/*****************************************************
+    TODO list
+    - Hazard control
+    
+ *****************************************************/
+ 
 /*****************************************************
  * This is the top level entity for the DECODE stage *
  *****************************************************
@@ -70,19 +75,19 @@ module decode_top(
 	output reg [`ADDR_SIZE-1:0] mimmediat;
 
 	// Output control signals
-	output reg regwrite;
-	output reg memtoreg;
+	output regwrite;
+	output memtoreg;
 
-	output reg branch;
-	output reg memwrite;
-	output reg memread;
-	output reg byteword;
+	output branch;
+	output memwrite;
+	output memread;
+	output byteword;
 
-	output reg alusrc;
-	output reg aluop;
+	output alusrc;
+	output [7:0] aluop;
 
 	 // Internal wires
-	 wire [5:0]                   opcode;	// To be connected to control
+	 wire [7:0]                   opcode;	// To be connected to control
 	 wire [`REG_ADDR-1:0]         dst;
 
 	 wire [`REG_SIZE-1:0] reg1_data;
@@ -98,9 +103,8 @@ module decode_top(
 	 assign reg1_data[`REG_SIZE-1:0] = rin_reg1[`REG_SIZE-1:0];
 	 assign reg2_data[`REG_SIZE-1:0] = rin_reg2[`REG_SIZE-1:0];
 
-	 assign dst_reg = dst;
-
-	 always @* begin
+	 always @(posedge clk) begin
+        dest_reg <= dst;
 	    rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
 	    rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
 	    out_pc <= pc;
@@ -110,26 +114,29 @@ module decode_top(
 		       mimmediat[`ADDR_SIZE-1:0] <= { {17{instruction[24]}},instruction[24:20], instruction[9:0] };
 	      end
 	      `OPCODE_JUMP: begin
-		       mimmediat[`ADDR_SIZE-1:0] <= { {12{instruction[14]}},instruction[24:20], instruction[14:0] };
+		       mimmediat[`ADDR_SIZE-1:0] <= { {12{instruction[24]}},instruction[24:20], instruction[14:0] };
 	      end
 	      default:
 		       mimmediat[`ADDR_SIZE-1:0] <= { {17{instruction[14]}},instruction[14:0] };
 	    endcase
 	 end
 	 
-	 // Control signals generator
-
-	 control control (
-		.opcode(opcode),
-		.memwrite(memwrite),
-		.memread(memread),
-		.memtoreg(memtoreg),
-		.branch(branch),
-		.regwrite(regwrite),
-		.alusrc(alusrc),
-		.aluop(aluop),
-		.byteword(byteword)
-         );
+    // Control signals generator
+    // NOTE: It acts also as the stage boundary implicitly since its outputs are
+    // registers that just are updated on clock posedges
+    
+    control control (
+        .clk(clk),
+        .opcode(opcode),
+        .memwrite(memwrite),
+        .memread(memread),
+        .memtoreg(memtoreg),
+        .branch(branch),
+        .regwrite(regwrite),
+        .alusrc(alusrc),
+        .aluop(aluop),
+        .byteword(byteword)
+    );
 
 endmodule
 

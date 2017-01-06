@@ -116,10 +116,10 @@ module cpu(
     wire d_e_memtoreg;
     wire d_e_branch;
     wire d_e_memwrite;
-    wire d_e_memread;	
-    wire d_e_byteword;	
+    wire d_e_memread;
+    wire d_e_byteword;
     wire d_e_alusrc;
-    wire d_e_aluop;	
+    wire d_e_aluop;
     
     regfile registers(
         .clk(clk),
@@ -187,7 +187,7 @@ module cpu(
         .reg2(d_e_data_reg2),
         .immediat(d_e_mimmediat),
         .old_pc(d_e_pc),
-	    .wreg_in(d_e_dest_reg),
+        .wreg_in(d_e_dest_reg),
         
         .regwrite_out(e_m_regwrite),
         .zero(e_m_zero),
@@ -214,11 +214,11 @@ module cpu(
         .src1(d_e_data_reg1),
         .src2(d_e_data_reg2),
         
-	    .regwrite_out(regwrite_out1),
+        .regwrite_out(regwrite_out1),
         .m1zero(m1zero),
         .m1overflow(m1overflow),
-	    .wreg_out(M1wreg_out),
-	    .m1result(m1result)
+        .wreg_out(M1wreg_out),
+        .m1result(m1result)
     );
 
     wire                                regwrite_out2;
@@ -237,9 +237,9 @@ module cpu(
         .regwrite_out(regwrite_out2),
         .zero(m2zero),
         .overflow(m2overflow),
-	    .m2result(m2result),
+        .m2result(m2result),
         .wreg_out(M2wreg_out)
-	);
+    );
 
     wire                                regwrite_out3;
     wire                                m3zero;
@@ -249,7 +249,7 @@ module cpu(
 
     M3 M3(
         .clk(clk),
-	    .regwrite_mult_in(regwrite_out2),
+        .regwrite_mult_in(regwrite_out2),
         .pre_m2result(m2result),
         .pre_zero(m2zero),
         .pre_overflow(m2overflow),
@@ -257,9 +257,9 @@ module cpu(
         .regwrite_out(regwrite_out3),
         .zero(m3zero),
         .overflow(m3overflow),
-	    .m3result(m3result),
+        .m3result(m3result),
         .wreg_out(M3wreg_out)
-	);	
+    );
     
     wire                                regwrite_out4;
     wire                                m4zero;
@@ -269,7 +269,7 @@ module cpu(
 
     M4 M4(
         .clk(clk),
-	    .regwrite_mult_in(regwrite_out3),
+        .regwrite_mult_in(regwrite_out3),
         .pre_m3result(m3result),
         .pre_zero(m3zero),
         .pre_overflow(m4overflow),
@@ -277,9 +277,9 @@ module cpu(
         .regwrite_out(regwrite_out4),
         .zero(m4zero),
         .overflow(m4overflow),
-	    .m4result(m4result),
+        .m4result(m4result),
         .wreg_out(M4wreg_out)
-	);
+    );
 
     wire                                regwrite_out5;
     wire                                m5zero;
@@ -289,7 +289,7 @@ module cpu(
 
     M5 M5(
         .clk(clk),
-	    .regwrite_mult_in(regwrite_out4),
+        .regwrite_mult_in(regwrite_out4),
         .pre_m4result(m4result),
         .pre_zero(m4zero),
         .pre_overflow(m4overflow),
@@ -297,9 +297,9 @@ module cpu(
         .regwrite_out(regwrite_out5),
         .zero(m5zero),
         .overflow(m5overflow),
-	    .m5result(m5result),
+        .m5result(m5result),
         .wreg_out(M5wreg_out)
-	);
+    );
 
    
    /***************************************************************************
@@ -333,9 +333,9 @@ module cpu(
         .clk(clk),
         .reset(reset),
         .addr(e_m_aluresult),
-	    .do_read(dc_do_read),
-	    .is_byte(dc_is_byte),
-	    .do_write(dc_is_write),
+        .do_read(dc_do_read),
+        .is_byte(dc_is_byte),
+        .do_write(dc_is_write),
         .data_in(dc_data_in),
         .data_out(dc_memresult),
         .hit(dc_hit),
