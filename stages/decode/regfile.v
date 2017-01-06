@@ -21,35 +21,23 @@ reg [`REG_SIZE-1:0] mem [`REG_N-1:0];
 //
 always @* 
 begin
-	if (rreg1 == {`REG_ADDR{1'b0}})
-	begin
-		rdata1 <= {`REG_SIZE{1'b0}};
-	end
-	else begin
-		rdata1 <= mem[rreg1]; //[`REG_SIZE-1:0];
-	end
+	rdata1 <= mem[rreg1]; //[`REG_SIZE-1:0];
 end
 
 // Reading second register asynch
 //
 always @* 
 begin
-	if (rreg2 == {`REG_ADDR{1'b0}})
-	begin
-		rdata2 <= {`REG_SIZE{1'b0}};
-	end
-	else begin
-		rdata2 <= mem[rreg2]; //[`REG_SIZE-1:0];
-	end
+	rdata2 <= mem[rreg2]; //[`REG_SIZE-1:0];
 end
 
 // Writing dst register synchronously
 //
 always @(posedge clk) 
 begin
-	if (regwrite) 
+	if (regwrite == 1) 
 	begin
-		mem[regwrite] <= wdata;
+		mem[wreg] <= wdata;
 	end
 end
 
