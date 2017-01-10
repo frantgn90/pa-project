@@ -17,7 +17,7 @@ module M3(
           output reg [`REG_SIZE-1:0] m3result,
           output reg [`REG_ADDR-1:0] wreg_out
           );
-			 
+
    always @(posedge clk) begin
 	    m3result <= pre_m2result;
 	    zero <= pre_zero;
