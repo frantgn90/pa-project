@@ -40,6 +40,10 @@ module cpu(
     wire [`REG_SIZE-1:0]                wb_wdata; //result to write
     wire                                wb_regwrite; //write permission
 
+    // WIRE FOR HAZARD CONTROL SIGNALS
+    wire pc_write;
+    wire if_id_write;
+    
     wire                                if_is_jump;
     wire                                if_is_branch;
     wire                                if_is_exception;
@@ -90,6 +94,16 @@ module cpu(
      *  DECODE STAGE                                                          *
      **************************************************************************/
 
+    //M1 and exec1: Need to be declared here because we need to plug this wires
+    // for hazard control.
+    wire [`REG_SIZE-1:0]                ex_regwrite;
+    wire                                ex_zero;
+    wire                                ex_overflow;
+    wire [`REG_SIZE-1:0]                ex_result;
+    wire [`ADDR_SIZE-1:0]               ex_pc_branch;
+    wire [`REG_ADDR-1:0]                ex_dst_reg;
+     
+     
     // Wires regfile <-> decode stage
     wire [`REG_ADDR-1:0] addr_reg1;
     wire [`REG_ADDR-1:0] addr_reg2;
@@ -103,9 +117,6 @@ module cpu(
 
     // NOTE: The outputs of the decode stage are defined as registers, then is not
     // necesary to explicitly manage its behaviour since they will behave as flip-flips
-
-    // TODO: Decide if is better to have the boundary register of the outputs from
-    // regfile inside the decode stage or directy here.
 
     // Instr decoded signals
     wire [`REG_ADDR-1:0] id_dest_reg;
@@ -167,21 +178,22 @@ module cpu(
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
         .aluop(id_aluop),		    // EX stage: ALU operation
 
-        .is_mult(id_regwrite_mult_in)
+        .is_mult(id_regwrite_mult_in),
+        
+        // Hazard control
+        .ex_regwrite(id_regwrite),
+        .ex_dest_reg(id_dest_reg),
+        .m_regwrite(ex_regwrite),
+        .m_dest_reg(ex_dst_reg),
+    
+        .pc_write(pc_write),
+        .if_id_write(if_id_write)
     );
 
 
     /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
-
-    //M1 and exec1
-    wire [`REG_SIZE-1:0]                ex_regwrite;
-    wire                                ex_zero;
-    wire                                ex_overflow;
-    wire [`REG_SIZE-1:0]                ex_result;
-    wire [`ADDR_SIZE-1:0]               ex_pc_branch;
-    wire [`REG_ADDR-1:0]                ex_dst_reg;
 
     exec1 exec1(
         .clk(clk),
