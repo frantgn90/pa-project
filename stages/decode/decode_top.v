@@ -71,9 +71,9 @@ module decode_top(
 
     // Hazard signals
     input wire ex_regwrite;
-    input wire ex_dest_reg;
+    input wire [`REG_ADDR-1:0] ex_dest_reg;
     input wire m_regwrite;
-    input wire m_dest_reg;
+    input wire [`REG_ADDR-1:0] m_dest_reg;
     
     output wire pc_write;
     output wire if_id_write;

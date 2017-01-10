@@ -15,14 +15,14 @@ module M2(
           output reg                 zero = 1'd0,
           output reg                 overflow = 1'd0,
           output reg [`REG_SIZE-1:0] m2result,
-          output reg [`REG_ADDR-1:0] wreg_out
+          output reg [`REG_ADDR-1:0] dst_reg
           );
 	 always @(posedge clk) begin
 		  m2result <= pre_m1result;
 		  zero <= pre_zero;
 		  overflow <= pre_overflow;
 		  regwrite_out <= regwrite_mult_in;
-      wreg_out <= wreg_in;
+      dst_reg <= wreg_in;
 	 end
 
 endmodule

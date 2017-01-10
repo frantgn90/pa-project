@@ -5,7 +5,7 @@
 `include "define.v"
 
 module alu(
-	input wire [4:0] aluop,
+	input wire [7:0] aluop,
 	input wire [`REG_SIZE-1:0] src1,
 	input wire [`REG_SIZE-1:0] src2,
 	output reg zero = 1'd0,
