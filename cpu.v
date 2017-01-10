@@ -181,7 +181,7 @@ module cpu(
     wire                                ex_overflow;
     wire [`REG_SIZE-1:0]                ex_result;
     wire [`ADDR_SIZE-1:0]               ex_pc_branch;
-    wire [`REG_ADDR-1:0]                ex_wreg_out;
+    wire [`REG_ADDR-1:0]                ex_dst_reg;
 
     exec1 exec1(
         .clk(clk),
@@ -199,7 +199,7 @@ module cpu(
         .overflow(ex_overflow),
         .alu_result(ex_result),
         .pc_branch(ex_pc_branch),
-        .wreg_out(ex_wreg_out)
+        .dst_reg(ex_dst_reg)
     );
 
     
@@ -208,7 +208,7 @@ module cpu(
     wire                                m1_regwrite_out1;
     wire                                m1_zero;
     wire                                m1_overflow;
-    wire [`REG_ADDR-1:0]                m1_wreg_out;
+    wire [`REG_ADDR-1:0]                m1_dst_reg;
     wire [`REG_SIZE-1:0]                m1_result;
 
     M1 M1(
@@ -222,7 +222,7 @@ module cpu(
         .regwrite_out(m1_regwrite_out1),
         .m1zero(m1_zero),
         .m1overflow(m1_overflow),
-        .wreg_out(m1_wreg_out),
+        .dst_reg(m1_dst_reg),
         .m1result(m1_result)
     );
 
@@ -230,7 +230,7 @@ module cpu(
    wire                                m2_zero;
    wire                                m2_overflow;
    wire [`REG_SIZE-1:0]                m2_result;
-   wire [`REG_ADDR-1:0]                m2_wreg_out;
+   wire [`REG_ADDR-1:0]                m2_dst_reg;
 
    M2 M2(
 	       .clk(clk),
@@ -238,20 +238,20 @@ module cpu(
          .pre_m1result(m1_result),
          .pre_zero(m1_zero),
          .pre_overflow(m1_overflow),
-         .wreg_in(m1_wreg_out),
+         .wreg_in(m1_dst_reg),
 
          .regwrite_out(m2_regwrite_out),
          .zero(m2_zero),
          .overflow(m2_overflow),
 	       .m2result(m2_result),
-         .wreg_out(m2_wreg_out)
+         .dst_reg(m2_dst_reg)
 	       );
 
    wire                                m3_regwrite_out;
    wire                                m3_zero;
    wire                                m3_overflow;
    wire [`REG_SIZE-1:0]                m3_result;
-   wire [`REG_ADDR-1:0]                m3_wreg_out;
+   wire [`REG_ADDR-1:0]                m3_dst_reg;
 
    M3 M3(
 	       .clk(clk),
@@ -259,20 +259,20 @@ module cpu(
          .pre_m2result(m2_result),
          .pre_zero(m2_zero),
          .pre_overflow(m2_overflow),
-         .wreg_in(m2_wreg_out),
+         .wreg_in(m2_dst_reg),
 
          .regwrite_out(m3_regwrite_out),
          .zero(m3_zero),
          .overflow(m3_overflow),
 	       .m3result(m3_result),
-         .wreg_out(m2_wreg_out)
+         .dst_reg(m2_dst_reg)
 	       );
 
    wire                                m4_regwrite_out;
    wire                                m4_zero;
    wire                                m4_overflow;
    wire [`REG_SIZE-1:0]                m4_result;
-   wire [`REG_ADDR-1:0]                m4_wreg_out;
+   wire [`REG_ADDR-1:0]                m4_dst_reg;
 
    M4 M4(
 	       .clk(clk),
@@ -280,20 +280,20 @@ module cpu(
          .pre_m3result(m3_result),
          .pre_zero(m3_zero),
          .pre_overflow(m3_overflow),
-         .wreg_in(m3_wreg_out),
+         .wreg_in(m3_dst_reg),
 
          .regwrite_out(m4_regwrite_out),
          .zero(m4_zero),
          .overflow(m4_overflow),
 	       .m4result(m4_result),
-         .wreg_out(m4_wreg_out)
+         .dst_reg(m4_dst_reg)
 	       );
 
    wire                                m5_regwrite_out;
    wire                                m5_zero;
    wire                                m5_overflow;
    wire [`REG_SIZE-1:0]                m5_result;
-   wire [`REG_ADDR-1:0]                m5_wreg_out;
+   wire [`REG_ADDR-1:0]                m5_dst_reg;
 
    M5 M5(
 	       .clk(clk),
@@ -301,13 +301,13 @@ module cpu(
          .pre_m4result(m4_result),
          .pre_zero(m4_zero),
          .pre_overflow(m4_overflow),
-         .wreg_in(m4_wreg_out),
+         .wreg_in(m4_dst_reg),
 
          .regwrite_out(m5_regwrite_out),
          .zero(m5_zero),
          .overflow(m5_overflow),
 	       .m5result(m5_result),
-         .wreg_out(m5_wreg_out)
+         .dst_reg(m5_dst_reg)
 	       );
 
    
@@ -315,7 +315,7 @@ module cpu(
     *   MEMORY STAGE                                                          *
     ***************************************************************************/
      
-   reg [`REG_ADDR-1:0]                 dc_wreg_out;
+   reg [`REG_ADDR-1:0]                 dc_dst_reg;
    reg [`REG_SIZE-1:0]                 dc_wdata;
    reg                                 dc_regwrite;
 
@@ -390,12 +390,12 @@ module cpu(
     *  WRITE-BACK STAGE                                                       *
     ***************************************************************************/
     always @(posedge clk) begin
-        dc_wreg_out <= ex_wreg_out;
+        dc_dst_reg <= ex_dst_reg;
         dc_regwrite <= ex_regwrite;
         dc_wdata <= dc_do_read? dc_data_out : ex_result;
     end
     
-   assign wb_wreg = dc_regwrite? dc_wreg_out : m5_wreg_out;
+   assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
    assign wb_wdata = dc_regwrite? dc_memresult : m5_result;
    assign regwrite = m5_regwrite_out | dc_regwrite;
 

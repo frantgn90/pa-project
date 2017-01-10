@@ -1,7 +1,7 @@
 `ifndef _exec1
 `define _exec1
 
-`include "define.v"
+`include "../../define.v"
 `include "alu.v"
 
 module exec1(

@@ -47,9 +47,12 @@ module decode_top(
     memread,	    // M Stage: If the memory will be readed or not
     byteword,	    // M Stage: If it is a byte (0) or world (1) load/store
 
-    alusrc,	// EX stage: src2 source mux govern
-    aluop,		// EX stage: ALU operation
+    alusrc,         // EX stage: src2 source mux govern
+    aluop,          // EX stage: ALU operation
     // regdst: This signal is not neede for our ISA
+    
+    is_mult         // EX stage: Indicates if the instruction is a multiplication.
+                    // This signal will gobern which pipeline will be used.
 );
 
 	// Input signals
@@ -85,6 +88,9 @@ module decode_top(
 
 	output alusrc;
 	output [7:0] aluop;
+    
+    output reg is_mult;
+    
 
 	 // Internal wires
 	 wire [7:0]                   opcode;	// To be connected to control
@@ -109,6 +115,13 @@ module decode_top(
 	    rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
 	    out_pc <= pc;
 
+        if (opcode == `OPCODE_MUL) begin
+            is_mult <= 1;
+        end
+        else begin
+            is_mult <= 0;
+        end
+        
 	    case (opcode)
 	      `OPCODE_BEQ: begin
 		       mimmediat[`ADDR_SIZE-1:0] <= { {17{instruction[24]}},instruction[24:20], instruction[9:0] };
