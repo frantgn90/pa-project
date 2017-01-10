@@ -377,7 +377,7 @@ module cpu(
     end
 
     //ARBITER
-    Arbiter Arbiter(
+    arbiter Arbiter(
         .clk(clk),
         .reset(reset),
         .ic_read_req(ic_read_req),

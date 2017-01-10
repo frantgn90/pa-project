@@ -43,7 +43,7 @@ reg [1:0] arb_state = 2'b00;
 // TODO Coherency between I and D cache
 
 // Handle requests
-always @* begin
+always @(posedge clk) begin
 	case (arb_state)
 		2'b00: begin // Null
 			mem_enable = 1'b0;
@@ -81,9 +81,8 @@ always @* begin
 		end
 	endcase
 	if (!mem_enable & !mem_ack) arb_state <= 2'b00;
+	if (reset) arb_state <= 2'b00;
 end
-
-always @(posedge clk) if (reset) arb_state <= 2'b00;
 
 endmodule
 
