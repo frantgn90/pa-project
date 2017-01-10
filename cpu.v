@@ -61,7 +61,9 @@ module cpu(
         .pc_jump(if_pc_jump),
         .pc_branch(if_branch),
         .old_pc(if_old_pc),
-        .new_pc(if_new_pc)
+        .new_pc(if_new_pc),
+        .pc_write(pc_write),
+        .if_id_write(if_id_write)
     );
 
     wire                                ic_is_byte;
