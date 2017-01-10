@@ -356,6 +356,12 @@ module cpu(
         .mem_read_ack(dc_mem_read_ack)
     );
 
+    always @(posedge clk) begin
+        dc_dst_reg <= ex_dst_reg;
+        dc_regwrite <= ex_regwrite;
+        dc_wdata <= dc_do_read? dc_data_out : ex_result;
+    end
+
     //ARBITER
     Arbiter Arbiter(
         .clk(clk),
@@ -384,16 +390,9 @@ module cpu(
     );
 
 
-
    /***************************************************************************
     *  WRITE-BACK STAGE                                                       *
     ***************************************************************************/
-    always @(posedge clk) begin
-        dc_dst_reg <= ex_dst_reg;
-        dc_regwrite <= ex_regwrite;
-        dc_wdata <= dc_do_read? dc_data_out : ex_result;
-    end
-
    assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
    assign wb_wdata = dc_regwrite? dc_memresult : m5_result;
    assign regwrite = m5_regwrite_out | dc_regwrite;
