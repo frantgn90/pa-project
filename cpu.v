@@ -210,6 +210,7 @@ module cpu(
 
         .regwrite_out(ex_regwrite),
         .zero(ex_zero),
+        .data_store(reg_to mem),
         .overflow(ex_overflow),
         .alu_result(ex_result),
         .pc_branch(ex_pc_branch),
@@ -371,9 +372,10 @@ module cpu(
     );
 
     always @(posedge clk) begin
-        dc_dst_reg <= ex_dst_reg;
-        dc_regwrite <= ex_regwrite;
-        dc_wdata <= dc_do_read? dc_data_out : ex_result;
+       dc_data_in <= reg_to_mem;
+       dc_dst_reg <= ex_dst_reg;
+       dc_regwrite <= ex_regwrite;
+       dc_wdata <= dc_do_read? dc_data_out : ex_result;
     end
 
     //ARBITER

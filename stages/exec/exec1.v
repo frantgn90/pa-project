@@ -17,6 +17,7 @@ module exec1(
 
              output reg                  regwrite_out, //Write Permission
              output reg                  zero = 1'd0, //Alu zero
+             output reg [`REG_SIZE-1:0]  data_store,
              output reg                  overflow = 1'd0, //Alu oveflow
              output reg [`REG_SIZE-1:0]  aluresult, //Alu result
              output reg [`ADDR_SIZE-1:0] pc_branch = 32'h0000, //New PC when branch
@@ -32,6 +33,7 @@ module exec1(
    assign src2 = alusrc ? reg2 : immediat;
 
 	 always @(posedge clk) begin
+      data_store <= reg2;
 		  pc_branch <= old_pc + (immediat << 2);
 		  zero <= alu_zero;
 		  overflow <= alu_overflow;
