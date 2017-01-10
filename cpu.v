@@ -117,7 +117,7 @@ module cpu(
 
    exec1 exec1(
 	             .clk(clk),
-	             .ex_regwrite_in(regwrite_in),
+	             .ex_regwrite_in(ex_regwrite_in),
 	             .alusrc(ex_alusrc),
 	             .aluop(ex_aluop),
                .src1(ex_src1),
@@ -241,9 +241,9 @@ module cpu(
 	       );
 
    //MEM STAGE
-   reg [`REG_ADDR-1:0]                     dc_wreg_out;
-   reg [`REG_SIZE-1:0]                     dc_wdata;
-   reg                                     dc_regwrite;
+   reg [`REG_ADDR-1:0]                 dc_wreg_out;
+   reg [`REG_SIZE-1:0]                 dc_wdata;
+   reg                                 dc_regwrite;
 
    wire                                dc_do_read;
    wire                                dc_is_byte;

@@ -24,7 +24,7 @@ module M1(
    always @(posedge clk) begin
       case (aluop)
 	      `ALUOP_MUL: begin
-				temp <= src1*src2;
+				   temp <= src1*src2;
 	         m1zero <= 0;
 	         m1result <= temp[`REG_SIZE-1:0];
            if({`REG_SIZE{m1result[`REG_SIZE-1]}} != temp[((`REG_SIZE*2)-1):`REG_SIZE]) m1overflow <= 1;
@@ -34,7 +34,7 @@ module M1(
 	      end
 	      default:
 	        ;
-	//   `WARNING(("[M1] Unknown M1OP signal %x", aluop))
+	      //   `WARNING(("[M1] Unknown M1OP signal %x", aluop))
 	    endcase
 	 end
 endmodule
