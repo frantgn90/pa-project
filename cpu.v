@@ -15,7 +15,7 @@
  `include "stages/decode/decode_top.v"
  `include "stages/decode/regfile.v"
 
-
+ `include "stages/decode/hazard_control.v"
 
 
 module cpu(
@@ -168,8 +168,7 @@ module cpu(
         .aluop(id_aluop),		    // EX stage: ALU operation
         
         .is_mult(id_regwrite_mult_in)
-);
-    
+    );
     
     /**************************************************************************
      *  EXEC STAGE                                                            *

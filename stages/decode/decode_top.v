@@ -3,7 +3,6 @@
 
  `include "../../define.v"
  `include "control.v"
- `include "hazard_control.v"
 
 /*****************************************************
     TODO list
@@ -24,6 +23,15 @@ module decode_top(
     pc,		        // PC to be bypassed directly to the next stage
     instruction,	// Instruction to be decoded
     out_pc,
+    
+    // Signals for hazard_control
+    ex_regwrite,    // EX Stage: Regfile write permission at ex stage
+    ex_dest_reg,    // EX stage: Reg destination at ex stage
+    m_regwrite,     // M stage: Regfile write permission at memory stage
+    m_dest_reg,     // M stage: Reg destination at memory stage
+    
+    pc_write,       // Permission for write the PC. Will be 0 when an hazard is detected
+    if_id_write,    // Permission for write on if/id boundat. 0 when an hazard is detected
 
     // Need to communicate with the external register bank
     src_reg1,		// Address for register 1
@@ -61,6 +69,15 @@ module decode_top(
 	input wire [`ADDR_SIZE-1:0] pc;
 	input wire [`INSTR_SIZE-1:0] instruction;
 
+    // Hazard signals
+    input wire ex_regwrite;
+    input wire ex_dest_reg;
+    input wire m_regwrite;
+    input wire m_dest_reg;
+    
+    output wire pc_write;
+    output wire if_id_write;
+    
 	// Need to communicate with the external register bank
 	output wire [`REG_ADDR-1:0] src_reg1;		// Address for register 1
 	output wire [`REG_ADDR-1:0] src_reg2;		// Address for register 2
@@ -150,6 +167,23 @@ module decode_top(
         .aluop(aluop),
         .byteword(byteword)
     );
+    
+    // Hazard control
+    
+    wire stall_execution;
+    
+    hazard_control hazards (
+        .d_src1(src_reg1),
+        .d_src2(src_reg2),
+        .ex_regwrite(ex_regwrite),
+        .ex_dest_reg(ex_dest_reg),
+        .m_regwrite(m_regwrite),
+        .m_dest_reg(m_dest_reg),
+        .stall(stall_execution)
+    );
+    
+    assign pc_write = ~stall_execution;
+    assign if_id_write = ~stall_execution;
 
 endmodule
 
