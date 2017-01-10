@@ -115,6 +115,8 @@ module decode_top(
 
 	 wire [`REG_SIZE-1:0] reg1_data;
 	 wire [`REG_SIZE-1:0] reg2_data;
+     
+     wire stall_execution;
 
 	 // Instruction decode
 	 assign opcode 		= instruction[31:25];
@@ -158,6 +160,7 @@ module decode_top(
     control control (
         .clk(clk),
         .opcode(opcode),
+        .stall(stall_execution),
         .memwrite(memwrite),
         .memread(memread),
         .memtoreg(memtoreg),
@@ -169,8 +172,6 @@ module decode_top(
     );
     
     // Hazard control
-    
-    wire stall_execution;
     
     hazard_control hazards (
         .d_src1(src_reg1),
