@@ -56,7 +56,8 @@ module decode_top(
     byteword,	    // M Stage: If it is a byte (0) or world (1) load/store
 
     alusrc,         // EX stage: src2 source mux govern
-    aluop,          // EX stage: ALU operation
+    funct_code,     // EX stage: FUNCtion code for rtype
+    op_code,
     // regdst: This signal is not neede for our ISA
     
     is_mult         // EX stage: Indicates if the instruction is a multiplication.
@@ -104,13 +105,16 @@ module decode_top(
 	output byteword;
 
 	output alusrc;
-	output [7:0] aluop;
+	output reg[5:0] funct_code;
+        output reg[5:0] op_code;
+   
     
     output reg is_mult;
     
 
 	 // Internal wires
-	 wire [7:0]                   opcode;	// To be connected to control
+	 wire [5:0]                   opcode;	// To be connected to control
+         wire [5:0]                   functcode;// Code for rtype instructions
 	 wire [`REG_ADDR-1:0]         dst;
 
 	 wire [`REG_SIZE-1:0] reg1_data;
@@ -119,22 +123,25 @@ module decode_top(
      wire stall_execution;
 
 	 // Instruction decode
-	 assign opcode 		= instruction[31:25];
+	 assign opcode 		= instruction[31:26];
 	 assign dst 		= instruction[24:20];
 	 assign src_reg1	= instruction[19:15];
 	 assign src_reg2	= instruction[14:10];
+         assign functcode       = instruction[5:0];
 
 	 // Direct connections to next stage
 	 assign reg1_data[`REG_SIZE-1:0] = rin_reg1[`REG_SIZE-1:0];
 	 assign reg2_data[`REG_SIZE-1:0] = rin_reg2[`REG_SIZE-1:0];
 
 	 always @(posedge clk) begin
-        dest_reg <= dst;
+      op_code <= opcode;
+      funct_code = functcode;
+      dest_reg <= dst;
 	    rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
 	    rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
 	    out_pc <= pc;
 
-        if (opcode == `OPCODE_MUL) begin
+        if (opcode == `OP_RTYPE && functcode == `FN_MUL) begin
             is_mult <= 1;
         end
         else begin
@@ -142,10 +149,10 @@ module decode_top(
         end
         
 	    case (opcode)
-	      `OPCODE_BEQ: begin
+	      `OP_BEQ: begin
 		       mimmediat[`ADDR_SIZE-1:0] <= { {17{instruction[24]}},instruction[24:20], instruction[9:0] };
 	      end
-	      `OPCODE_JUMP: begin
+	      `OP_JUMP: begin
 		       mimmediat[`ADDR_SIZE-1:0] <= { {12{instruction[24]}},instruction[24:20], instruction[14:0] };
 	      end
 	      default:
@@ -157,19 +164,18 @@ module decode_top(
     // NOTE: It acts also as the stage boundary implicitly since its outputs are
     // registers that just are updated on clock posedges
     
-    control control (
-        .clk(clk),
-        .opcode(opcode),
-        .stall(stall_execution),
-        .memwrite(memwrite),
-        .memread(memread),
-        .memtoreg(memtoreg),
-        .branch(branch),
-        .regwrite(regwrite),
-        .alusrc(alusrc),
-        .aluop(aluop),
-        .byteword(byteword)
-    );
+   control control (
+                    .clk(clk),
+                    .opcode(opcode),
+                    .stall(stall_execution),
+                    .memwrite(memwrite),
+                    .memread(memread),
+                    .memtoreg(memtoreg),
+                    .branch(branch),
+                    .regwrite(regwrite),
+                    .alusrc(alusrc),
+                    .byteword(byteword)
+                    );
     
     // Hazard control
     

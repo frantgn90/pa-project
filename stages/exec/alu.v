@@ -38,7 +38,7 @@ module alu(
 					//else
 		//			overflow <= 0;
 		//	end
-		`ALUOP_LDB: begin
+/*		`ALUOP_LDB: begin
 					zero <= 0;
 					out <= src1 + src2;
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
@@ -51,16 +51,16 @@ module alu(
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
 					//else
 					overflow <= 0;
-			end
-		`ALUOP_LDW: begin
+			end*/
+/*		`ALUOP_LDW: begin
 					zero <= 0;
 					temp[`REG_SIZE-1:0] <= src1 + src2;
 					out <= (temp[`REG_SIZE-1:0] & `MASK_WORD);
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
 					//else
 					overflow <= 0;
-			end
-		`ALUOP_STB: begin
+			end*/
+/*		`ALUOP_STB: begin
 					zero <= 0;
 					out <= src1 + src2;
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
@@ -74,17 +74,17 @@ module alu(
 					//if({`REG_SIZE{out[`REG_SIZE-1]}} != tmp[((`REG_SIZE*2)-1):`REG_SIZE]) overflow <= 1;
 					//else
 					overflow <= 0;
-			end
+			end*/
 		`ALUOP_MOV: begin
 					zero <= 0;
 					out <= src1;
 			end
-		`ALUOP_BEQ: begin
+/*		`ALUOP_BEQ: begin
 					out <= 32'd0;
 					overflow <= 0;
 					if((src1 - src2) == 0) zero <= 0;
 					else zero <= 1;
-			end
+			end*/
 		`ALUOP_JUMP: begin
 					zero <= 0;
 					out <= 32'd0;

@@ -21,7 +21,27 @@
 
 //`define REG_BITS 5
 
+//FUNCTION CODES for RTYPE
+`define FN_ADD 6'h20
+`define FN_SUB 6'h22
+`define FN_MUL 6'h18
+
+
 //OPERATIONS CODE
+`define OP_RTYPE 6'h0
+//add,sub,mul.,
+`define OP_LDB 6'h20
+`define OP_LDW 6'h23
+`define OP_STB 6'h28
+`define OP_STW 6'h2b
+`define OP_MOV 6'h10
+`define OP_BEQ 6'h4
+`define OP_JUMP 6'h2
+`define OP_TLBWRITE 6'h13
+//??? IS IRET OR ERET??
+`define OP_IRET 6'h12 
+
+/*
 `define OPCODE_ADD 7'h00
 `define OPCODE_SUB 7'h01
 `define OPCODE_MUL 7'h02
@@ -34,8 +54,15 @@
 `define OPCODE_JUMP 7'h31
 `define OPCODE_TLBWRITE 7'h32
 `define OPCODE_IRET 7'h33
+*/
 
 //ALU OPERATIONS
+`define ALUOP_ADD 5'h1
+`define ALUOP_SUB 5'h2
+`define ALUOP_MUL 5'h3
+`define ALUOP_MOV 5'h4
+`define ALUOP_JUMP 5'h5
+/*
 `define ALUOP_ADD 7'h00
 `define ALUOP_SUB 7'h01
 `define ALUOP_MUL 7'h02
@@ -48,7 +75,7 @@
 `define ALUOP_JUMP 7'h31
 `define ALUOP_TLBWRITE 7'h32
 `define ALUOP_IRET 7'h33
-
+*/
 //MASKS
 
 `define MASK_WORD 32'hFFFC

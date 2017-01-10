@@ -1,7 +1,7 @@
 `ifndef _cache
 `define _cache
 
-`include "../define.v"
+`include "define.v"
 
 /////////////////////////////
 //                         //

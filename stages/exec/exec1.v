@@ -1,14 +1,15 @@
 `ifndef _exec1
 `define _exec1
 
-`include "../../define.v"
+`include "define.v"
 `include "alu.v"
 
 module exec1(
              input wire                  clk,
              input wire                  regwrite_in, //Write Permission
              input wire                  alusrc, // If 1 take reg2 otherwise immediat as second operand
-             input wire [7:0]            aluop, //Alu operation code
+             input wire [5:0]            opcode, //operation code
+             input wire [5:0]            funct_code, //functional code
              input wire [`REG_SIZE-1:0]  src1, //Register1
              input wire [`REG_SIZE-1:0]  reg2, //Register2
              input wire [`REG_SIZE-1:0]  immediat, //Immediat
@@ -24,10 +25,11 @@ module exec1(
              output reg [`REG_ADDR-1:0]  dst_reg //Destination Register
               );
     // Internal wires
-    wire [`REG_SIZE-1:0] src2;
-    wire alu_zero;
-    wire alu_overflow;
-    wire [`REG_SIZE-1:0] aluresult;
+   wire [`REG_SIZE-1:0]                  src2;
+   wire                                  alu_zero;
+   wire                                  alu_overflow;
+   wire [`REG_SIZE-1:0]                  aluresult;
+   wire [4:0]                            aluop;
 
    //assign just used on combinational parts, on wires
    assign src2 = alusrc ? reg2 : immediat;
@@ -41,14 +43,18 @@ module exec1(
       dst_reg <= wreg_in;
       regwrite_out <= regwrite_in;
 	 end
-
-alu alu(
- 	.aluop(aluop),
- 	.src1(src1),
- 	.src2(src2),
- 	.zero(alu_zero),
- 	.overflow(alu_overflow),
- 	.out(aluresult)
-	);
- endmodule
- `endif
+   alucontrol alucontrol(
+                         .funct(funct_code),
+                         .opcode(opcode),
+                         .aluop_out(aluop)
+                         );
+     alu alu(
+ 	           .aluop(aluop),
+ 	           .src1(src1),
+ 	           .src2(src2),
+ 	           .zero(alu_zero),
+ 	           .overflow(alu_overflow),
+ 	           .out(aluresult)
+	           );
+endmodule
+`endif

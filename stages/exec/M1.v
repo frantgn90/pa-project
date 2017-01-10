@@ -8,7 +8,8 @@ module M1(
           input wire                 clk,
           input wire                 regwrite_mult_in, //Write Permission
           input wire [`REG_ADDR-1:0] wreg_in, //Destination Register for
-          input wire [7:0]           aluop,
+          input wire [5:0]           opcode,
+          input wire [5:0]           funct_code,
           input wire [`REG_SIZE-1:0] src1,
           input wire [`REG_SIZE-1:0] src2,
 
@@ -22,16 +23,22 @@ module M1(
    reg [((`REG_SIZE*2)-1):0] temp; //temporary reg for multiplication
 
    always @(posedge clk) begin
-      case (aluop)
-	      `ALUOP_MUL: begin
-				   temp <= src1*src2;
-	         m1zero <= 0;
-	         m1result <= temp[`REG_SIZE-1:0];
-           if({`REG_SIZE{m1result[`REG_SIZE-1]}} != temp[((`REG_SIZE*2)-1):`REG_SIZE]) m1overflow <= 1;
-			     else m1overflow <= 0;
-           dst_reg <= wreg_in;
-           regwrite_out <= regwrite_mult_in;
-	      end
+      case (opcode)
+	      `OP_RTYPE: begin
+           case (funct_code)
+             `FN_MUL: begin
+                      temp <= src1*src2;
+	              m1zero <= 0;
+	              m1result <= temp[`REG_SIZE-1:0];
+                      if({`REG_SIZE{m1result[`REG_SIZE-1]}} != temp[((`REG_SIZE*2)-1):`REG_SIZE]) m1overflow <= 1;
+                      else m1overflow <= 0;
+                      dst_reg <= wreg_in;
+                      regwrite_out <= regwrite_mult_in;
+	           end
+             default:
+             ;
+	     endcase
+             end
 	      default:
 	        ;
 	      //   `WARNING(("[M1] Unknown M1OP signal %x", aluop))

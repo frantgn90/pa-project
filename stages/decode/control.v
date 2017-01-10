@@ -5,8 +5,8 @@
 
 module control (
     clk,
-    opcode,		// Instruction operation code
     stall,
+    opcode,
     regwrite,	// WB Stage: Register write permission
     memtoreg,	// WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
     branch,		// M Stage: Govern the Fetch stage mux for PC
@@ -14,15 +14,13 @@ module control (
     memread,	// M Stage: If the memory will be readed or not
     byteword,	// M Stage: If it is a byte (0) or world (1) load/store
     alusrc,		// EX stage: src2 source mux govern
-    aluop		// EX stage: ALU operation
 );
 	// Input signals
-    input clk;
-	input [7:0] opcode;
-    input stall;
+   input clk;
+   input       stall;
+   input [5:0] opcode;
 
 	// Output signals
-	output reg [7:0] aluop;
 	output reg regwrite;
 	output reg branch;
 	output reg alusrc;
@@ -42,63 +40,53 @@ module control (
 			alusrc 		<= "X";
         end
         else begin
-            aluop[7:0] <= opcode[7:0];
             case (opcode)
-            `OPCODE_ADD, `OPCODE_SUB: begin
+            `OP_RTYPE: begin
                 regwrite 	<= 1;
                 memtoreg 	<= 0;
                 branch		<= 0;
                 memwrite 	<= 0;
                 memread 	<= 0;
                 byteword 	<= "X";
-                alusrc 		<= 0;
+                alusrc 		<= 1;
             end
-            `OPCODE_MUL: begin
-                regwrite 	<= 1;
-                memtoreg 	<= 0;
-                branch		<= 0;
-                memwrite 	<= 0;
-                memread 	<= 0;
-                byteword 	<= "X";
-                alusrc 		<= 0;
-            end
-            `OPCODE_LDB: begin
+            `OP_LDB: begin
                 regwrite 	<= 1;
                 memtoreg 	<= 1;
                 branch		<= 0;
                 memwrite 	<= 0;
                 memread 	<= 1;
                 byteword 	<= 0;
-                alusrc 		<= 1;
+                alusrc 		<= 0;
             end
-            `OPCODE_LDW: begin
+            `OP_LDW: begin
                 regwrite 	<= 1;
                 memtoreg 	<= 1;
                 branch		<= 0;
                 memwrite 	<= 0;
                 memread 	<= 1;
                 byteword 	<= 1;
-                alusrc 		<= 1;
+                alusrc 		<= 0;
             end
-            `OPCODE_STB: begin
+            `OP_STB: begin
                 regwrite 	<= 0;
                 memtoreg 	<= "X";
                 branch		<= 0;
                 memwrite 	<= 1;
                 memread 	<= 0;
                 byteword 	<= 0;
-                alusrc 		<= 1;
+                alusrc 		<= 0;
             end
-            `OPCODE_STW: begin
+            `OP_STW: begin
                 regwrite 	<= 0;
                 memtoreg 	<= "X";
                 branch		<= 0;
                 memwrite 	<= 1;
                 memread 	<= 0;
                 byteword 	<= 1;
-                alusrc 		<= 1;
-            end 
-            `OPCODE_BEQ, `OPCODE_JUMP, `OPCODE_IRET: begin
+                alusrc 		<= 0;
+            end
+            `OP_BEQ: begin
                 regwrite 	<= 0;
                 memtoreg 	<= "X";
                 branch		<= 1;
@@ -107,7 +95,9 @@ module control (
                 byteword 	<= "X";
                 alusrc 		<= 1;
             end
-        
+            /*
+            JUMP AND IRET NOT DONE
+            */
             /*`OPCODE_TLBWRITE: 
             begin
                 `WARNING(("[CONTROL] Unknown OPCODE signal %x", opcode))

@@ -132,7 +132,8 @@ module cpu(
     wire id_memread;
     wire id_byteword;
     wire id_alusrc;
-    wire [7:0] id_aluop;
+    wire [5:0] id_opcode;
+    wire [5:0]  id_funct_code;
 
     //M1:
    wire                                id_regwrite_mult_in;
@@ -178,7 +179,9 @@ module cpu(
         .byteword(id_byteword),	// M Stage: If it is a byte (0) or world (1) load/store
 
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
-        .aluop(id_aluop),		    // EX stage: ALU operation
+        .funct_code(id_funct_code),		    // EX stage: FUNCTION code for rtype operation
+        .op_code(id_opcode),
+  
 
         .is_mult(id_regwrite_mult_in),
         
@@ -197,25 +200,26 @@ module cpu(
      *  EXEC STAGE                                                            *
      **************************************************************************/
     wire	[`REG_SIZE-1:0] reg_to_mem;
-    exec1 exec1(
-        .clk(clk),
-        .regwrite_in(id_regwrite),
-        .alusrc(id_alusrc),
-        .aluop(id_aluop),
-        .src1(id_data_reg1),
-        .reg2(id_data_reg2),
-        .immediat(id_mimmediat),
-        .old_pc(id_pc),
-        .wreg_in(id_dest_reg),
+   exec1 exec1(
+               .clk(clk),
+               .regwrite_in(id_regwrite),
+               .alusrc(id_alusrc),
+               .opcode(id_opcode),
+               .funct_code(id_funct_code),
+               .src1(id_data_reg1),
+               .reg2(id_data_reg2),
+               .immediat(id_mimmediat),
+               .old_pc(id_pc),
+               .wreg_in(id_dest_reg),
 
-        .regwrite_out(ex_regwrite),
-        .zero(ex_zero),
-        .data_store(reg_to_mem),
-        .overflow(ex_overflow),
-        .alu_result(ex_result),
-        .pc_branch(ex_pc_branch),
-        .dst_reg(ex_dst_reg)
-    );
+               .regwrite_out(ex_regwrite),
+               .zero(ex_zero),
+               .data_store(reg_to_mem),
+               .overflow(ex_overflow),
+               .alu_result(ex_result),
+               .pc_branch(ex_pc_branch),
+               .dst_reg(ex_dst_reg)
+               );
 
 
     ///// Multiplication pipeline
@@ -230,7 +234,8 @@ module cpu(
         .clk(clk),
         .regwrite_mult_in(id_regwrite_mult_in),
         .wreg_in(id_dest_reg),
-        .aluop(id_aluop),
+        .opcode(id_opcode),
+        .funct_code(id_funct_code),
         .src1(id_data_reg1),
         .src2(id_data_reg2),
 
