@@ -16,9 +16,6 @@
 `define INITIAL_PC 32'h1000
 `define EXCEPTION_PC 32'h2000
 
-//Cache defines
-`define MEMORY_WIDTH 128
-
 //Number of registers
 `define REG_SIZE 32
 
@@ -64,7 +61,7 @@
 `define WIDTH 128		//CACHE LINE WIDTH
 `define MEMORY_DATA "../memory_init/memory.raw"
 `ifndef MEMORY_LATENCY
-	`define MEMORY_LATENCY 27
+`define MEMORY_LATENCY 27
 `endif
 
 
