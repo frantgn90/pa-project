@@ -6,6 +6,7 @@
 *.qpf
 *.rpt
 *.wlf
+transcript
 work/
 db/
 incremental_db/

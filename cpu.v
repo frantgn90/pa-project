@@ -34,7 +34,7 @@ module cpu(
    /***************************************************************************
     *  FETCH STAGE                                                            *
     ***************************************************************************/
-     
+
     // WRITE BACK STAGE
     wire [`REG_ADDR-1:0]                wb_wreg; //destination register
     wire [`REG_SIZE-1:0]                wb_wdata; //result to write
@@ -89,28 +89,28 @@ module cpu(
     /**************************************************************************
      *  DECODE STAGE                                                          *
      **************************************************************************/
-     
+
     // Wires regfile <-> decode stage
     wire [`REG_ADDR-1:0] addr_reg1;
     wire [`REG_ADDR-1:0] addr_reg2;
     wire [`REG_SIZE-1:0] data_reg1;
     wire [`REG_SIZE-1:0] data_reg2;
-    
+
     // Wires decode stage <-> exec stage
     wire [`ADDR_SIZE-1:0] id_pc;
     wire [`REG_SIZE-1:0] id_data_reg1;
     wire [`REG_SIZE-1:0] id_data_reg2;
-    
+
     // NOTE: The outputs of the decode stage are defined as registers, then is not
     // necesary to explicitly manage its behaviour since they will behave as flip-flips
-    
+
     // TODO: Decide if is better to have the boundary register of the outputs from
     // regfile inside the decode stage or directy here.
-    
+
     // Instr decoded signals
     wire [`REG_ADDR-1:0] id_dest_reg;
     wire [`ADDR_SIZE-1:0] id_mimmediat;
-    
+
     // Control signals
     wire id_regwrite;
     wire id_memtoreg;
@@ -120,10 +120,10 @@ module cpu(
     wire id_byteword;
     wire id_alusrc;
     wire id_aluop;
-    
+
     //M1:
    wire                                id_regwrite_mult_in;
-    
+
     regfile registers(
         .clk(clk),
         .rreg1(addr_reg1),
@@ -131,13 +131,13 @@ module cpu(
         .wreg(wb_wreg),
         .wdata(wb_wdata),
         .regwrite(wb_regwrite),
-        .rdata1(data_reg1), 
+        .rdata1(data_reg1),
         .radat2(data_reg2)
     );
 
     decode_top decode(
         .clk(clk),
-        .reset(reset),		    
+        .reset(reset),
         .instruction(ic_memresult),
         .pc(if_new_pc),
         .out_pc(id_pc),
@@ -166,14 +166,15 @@ module cpu(
 
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
         .aluop(id_aluop),		    // EX stage: ALU operation
-        
+
         .is_mult(id_regwrite_mult_in)
     );
-    
+
+
     /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
-     
+
     //M1 and exec1
     wire [`REG_SIZE-1:0]                ex_regwrite;
     wire                                ex_zero;
@@ -192,7 +193,7 @@ module cpu(
         .immediat(id_mimmediat),
         .old_pc(id_pc),
         .wreg_in(id_dest_reg),
-        
+
         .regwrite_out(ex_regwrite),
         .zero(ex_zero),
         .overflow(ex_overflow),
@@ -201,9 +202,9 @@ module cpu(
         .dst_reg(ex_dst_reg)
     );
 
-    
-    ///// Multiplication pipeline 
-    
+
+    ///// Multiplication pipeline
+
     wire                                m1_regwrite_out1;
     wire                                m1_zero;
     wire                                m1_overflow;
@@ -217,7 +218,7 @@ module cpu(
         .aluop(id_aluop),
         .src1(id_data_reg1),
         .src2(id_data_reg2),
-        
+
         .regwrite_out(m1_regwrite_out1),
         .m1zero(m1_zero),
         .m1overflow(m1_overflow),
@@ -225,7 +226,7 @@ module cpu(
         .m1result(m1_result)
     );
 
-    wire                                m2_regwrite_out;
+   wire                                m2_regwrite_out;
    wire                                m2_zero;
    wire                                m2_overflow;
    wire [`REG_SIZE-1:0]                m2_result;
@@ -309,11 +310,10 @@ module cpu(
          .dst_reg(m5_dst_reg)
 	       );
 
-   
    /***************************************************************************
     *   MEMORY STAGE                                                          *
     ***************************************************************************/
-     
+
    reg [`REG_ADDR-1:0]                 dc_dst_reg;
    reg [`REG_SIZE-1:0]                 dc_wdata;
    reg                                 dc_regwrite;
@@ -355,7 +355,13 @@ module cpu(
         .mem_read_data(dc_mem_read_data),
         .mem_read_ack(dc_mem_read_ack)
     );
-    
+
+    always @(posedge clk) begin
+        dc_dst_reg <= ex_dst_reg;
+        dc_regwrite <= ex_regwrite;
+        dc_wdata <= dc_do_read? dc_data_out : ex_result;
+    end
+
     //ARBITER
     Arbiter Arbiter(
         .clk(clk),
@@ -383,17 +389,10 @@ module cpu(
         .mem_data_out(mem_data_in)
     );
 
-    
-    
+
    /***************************************************************************
     *  WRITE-BACK STAGE                                                       *
     ***************************************************************************/
-    always @(posedge clk) begin
-        dc_dst_reg <= ex_dst_reg;
-        dc_regwrite <= ex_regwrite;
-        dc_wdata <= dc_do_read? dc_data_out : ex_result;
-    end
-    
    assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
    assign wb_wdata = dc_regwrite? dc_memresult : m5_result;
    assign regwrite = m5_regwrite_out | dc_regwrite;
