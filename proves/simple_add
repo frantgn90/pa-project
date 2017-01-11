@@ -1,0 +1,30 @@
+##add r3,r1,r2
+##00000000001000100001100000100000
+
+vsim -gui work.cpu
+add wave -position end  sim:/cpu/clk
+force -freeze sim:/cpu/clk 0 0, 1 {50 ps} -r 100
+#r0 = 0,r1=1, r2=2 r3=4
+mem load -filltype value -filldata 0 -fillradix decimal /cpu/registers/mem(0)
+mem load -filltype value -filldata 1 -fillradix decimal /cpu/registers/mem(1)
+mem load -filltype value -filldata 2 -fillradix decimal /cpu/registers/mem(2)
+mem load -filltype value -filldata 4 -fillradix decimal /cpu/registers/mem(3)
+
+add wave -position end  sim:/cpu/ic_memresult
+force -freeze sim:/cpu/ic_memresult 00000000001000100001100000100000 0
+
+add wave -position end  sim:/cpu/addr_reg1
+add wave -position end  sim:/cpu/addr_reg2
+add wave -position end  sim:/cpu/id_dest_reg
+add wave -position 4  sim:/cpu/id_data_reg1
+add wave -position 5  sim:/cpu/id_data_reg2
+add wave -position end  sim:/cpu/id_regwrite
+add wave -position 7  sim:/cpu/ex_dst_reg
+add wave -position 7  sim:/cpu/ex_result
+add wave -position 7  sim:/cpu/dc_regwrite
+add wave -position 7  sim:/cpu/ex_regwrite
+add wave -position 10  sim:/cpu/dc_wdata
+add wave -position end  sim:/cpu/dc_dst_reg
+add wave -position 9  sim:/cpu/wb_regwrite
+add wave -position 12  sim:/cpu/wb_wdata
+add wave -position end  sim:/cpu/wb_wreg
