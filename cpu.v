@@ -36,9 +36,9 @@ module cpu(
     ***************************************************************************/
 
     // WRITE BACK STAGE
-    wire [`REG_ADDR-1:0]                wb_wreg; //destination register
-    wire [`REG_SIZE-1:0]                wb_wdata; //result to write
-    wire                                wb_regwrite; //write permission
+    reg [`REG_ADDR-1:0]                wb_wreg; //destination register
+    reg [`REG_SIZE-1:0]                wb_wdata; //result to write
+    reg                                wb_regwrite; //write permission
 
     // WIRE FOR HAZARD CONTROL SIGNALS
     wire pc_write;
@@ -384,6 +384,9 @@ module cpu(
        dc_dst_reg <= ex_dst_reg;
        dc_regwrite <= ex_regwrite;
        dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
+       wb_wreg <= dc_regwrite? dc_dst_reg : m5_dst_reg;
+       wb_wdata <= dc_regwrite? dc_wdata : m5_result;
+       wb_regwrite <= m5_regwrite_out | dc_regwrite;
     end
 
     //ARBITER
@@ -417,9 +420,7 @@ module cpu(
    /***************************************************************************
     *  WRITE-BACK STAGE                                                       *
     ***************************************************************************/
-   assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
-   assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
-   assign wb_regwrite = m5_regwrite_out | dc_regwrite;
+
 
 endmodule
 `endif
