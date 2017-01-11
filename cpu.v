@@ -10,7 +10,7 @@
  `include "stages/exec/M3.v"
  `include "stages/exec/M4.v"
  `include "stages/exec/M5.v"
- `include "memory/memory_sync.v"
+ `include "memory/memory_async.v"
  `include "cache/cache.v"
  `include "stages/decode/decode_top.v"
  `include "stages/decode/regfile.v"
@@ -30,6 +30,19 @@ module cpu(
     input wire [`WIDTH-1:0]     mem_data_out,
     output wire [`WIDTH-1:0]    mem_data_in
 );
+
+   /***************************************************************************
+    *  MEMORY                                                                 *
+    ***************************************************************************/
+   memory_async memory(
+                      .reset(reset),
+                      .addr(mem_addr),
+                      .enable(mem_enable),
+                      .read_write(mem_rw),
+                      .data_in(mem_data_out),
+                      .data_out(mem_data_in),
+                      .ack(mem_ack)
+                      );
 
    /***************************************************************************
     *  FETCH STAGE                                                            *

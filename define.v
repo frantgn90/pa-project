@@ -80,15 +80,15 @@
 
 `define MASK_WORD 32'hFFFC
 
-`define WARNING(M) begin $write("%5t [warning] ", $time); $display M; 
+`define WARNING(M) begin $write("%5t [warning] ", $time); $display M; end
 
 //MEMORY AND CACHE
-`define MEMORY_WIDTH 128	//MEMORY LINE WIDTH
-`define MEMORY_DEPTH 2048	//MEMORY LINES
+`define MEMORY_WIDTH 128	  //MEMORY LINE WIDTH
+`define MEMORY_DEPTH 12288	//MEMORY LINES -> 0x3000
 `define WIDTH 128		//CACHE LINE WIDTH
 `define MEMORY_DATA "../memory_init/memory.raw"
 `ifndef MEMORY_LATENCY
-`define MEMORY_LATENCY 27
+`define MEMORY_LATENCY 1000 //as we want to wait 10 cycles of clock to receive from memory and cpu clock is 100
 `endif
 
 

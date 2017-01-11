@@ -17,7 +17,7 @@ module memory_sync (
 );
 
 //parameter WIDTH = `MEMORY_WIDTH;
-parameter DEPTH = `MEMORY_DEPTH; //2048
+parameter DEPTH = `MEMORY_DEPTH; //0x3000
 localparam WB = $clog2(`WIDTH) - 3; // Address in bytes
 localparam DB = $clog2(DEPTH);
 
