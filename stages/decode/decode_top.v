@@ -124,10 +124,10 @@ module decode_top(
 
 	 // Instruction decode
 	 assign opcode 		= instruction[31:26];
-	 assign dst 		= instruction[24:20];
-	 assign src_reg1	= instruction[19:15];
-	 assign src_reg2	= instruction[14:10];
-         assign functcode       = instruction[5:0];
+	 assign dst 		= instruction[15:11];
+	 assign src_reg1	= instruction[25:21];
+	 assign src_reg2	= instruction[20:16];
+   assign functcode       = instruction[5:0];
 
 	 // Direct connections to next stage
 	 assign reg1_data[`REG_SIZE-1:0] = rin_reg1[`REG_SIZE-1:0];
