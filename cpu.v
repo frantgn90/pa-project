@@ -171,7 +171,7 @@ module cpu(
 
         // Instruction control signals
         .regwrite(id_regwrite),	// WB Stage: Permission write
-        .memtoreg(id_memread),     // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
+        .memtoreg(id_memtoreg),     // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
 
         .branch(id_branch),	    // M Stage: Govern the Fetch stage mux for PC
         .memwrite(id_memwrite),	// M Stage: If the memory will be written or not
@@ -199,7 +199,9 @@ module cpu(
     /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
-    wire	[`REG_SIZE-1:0] reg_to_mem;
+   wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
+   wire                                ex_memtoreg;
+   wire                                ex_do_read;
    exec1 exec1(
                .clk(clk),
                .regwrite_in(id_regwrite),
@@ -210,14 +212,18 @@ module cpu(
                .reg2(id_data_reg2),
                .immediat(id_mimmediat),
                .old_pc(id_pc),
-               .wreg_in(id_dest_reg),
+               .dst_reg_in(id_dest_reg),
+               .do_read(id_memread),
+               .memtoreg(id_memtoreg),
 
                .regwrite_out(ex_regwrite),
                .zero(ex_zero),
-               .data_store(reg_to_mem),
+               .data_store(ex_reg_to_mem),
                .overflow(ex_overflow),
                .alu_result(ex_result),
                .pc_branch(ex_pc_branch),
+               .do_read_out(ex_do_read),
+               .memtoreg_out(ex_memtoreg),
                .dst_reg(ex_dst_reg)
                );
 
@@ -338,7 +344,6 @@ module cpu(
    reg [`REG_SIZE-1:0]                 dc_wdata;
    reg                                 dc_regwrite;
 
-   wire                                dc_do_read;
    wire                                dc_is_byte;
    wire                                dc_is_write;
    wire [`REG_SIZE-1:0]                dc_data_out;
@@ -359,7 +364,7 @@ module cpu(
         .clk(clk),
         .reset(reset),
         .addr(ex_result),
-        .do_read(dc_do_read),
+        .do_read(ex_do_read),
         .is_byte(dc_is_byte),
         .do_write(dc_is_write),
         .data_in(reg_to_mem),
@@ -378,7 +383,7 @@ module cpu(
     always @(posedge clk) begin
        dc_dst_reg <= ex_dst_reg;
        dc_regwrite <= ex_regwrite;
-       dc_wdata <= dc_do_read? dc_data_out : ex_result;
+       dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
     end
 
     //ARBITER
@@ -413,8 +418,8 @@ module cpu(
     *  WRITE-BACK STAGE                                                       *
     ***************************************************************************/
    assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
-   assign wb_wdata = dc_regwrite? dc_memresult : m5_result;
-   assign regwrite = m5_regwrite_out | dc_regwrite;
+   assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
+   assign wb_regwrite = m5_regwrite_out | dc_regwrite;
 
 endmodule
 `endif
