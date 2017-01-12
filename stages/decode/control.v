@@ -13,7 +13,7 @@ module control (
     memwrite,	// M Stage: If the memory will be written or not
     memread,	// M Stage: If the memory will be readed or not
     byteword,	// M Stage: If it is a byte (0) or world (1) load/store
-    alusrc,		// EX stage: src2 source mux govern
+    alusrc		// EX stage: src2 source mux govern
 );
 	// Input signals
    input clk;
@@ -95,6 +95,15 @@ module control (
                 byteword 	<= "X";
                 alusrc 		<= 1;
             end
+            `OP_JUMP: begin
+                regwrite 	<= 0;
+                memtoreg 	<= "X";
+                branch		<= 0;
+                memwrite 	<= 0;
+                memread 	<= 0;
+                byteword 	<= "X";
+                alusrc 		<= "X";
+            end
             /*
             JUMP AND IRET NOT DONE
             */
@@ -109,7 +118,7 @@ module control (
             default: begin
                 regwrite 	<= 0;
                 memtoreg 	<= "X";
-                branch		<= "X";
+                branch		<= 0;
                 memwrite 	<= 0;
                 memread 	<= 0;
                 byteword 	<= "X";

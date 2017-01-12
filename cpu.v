@@ -57,21 +57,22 @@ module cpu(
     wire pc_write;
     wire if_id_write;
     
-    wire                                if_is_jump;
+    wire                                id_is_jump;
+    wire [`ADDR_SIZE-1:0]               id_pc_jump;
+    
     wire                                if_is_branch;
     wire                                if_is_exception;
-    wire [`ADDR_SIZE-1:0]               if_pc_jump;
     wire [`ADDR_SIZE-1:0]               if_branch;
     wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
 
     fetch fetch(
         .clk(clk),
-        .is_jump(if_is_jump),
+        .is_jump(id_is_jump),
         .is_branch(if_is_branch),
         .is_exception(if_is_exception),
         .reset(reset),
-        .pc_jump(if_pc_jump),
+        .pc_jump(id_pc_jump),
         .pc_branch(if_branch),
         .old_pc(if_old_pc),
         .new_pc(if_new_pc),
@@ -205,7 +206,11 @@ module cpu(
         .m_dest_reg(ex_dst_reg),
     
         .pc_write(pc_write),
-        .if_id_write(if_id_write)
+        .if_id_write(if_id_write),
+        
+        // JUMP signals. These signals are async.
+        .is_jump(id_is_jump),
+        .jump_addr(id_pc_jump)
     );
 
 
