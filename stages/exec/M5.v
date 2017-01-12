@@ -19,13 +19,22 @@ module M5(
           output reg [`REG_ADDR-1:0] dst_reg
           );
 
-	 always @(posedge clk) begin
-		  m5result <= pre_m4result;
-		  zero <= pre_zero;
-		  overflow <= pre_overflow;
-		  regwrite_out <= regwrite_mult_in;
-        dst_reg <= wreg_in;
-	 end
+      always @(posedge clk) begin
+            if (reset) begin
+               regwrite_out = 1'd0
+               zero = 1'd0
+               overflow = 1'd0
+               m5result = {`REG_SIZE{1'd0}}
+               dst_reg = {`REG_ADDR{1'd0}}
+            end
+            if (we) begin
+                  m5result <= pre_m4result;
+                  zero <= pre_zero;
+                  overflow <= pre_overflow;
+              regwrite_out <= regwrite_mult_in;
+               dst_reg <= wreg_in;
+            end
+      end
 
 endmodule
 `endif

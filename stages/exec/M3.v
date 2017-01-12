@@ -19,11 +19,20 @@ module M3(
           );
 
    always @(posedge clk) begin
-	    m3result <= pre_m2result;
-	    zero <= pre_zero;
-	    overflow <= pre_overflow;
-	    regwrite_out <= regwrite_mult_in;
-       dst_reg <= wreg_in;
+            if (reset) begin
+               regwrite_out = 1'd0
+               zero = 1'd0
+               overflow = 1'd0
+               m3result = {`REG_SIZE{1'd0}}
+               dst_reg = {`REG_ADDR{1'd0}}
+            end
+            if (we) begin
+            m3result <= pre_m2result;
+            zero <= pre_zero;
+            overflow <= pre_overflow;
+             regwrite_out <= regwrite_mult_in;
+               dst_reg <= wreg_in;
+            end
    end
 
 endmodule

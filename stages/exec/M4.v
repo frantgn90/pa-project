@@ -19,11 +19,20 @@ module M4(
           );
 
    always @(posedge clk) begin
-	    m4result <= pre_m3result;
-	    zero <= pre_zero;
-	    overflow <= pre_overflow;
-	    regwrite_out <= regwrite_mult_in;
-      dst_reg <= wreg_in;
+            if (reset) begin
+               regwrite_out = 1'd0
+               zero = 1'd0
+               overflow = 1'd0
+               m4result = {`REG_SIZE{1'd0}}
+               dst_reg = {`REG_ADDR{1'd0}}
+            end
+            if (we) begin
+            m4result <= pre_m3result;
+            zero <= pre_zero;
+            overflow <= pre_overflow;
+        regwrite_out <= regwrite_mult_in;
+               dst_reg <= wreg_in;
+            end
    end
 endmodule // M4
 `endif
