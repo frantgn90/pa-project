@@ -8,6 +8,8 @@ module exec1(
              input wire                  clk,
              input wire                  regwrite_in, //Write Permission
              input wire                  alusrc, // If 1 take reg2 otherwise immediat as second operand
+             input wire                  reset,
+             input wire                  we,//write enable
              input wire [5:0]            opcode, //operation code
              input wire [5:0]            funct_code, //functional code
              input wire [`REG_SIZE-1:0]  src1, //Register1
@@ -17,6 +19,7 @@ module exec1(
              input wire [`REG_ADDR-1:0]  dst_reg_in, //Destination Register
              input wire                  do_read,//memory read permission
              input wire                  memtoreg,//take data from dcache or exec1
+             input wire                  is_branch_in,//if it is a branch
 
              output reg                  regwrite_out, //Write Permission
              output reg                  zero = 1'd0, //Alu zero
@@ -26,6 +29,7 @@ module exec1(
              output reg [`ADDR_SIZE-1:0] pc_branch = 32'h0000, //New PC when branch,
              output reg                  do_read_out,
              output reg                  memtoreg_out,
+             output reg                  is_branch_out,
              output reg [`REG_ADDR-1:0]  dst_reg //Destination Register
               );
     // Internal wires
@@ -39,6 +43,19 @@ module exec1(
    assign src2 = alusrc ? reg2 : immediat;
 
 	 always @(posedge clk) begin
+      if (reset) begin
+         is_branch_out <= 1'b0;
+         do_read_out <= 1'b0;
+         memtoreg_out <= 1'b0;
+         data_store <= {`REG_SIZE{1'b0}};
+         pc_branch <= {`ADDR_SIZE{1'b0}};
+         zero <= 1'b0;
+         overflow <= 1'b0;
+         alu_result <= {`REG_SIZE{1'b0}};
+         dst_reg <= {`REG_ADDR{1'b0}};
+         regwrite_out <= 1'b0;
+      end else if (we) begin
+      is_branch_out <= is_branch_in;
       do_read_out <= do_read;
       memtoreg_out <= memtoreg;
       data_store <= reg2;
@@ -48,7 +65,9 @@ module exec1(
 		  alu_result <= aluresult;
       dst_reg <= dst_reg_in;
       regwrite_out <= regwrite_in;
-	 end
+	    end // else: !if(reset)
+   end // always @ (posedge clk)
+
    alucontrol alucontrol(
                          .funct(funct_code),
                          .opcode(opcode),
