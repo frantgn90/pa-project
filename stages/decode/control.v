@@ -13,7 +13,7 @@ module control (
     memwrite,	// M Stage: If the memory will be written or not
     memread,	// M Stage: If the memory will be readed or not
     byteword,	// M Stage: If it is a byte (0) or world (1) load/store
-    alusrc,		// EX stage: src2 source mux govern
+    alusrc		// EX stage: src2 source mux govern
 );
 	// Input signals
    input clk;
