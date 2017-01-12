@@ -4,14 +4,22 @@
  `include "../../define.v"
  
 /*****************************************************
-    TODO list
-    - RAW dependencies bw R-instr
-    - The hazards will change with bypasses
+    TODO list                                        *
+    - RAW dependencies bw R-instr                    *
+    - The hazards will change with bypasses          *
+    - Move this module to CPU instead of control     *
  *****************************************************/
 
 /*****************************************************
  * For schematic look at pag. 84, TheProcessor.pdf   *
  *****************************************************/
+ 
+ /*****************************************************
+  * Forwarding conditions at pag. 75, TheProcessor.pdf*
+  * As for the moment we have not forwarding, those   *
+  * conditions are for stall.                         *
+  *****************************************************/
+  
  
  module hazard_control(
     d_src1,     // D stage: register 1
@@ -41,8 +49,8 @@
     
     output wire stall;
     
-    assign stall = ex_regwrite && (d_src1 == ex_dest_reg || d_src2 == ex_dest_reg)
-        || m_regwrite && (d_src1 == m_dest_reg || d_src2 == m_dest_reg);
+    assign stall = ex_regwrite && ex_dest_reg != 0 && (d_src1 == ex_dest_reg || d_src2 == ex_dest_reg)
+                || m_regwrite  && m_dest_reg != 0  && (d_src1 == m_dest_reg || d_src2 == m_dest_reg);
         
 endmodule
         
