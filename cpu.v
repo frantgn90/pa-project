@@ -380,7 +380,7 @@ module cpu(
         .do_read(ex_do_read),
         .is_byte(dc_is_byte),
         .do_write(dc_is_write),
-        .data_in(reg_to_mem),
+        .data_in(ex_reg_to_mem),
         .data_out(dc_memresult),
         .hit(dc_hit),
         .mem_write_req(dc_mem_write_req),
