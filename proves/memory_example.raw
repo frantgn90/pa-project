@@ -1,0 +1,6 @@
+//memory example
+//first address 0x1000
+@1000
+000000000010001000011000001000000 //##add r3,r1,r2
+@2000
+//exception
