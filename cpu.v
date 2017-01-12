@@ -54,32 +54,31 @@ module cpu(
     reg                                wb_regwrite; //write permission
 
     // WIRE FOR HAZARD CONTROL SIGNALS
-    wire pc_write;
-    wire if_id_write;
+    reg pc_write;
+    reg if_id_write;
     
     wire                                id_is_jump;
     wire [`ADDR_SIZE-1:0]               id_pc_jump;
     
-    wire                                if_is_branch;
+    wire                                mem_is_branch;
     wire                                if_is_exception;
-    wire [`ADDR_SIZE-1:0]               if_branch;
+    wire [`ADDR_SIZE-1:0]               mem_branch;
     wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
-   wire                                pc_reset;
-
+    reg                                 pc_reset;
+    reg                                 if_id_reset;
 
     fetch fetch(
         .clk(clk),
         .is_jump(id_is_jump),
-        .is_branch(if_is_branch),
+        .is_branch(mem_is_branch),
         .is_exception(if_is_exception),
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
-        .pc_branch(if_branch),
+        .pc_branch(mem_branch),
         .old_pc(if_old_pc),
         .new_pc(if_new_pc),
-        .pc_write(pc_write),
-        .if_id_write(if_id_write)
+        .pc_write(pc_write)
     );
 
     wire                                ic_is_byte;
@@ -90,6 +89,8 @@ module cpu(
     wire [`REG_SIZE-1:0]                ic_mem_read_addr;
     wire [`WIDTH-1:0]                   ic_mem_read_data;
     wire                                ic_mem_read_ack;
+    
+    reg [`INSTR_SIZE-1:0]               if_instruction;
 
 
     cache Icache(
@@ -107,6 +108,11 @@ module cpu(
         .mem_read_data(ic_mem_read_data),
         .mem_read_ack(ic_mem_read_ack)
     );
+    
+    always @(posedge clk) begin
+        if (if_id_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
+        else if (if_id_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
+    end
 
     /**************************************************************************
      *  DECODE STAGE                                                          *
@@ -148,12 +154,12 @@ module cpu(
    wire                   id_memread;
    wire                   id_byteword;
    wire                   id_alusrc;
-   wire                   if_id_reset;
    wire [5:0]             id_opcode;
    wire [5:0]             id_funct_code;
-   wire                   id_ex_write;
    wire                   id_regwrite_mult_in;
-
+   
+   wire                   id_hazard_stall;
+   
     regfile registers(
         .clk(clk),
         .rreg1(addr_reg1),
@@ -168,10 +174,10 @@ module cpu(
     decode_top decode(
         .clk(clk),
         .reset(if_id_reset),
-        .instruction(ic_memresult),
+        .instruction(if_instruction),
         .pc(if_new_pc),
         .out_pc(id_pc),
-        .we(id_ex_write),
+        .we(if_id_write),
 
         // Regfile wires
         .src_reg1(addr_reg1),
@@ -208,8 +214,7 @@ module cpu(
         .m_regwrite(ex_regwrite),
         .m_dest_reg(ex_dst_reg),
     
-        .pc_write(pc_write),
-        .if_id_write(if_id_write),
+        .hazard_stall(id_hazard_stall),
         
         // JUMP signals. These signals are async.
         .is_jump(id_is_jump),
@@ -218,15 +223,17 @@ module cpu(
 
 
 
-   if_branch <= ex_pc_    /**************************************************************************
+    /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
    wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
    wire                                ex_memtoreg;
    wire                                ex_do_read;
    wire                                ex_is_branch;
-   wire                                ex_mem_reset;
-   wire                                ex_mem_write;
+   reg                                ex_mem_reset;
+   reg                                ex_mem_write;
+   reg                                id_ex_write;
+   reg                                id_ex_reset;
 
 
    exec1 exec1(
@@ -400,8 +407,8 @@ module cpu(
    wire [`REG_SIZE-1:0]                dc_mem_read_addr;
    wire [`WIDTH-1:0]                   dc_mem_read_data;
    wire                                dc_mem_read_ack;
-   wire                                mem_wb_reset;
-   wire                                mem_wb_write;
+   reg                                mem_wb_reset;
+   reg                                mem_wb_write;
     cache Dcache(
         .clk(clk),
         .reset(reset),
@@ -422,15 +429,16 @@ module cpu(
         .mem_read_ack(dc_mem_read_ack)
     );
 
+    assign mem_branch = ex_pc_branch;
+    assign mem_is_branch = ex_is_branch & ex_zero; //If we branch
    always @(posedge clk) begin
-      if_branch <= ex_pc_branch;
-      if_is_branch <= ex_is_branch & ex_zero;//If we branch
+      
       if (mem_wb_reset) begin
-         dc_dst_reg <= {`REG_ADDR{1'b0}};
-      dc_regwrite <= 1'b0;
-      dc_wdata <= {`REG_SIZE{1'b0}};
-   end
-      else if (mem_wb_write)begin
+        dc_dst_reg <= {`REG_ADDR{1'b0}};
+        dc_regwrite <= 1'b0;
+        dc_wdata <= {`REG_SIZE{1'b0}};
+      end
+      else if (mem_wb_write) begin
          dc_dst_reg <= ex_dst_reg;
          dc_regwrite <= ex_regwrite;
          dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
@@ -494,9 +502,11 @@ module cpu(
          
          
          mem_wb_reset <= 1'b0;
-         end
-
-
-   
+      end
+      else if (id_hazard_stall) begin
+        pc_write <= 1'b0;
+        if_id_write <= 1'b0;
+      end
+    end
 endmodule
 `endif

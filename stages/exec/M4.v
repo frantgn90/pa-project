@@ -5,6 +5,8 @@
 
 module M4(
           input wire                 clk,
+          input wire                 reset,
+          input wire                 we,
           input wire                 regwrite_mult_in, //Write Permission
           input wire [`REG_ADDR-1:0] wreg_in, //Destination Register
           input wire [`REG_SIZE-1:0] pre_m3result,
@@ -20,11 +22,11 @@ module M4(
 
    always @(posedge clk) begin
             if (reset) begin
-               regwrite_out = 1'd0
-               zero = 1'd0
-               overflow = 1'd0
-               m4result = {`REG_SIZE{1'd0}}
-               dst_reg = {`REG_ADDR{1'd0}}
+               regwrite_out = 1'd0;
+               zero = 1'd0;
+               overflow = 1'd0;
+               m4result = {`REG_SIZE{1'd0}};
+               dst_reg = {`REG_ADDR{1'd0}};
             end
             if (we) begin
             m4result <= pre_m3result;

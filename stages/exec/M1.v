@@ -26,11 +26,11 @@ module M1(
 
    always @(posedge clk) begin
       if (reset) begin
-        regwrite_out = 1'd0
-        m1zero = 1'd0
-        m1overflow = 1'd0
-        dest_reg = {`REG_ADDR{1'd0}}
-        m1result = {`REG_SIZE{1'd0}}
+        regwrite_out = 1'd0;
+        m1zero = 1'd0;
+        m1overflow = 1'd0;
+        dst_reg = {`REG_ADDR{1'd0}};
+        m1result = {`REG_SIZE{1'd0}};
       end
       if (we) begin
         case (opcode)

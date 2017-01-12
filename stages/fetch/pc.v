@@ -15,8 +15,7 @@ module pc(
 	input wire [31:0] pc_branch,
 	input wire [31:0] old_pc,
 	output reg [31:0] new_pc,
-	input wire pc_write,
-	input wire if_id_write
+	input wire pc_write
 	);
 	
 wire pc;
@@ -28,10 +27,7 @@ assign pc = is_jump&pc_write?		 	pc_jump :
 
 always @(posedge clk) begin
 	if (reset) new_pc <= `INITIAL_PC;
-	else begin
-		if (if_id_write) new_pc <= pc;
-		else new_pc <=old_pc;
-	end
+	else new_pc <= pc;
 end
 
 endmodule

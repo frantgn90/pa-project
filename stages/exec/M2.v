@@ -21,11 +21,11 @@ module M2(
           );
 	 always @(posedge clk) begin
             if (reset) begin
-               regwrite_out = 1'd0
-               zero = 1'd0
-               overflow = 1'd0
-               m2result = {`REG_SIZE{1'd0}}
-               dst_reg = {`REG_ADDR{1'd0}}
+               regwrite_out = 1'd0;
+               zero = 1'd0;
+               overflow = 1'd0;
+               m2result = {`REG_SIZE{1'd0}};
+               dst_reg = {`REG_ADDR{1'd0}};
             end
             if (we) begin
 		        m2result <= pre_m1result;

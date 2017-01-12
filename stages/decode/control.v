@@ -5,6 +5,7 @@
 
 module control (
     clk,
+    reset,
     stall,
     opcode,
     regwrite,	// WB Stage: Register write permission
@@ -17,6 +18,7 @@ module control (
 );
 	// Input signals
    input clk;
+   input reset;
    input       stall;
    input [5:0] opcode;
 
@@ -30,7 +32,7 @@ module control (
 	output reg memtoreg;
 
 	always @(posedge clk) begin
-        if (stall) begin
+        if (stall || reset) begin
             regwrite 	<= 0;
 			memtoreg 	<= "X";
 			branch		<= "X";

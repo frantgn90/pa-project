@@ -29,7 +29,6 @@
 
 //OPERATIONS CODE
 `define OP_RTYPE 6'h0
-//add,sub,mul.,
 `define OP_LDB 6'h20
 `define OP_LDW 6'h23
 `define OP_STB 6'h28
@@ -38,7 +37,6 @@
 `define OP_BEQ 6'h4
 `define OP_JUMP 6'h2
 `define OP_TLBWRITE 6'h13
-//??? IS IRET OR ERET??
 `define OP_IRET 6'h12 
 
 /*
