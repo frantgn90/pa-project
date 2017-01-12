@@ -8,6 +8,8 @@ module exec1(
              input wire                  clk,
              input wire                  regwrite_in, //Write Permission
              input wire                  alusrc, // If 1 take reg2 otherwise immediat as second operand
+             input wire                  reset,
+             input wire                  we,//write enable
              input wire [5:0]            opcode, //operation code
              input wire [5:0]            funct_code, //functional code
              input wire [`REG_SIZE-1:0]  src1, //Register1
@@ -41,6 +43,18 @@ module exec1(
    assign src2 = alusrc ? reg2 : immediat;
 
 	 always @(posedge clk) begin
+      if (reset) begin
+         is_branch_out <= 1'b0;
+         do_read_out <= 1'b0;
+         memtoreg_out <= 1'b0;
+         data_store <= {`REG_SIZE{1'b0}};
+         pc_branch <= {`ADDR_SIZE{1'b0}};
+         zero <= 1'b0;
+         overflow <= 1'b0;
+         alu_result <= {`REG_SIZE{1'b0}};
+         dst_reg <= {`REG_ADDR{1'b0}};
+         regwrite_out <= 1'b0;
+      end else if (we) begin
       is_branch_out <= is_branch_in;
       do_read_out <= do_read;
       memtoreg_out <= memtoreg;
@@ -51,7 +65,9 @@ module exec1(
 		  alu_result <= aluresult;
       dst_reg <= dst_reg_in;
       regwrite_out <= regwrite_in;
-	 end
+	    end // else: !if(reset)
+   end // always @ (posedge clk)
+
    alucontrol alucontrol(
                          .funct(funct_code),
                          .opcode(opcode),
