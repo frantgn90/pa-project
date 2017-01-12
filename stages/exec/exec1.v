@@ -17,6 +17,7 @@ module exec1(
              input wire [`REG_ADDR-1:0]  dst_reg_in, //Destination Register
              input wire                  do_read,//memory read permission
              input wire                  memtoreg,//take data from dcache or exec1
+             input wire                  is_branch_in,//if it is a branch
 
              output reg                  regwrite_out, //Write Permission
              output reg                  zero = 1'd0, //Alu zero
@@ -26,6 +27,7 @@ module exec1(
              output reg [`ADDR_SIZE-1:0] pc_branch = 32'h0000, //New PC when branch,
              output reg                  do_read_out,
              output reg                  memtoreg_out,
+             output reg                  is_branch_out,
              output reg [`REG_ADDR-1:0]  dst_reg //Destination Register
               );
     // Internal wires
@@ -39,6 +41,7 @@ module exec1(
    assign src2 = alusrc ? reg2 : immediat;
 
 	 always @(posedge clk) begin
+      is_branch_out <= is_branch_in;
       do_read_out <= do_read;
       memtoreg_out <= memtoreg;
       data_store <= reg2;

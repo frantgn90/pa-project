@@ -140,7 +140,7 @@ module cpu(
     // Control signals
     wire id_regwrite;
     wire id_memtoreg;
-    wire id_branch;
+    wire id_is_branch;
     wire id_memwrite;
     wire id_memread;
     wire id_byteword;
@@ -148,7 +148,6 @@ module cpu(
     wire [5:0] id_opcode;
     wire [5:0]  id_funct_code;
 
-    //M1:
    wire                                id_regwrite_mult_in;
 
     regfile registers(
@@ -186,7 +185,7 @@ module cpu(
         .regwrite(id_regwrite),	// WB Stage: Permission write
         .memtoreg(id_memtoreg),     // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
 
-        .branch(id_branch),	    // M Stage: Govern the Fetch stage mux for PC
+        .branch(id_is_branch),	    // M Stage: Govern the Fetch stage mux for PC
         .memwrite(id_memwrite),	// M Stage: If the memory will be written or not
         .memread(id_memread),	    // M Stage: If the memory will be readed or not
         .byteword(id_byteword),	// M Stage: If it is a byte (0) or world (1) load/store
@@ -209,12 +208,14 @@ module cpu(
     );
 
 
-    /**************************************************************************
+
+   if_branch <= ex_pc_    /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
    wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
    wire                                ex_memtoreg;
    wire                                ex_do_read;
+   wire                                ex_is_branch;
    exec1 exec1(
                .clk(clk),
                .regwrite_in(id_regwrite),
@@ -228,6 +229,7 @@ module cpu(
                .dst_reg_in(id_dest_reg),
                .do_read(id_memread),
                .memtoreg(id_memtoreg),
+               .is_branch_in(id_is_branch),
 
                .regwrite_out(ex_regwrite),
                .zero(ex_zero),
@@ -237,6 +239,7 @@ module cpu(
                .pc_branch(ex_pc_branch),
                .do_read_out(ex_do_read),
                .memtoreg_out(ex_memtoreg),
+               .is_branch_out(ex_is_branch),
                .dst_reg(ex_dst_reg)
                );
 
@@ -394,6 +397,8 @@ module cpu(
     );
 
     always @(posedge clk) begin
+       if_branch <= ex_pc_branch;
+       if_is_branch <= ex_is_branch & ex_zero;//If we branch
        dc_dst_reg <= ex_dst_reg;
        dc_regwrite <= ex_regwrite;
        dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
