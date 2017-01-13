@@ -20,6 +20,7 @@ module exec1(
              input wire                  do_read,//memory read permission
              input wire                  do_write,
              input wire                  is_read,
+             input wire                  is_byte,
              input wire                  memtoreg,//take data from dcache or exec1
              input wire                  is_branch_in,//if it is a branch
 
@@ -72,7 +73,7 @@ module exec1(
 		  alu_result <= aluresult;
       dst_reg <= dst_reg_in;
       regwrite_out <= regwrite_in;
-      is_byte_out <= is_byte_out;
+      is_byte_out <= is_byte;
 
 	    end // else: !if(reset)
    end // always @ (posedge clk)
