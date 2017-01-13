@@ -229,6 +229,7 @@ module cpu(
    wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
    wire                                ex_memtoreg;
    wire                                ex_do_read;
+   wire                                ex_do_write;
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
    reg                                ex_mem_write;
@@ -250,6 +251,7 @@ module cpu(
                .old_pc(id_pc),
                .dst_reg_in(id_dest_reg),
                .do_read(id_memread),
+               .do_write(id_memwrite),
                .memtoreg(id_memtoreg),
                .is_branch_in(id_is_branch),
 
@@ -259,6 +261,7 @@ module cpu(
                .overflow(ex_overflow),
                .alu_result(ex_result),
                .pc_branch(ex_pc_branch),
+               .do_write_out(ex_do_write),
                .do_read_out(ex_do_read),
                .memtoreg_out(ex_memtoreg),
                .is_branch_out(ex_is_branch),
@@ -415,7 +418,7 @@ module cpu(
         .addr(ex_result),
         .do_read(ex_do_read),
         .is_byte(dc_is_byte),
-        .do_write(dc_is_write),
+        .do_write(ex_do_write),
         .data_in(ex_reg_to_mem),
         .data_out(dc_memresult),
         .hit(dc_hit),
