@@ -63,7 +63,7 @@ module cpu(
     wire                                mem_is_branch;
     wire                                if_is_exception;
     wire [`ADDR_SIZE-1:0]               mem_branch;
-    wire [`ADDR_SIZE-1:0]               if_old_pc;
+    //wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
     reg                                 if_id_reset;
@@ -76,7 +76,7 @@ module cpu(
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
         .pc_branch(mem_branch),
-        .old_pc(if_old_pc),
+        .old_pc(if_new_pc),
         .new_pc(if_new_pc),
         .pc_write(pc_write)
     );
