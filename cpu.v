@@ -76,7 +76,7 @@ module cpu(
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
         .pc_branch(mem_branch),
-        .old_pc(if_new_pc),
+        .old_pc(if_instruction),
         .new_pc(if_new_pc),
         .pc_write(pc_write)
     );
@@ -199,7 +199,7 @@ module cpu(
         .branch(id_is_branch),	    // M Stage: Govern the Fetch stage mux for PC
         .memwrite(id_memwrite),	// M Stage: If the memory will be written or not
         .memread(id_memread),	    // M Stage: If the memory will be readed or not
-        .byteword(id_byteword),	// M Stage: If it is a byte (0) or world (1) load/store
+        .byteword(id_byteword),	// M Stage: If it is a byte (0) or word (1) load/store
 
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
         .funct_code(id_funct_code),		    // EX stage: FUNCTION code for rtype operation
@@ -230,6 +230,7 @@ module cpu(
    wire                                ex_memtoreg;
    wire                                ex_do_read;
    wire                                ex_do_write;
+   wire                                ex_is_byte;
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
    reg                                ex_mem_write;
@@ -252,6 +253,7 @@ module cpu(
                .dst_reg_in(id_dest_reg),
                .do_read(id_memread),
                .do_write(id_memwrite),
+               .is_byte(~id_byteword),
                .memtoreg(id_memtoreg),
                .is_branch_in(id_is_branch),
 
@@ -263,6 +265,7 @@ module cpu(
                .pc_branch(ex_pc_branch),
                .do_write_out(ex_do_write),
                .do_read_out(ex_do_read),
+               .is_byte_out(ex_is_byte),
                .memtoreg_out(ex_memtoreg),
                .is_branch_out(ex_is_branch),
                .dst_reg(ex_dst_reg)
@@ -417,7 +420,7 @@ module cpu(
         .reset(reset),
         .addr(ex_result),
         .do_read(ex_do_read),
-        .is_byte(dc_is_byte),
+        .is_byte(ex_is_byte),
         .do_write(ex_do_write),
         .data_in(ex_reg_to_mem),
         .data_out(dc_memresult),
