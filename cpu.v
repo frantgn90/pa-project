@@ -496,16 +496,44 @@ module cpu(
          if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b0;
-         
-         ex_mem_reset <= 1'b0;
-         ex_mem_write <= 1'b0;
-         
-         
-         mem_wb_reset <= 1'b0;
-      end
+         ex_mem_reset <= 1'b1;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b1;
+         mem_wb_write <= 1'b1;
+      end // if (dc_stall)
+      //TODO ex_isjump | ex_exc_ret
       else if (id_hazard_stall) begin
-        pc_write <= 1'b0;
-        if_id_write <= 1'b0;
+         pc_reset <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b0;
+         id_ex_reset <= 1'b1;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end // if (id_hazard_stall)
+      else if(ic_stall) begin
+         pc_reset <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b1;
+         id_ex_reset <= 1'b0;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end // if (ic_stall)
+      else begin
+         pc_reset <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b1;
+         id_ex_reset <= 1'b0;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
       end
     end
 endmodule
