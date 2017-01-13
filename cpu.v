@@ -67,6 +67,7 @@ module cpu(
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
     reg                                 if_id_reset;
+   reg [`INSTR_SIZE-1:0]                if_instruction;
 
     fetch fetch(
         .clk(clk),
@@ -89,8 +90,8 @@ module cpu(
     wire [`REG_SIZE-1:0]                ic_mem_read_addr;
     wire [`WIDTH-1:0]                   ic_mem_read_data;
     wire                                ic_mem_read_ack;
-    
-    reg [`INSTR_SIZE-1:0]               if_instruction;
+
+
 
 
     cache Icache(
