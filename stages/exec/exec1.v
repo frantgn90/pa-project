@@ -18,8 +18,7 @@ module exec1(
              input wire [`ADDR_SIZE-1:0] old_pc, //Old_pc
              input wire [`REG_ADDR-1:0]  dst_reg_in, //Destination Register
              input wire                  do_read,//memory read permission
-             input wire                  do_write,
-             input wire                  is_read,
+             input wire                  do_write,//memory write permission
              input wire                  is_byte,
              input wire                  memtoreg,//take data from dcache or exec1
              input wire                  is_branch_in,//if it is a branch
@@ -64,7 +63,6 @@ module exec1(
       end else if (we) begin
       is_branch_out <= is_branch_in;
       do_read_out <= do_read;
-      do_write_out <= do_write;
       memtoreg_out <= memtoreg;
       data_store <= reg2;
 		  pc_branch <= old_pc + (immediat << 2);
@@ -73,8 +71,8 @@ module exec1(
 		  alu_result <= aluresult;
       dst_reg <= dst_reg_in;
       regwrite_out <= regwrite_in;
+      do_write_out <= do_write;
       is_byte_out <= is_byte;
-
 	    end // else: !if(reset)
    end // always @ (posedge clk)
 

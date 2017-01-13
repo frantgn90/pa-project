@@ -39,8 +39,8 @@ module cpu(
                       .addr(mem_addr),
                       .enable(mem_enable),
                       .read_write(mem_rw),
-                      .data_in(mem_data_out),
-                      .data_out(mem_data_in),
+                      .data_in(mem_data_in),
+                      .data_out(mem_data_out),
                       .ack(mem_ack)
                       );
 
@@ -49,24 +49,22 @@ module cpu(
     ***************************************************************************/
 
     // WRITE BACK STAGE
-    reg [`REG_ADDR-1:0]                wb_wreg; //destination register
-    reg [`REG_SIZE-1:0]                wb_wdata; //result to write
-    reg                                wb_regwrite; //write permission
+    wire [`REG_ADDR-1:0]                wb_wreg; //destination register
+    wire [`REG_SIZE-1:0]                wb_wdata; //result to write
+    wire                                wb_regwrite; //write permission
 
     // WIRE FOR HAZARD CONTROL SIGNALS
     reg pc_write;
-    reg if_id_write;
     
     wire                                id_is_jump;
     wire [`ADDR_SIZE-1:0]               id_pc_jump;
     
     wire                                mem_is_branch;
-    wire                                if_is_exception;
+    wire                                if_is_exception = 1'b0;
     wire [`ADDR_SIZE-1:0]               mem_branch;
     //wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
-    reg                                 if_id_reset;
    reg [`INSTR_SIZE-1:0]                if_instruction;
 
     fetch fetch(
@@ -77,7 +75,7 @@ module cpu(
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
         .pc_branch(mem_branch),
-        .old_pc(if_instruction),
+        .old_pc(if_new_pc),
         .new_pc(if_new_pc),
         .pc_write(pc_write)
     );
@@ -111,8 +109,8 @@ module cpu(
     );
     
     always @(posedge clk) begin
-        if (if_id_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
-        else if (if_id_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
+        if (pc_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
+        else if (pc_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
     end
 
     /**************************************************************************
@@ -127,7 +125,8 @@ module cpu(
     wire [`REG_SIZE-1:0]                ex_result;
     wire [`ADDR_SIZE-1:0]               ex_pc_branch;
     wire [`REG_ADDR-1:0]                ex_dst_reg;
-     
+    reg                                id_ex_write;
+    reg                                id_ex_reset;
      
     // Wires regfile <-> decode stage
     wire [`REG_ADDR-1:0] addr_reg1;
@@ -174,11 +173,11 @@ module cpu(
 
     decode_top decode(
         .clk(clk),
-        .reset(if_id_reset),
+        .reset(id_ex_reset),
         .instruction(if_instruction),
         .pc(if_new_pc),
         .out_pc(id_pc),
-        .we(if_id_write),
+        .we(id_ex_write),
 
         // Regfile wires
         .src_reg1(addr_reg1),
@@ -235,8 +234,6 @@ module cpu(
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
    reg                                ex_mem_write;
-   reg                                id_ex_write;
-   reg                                id_ex_reset;
 
 
    exec1 exec1(
@@ -438,6 +435,9 @@ module cpu(
 
     assign mem_branch = ex_pc_branch;
     assign mem_is_branch = ex_is_branch & ex_zero; //If we branch
+    assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
+    assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
+    assign wb_regwrite = m5_regwrite_out | dc_regwrite;
    always @(posedge clk) begin
       
       if (mem_wb_reset) begin
@@ -450,9 +450,6 @@ module cpu(
          dc_regwrite <= ex_regwrite;
          dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
       end
-      wb_wreg <= dc_regwrite? dc_dst_reg : m5_dst_reg;
-      wb_wdata <= dc_regwrite? dc_wdata : m5_result;
-      wb_regwrite <= m5_regwrite_out | dc_regwrite;
    end
 
     //ARBITER
@@ -478,19 +475,18 @@ module cpu(
         .mem_rw(mem_rw),
         .mem_ack(mem_ack),
         .mem_addr(mem_addr),
-        .mem_data_in(mem_data_out),
-        .mem_data_out(mem_data_in)
+        .mem_data_in(mem_data_in),
+        .mem_data_out(mem_data_out)
     );
 
+   wire dc_enable = ex_do_read | ex_do_write;
    wire ic_stall = !ic_hit;
-   wire dc_stall = !dc_hit;
+   wire dc_stall = !dc_hit & dc_enable;
 
    always @* begin
       if (reset) begin
          pc_reset <= 1'b1;
          pc_write <= 1'b1;
-         if_id_reset <= 1'b1;
-         if_id_write <= 1'b1;
          id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b1;
@@ -501,8 +497,6 @@ module cpu(
       end else if (dc_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         if_id_reset <= 1'b0;
-         if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b0;
          ex_mem_reset <= 1'b1;
@@ -514,8 +508,6 @@ module cpu(
       else if (id_hazard_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         if_id_reset <= 1'b0;
-         if_id_write <= 1'b0;
          id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
@@ -526,8 +518,6 @@ module cpu(
       else if(ic_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         if_id_reset <= 1'b0;
-         if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
@@ -538,8 +528,6 @@ module cpu(
       else begin
          pc_reset <= 1'b0;
          pc_write <= 1'b1;
-         if_id_reset <= 1'b0;
-         if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;

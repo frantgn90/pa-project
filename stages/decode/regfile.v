@@ -19,23 +19,30 @@ reg [`REG_SIZE-1:0] mem [`REG_N-1:0];
 
 // Reading first register asynch
 //
-always @* 
+always @(*)
 begin
-	rdata1 <= mem[rreg1]; //[`REG_SIZE-1:0];
+	if (wreg == rreg1 && regwrite) begin
+		rdata1 <= wdata;
+	end else
+		rdata1 <= mem[rreg1][`REG_SIZE-1:0];
 end
 
 // Reading second register asynch
 //
-always @* 
+//always @(wdata or clk or regwrite or rreg1 or rreg2) 
+always @(*)
 begin
-	rdata2 <= mem[rreg2]; //[`REG_SIZE-1:0];
+	if (wreg == rreg2 && regwrite) begin
+		rdata2 <= wdata;
+	end else
+		rdata2 <= mem[rreg2][`REG_SIZE-1:0];
 end
 
 // Writing dst register synchronously
 //
 always @(posedge clk) 
 begin
-	if (regwrite == 1) 
+	if (regwrite) 
 	begin
 		mem[wreg] <= wdata;
 	end
