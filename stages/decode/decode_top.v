@@ -25,16 +25,6 @@ module decode_top(
     pc,		        // PC to be bypassed directly to the next stage
     instruction,	// Instruction to be decoded
     out_pc,
-    
-    // Signals for hazard_control
-    ex_regwrite,    // EX Stage: Regfile write permission at ex stage
-    ex_dest_reg,    // EX stage: Reg destination at ex stage
-    m_regwrite,     // M stage: Regfile write permission at memory stage
-    m_dest_reg,     // M stage: Reg destination at memory stage
-    
-    hazard_stall,
-    //pc_write,       // Permission for write the PC. Will be 0 when an hazard is detected
-    //if_id_write,    // Permission for write on if/id boundat. 0 when an hazard is detected
 
     // Need to communicate with the external register bank
     src_reg1,		// Address for register 1
@@ -68,7 +58,11 @@ module decode_top(
 
     // Those signals are not syncrhonous with clock
     jump_addr,      // F stage: Is the target address of the jump
-    is_jump         // F stage: Is the gobernor of the source mux of PC
+    is_jump,         // F stage: Is the gobernor of the source mux of PC
+    
+    out_addr_reg1,
+    out_addr_reg2,
+    stall
 );
 
     // Input signals
@@ -77,17 +71,8 @@ module decode_top(
     input wire we;
     input wire [`ADDR_SIZE-1:0] pc;
     input wire [`INSTR_SIZE-1:0] instruction;
-
-    // Hazard signals
-    input wire ex_regwrite;
-    input wire [`REG_ADDR-1:0] ex_dest_reg;
-    input wire m_regwrite;
-    input wire [`REG_ADDR-1:0] m_dest_reg;
-
-    //output wire pc_write;
-    //output wire if_id_write;
     
-    output wire hazard_stall;
+    input wire stall;
     
     // Need to communicate with the external register bank
     output wire [`REG_ADDR-1:0] src_reg1;		// Address for register 1
@@ -99,6 +84,8 @@ module decode_top(
     // Output signals
     output reg [`ADDR_SIZE-1:0]  out_pc;
 
+    output reg [`REG_ADDR-1:0] out_addr_reg1;
+    output reg [`REG_ADDR-1:0] out_addr_reg2;
     output reg [`REG_SIZE-1:0] rout_reg1; 
     output reg [`REG_SIZE-1:0] rout_reg2;
 
@@ -159,6 +146,8 @@ module decode_top(
             op_code <= opcode;
             funct_code = functcode;
             
+            out_addr_reg1 <= src_reg1;
+            out_addr_reg2 <= src_reg2;
             dest_reg <= dst;
             rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
             rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
@@ -182,7 +171,7 @@ module decode_top(
         .clk(clk),
         .reset(reset),
         .opcode(opcode),
-        .stall(stall_execution),
+        .stall(stall),
         .memwrite(memwrite),
         .memread(memread),
         .memtoreg(memtoreg),
@@ -191,23 +180,6 @@ module decode_top(
         .alusrc(alusrc),
         .byteword(byteword)
     );
-    
-    // Hazard control
-    
-    hazard_control hazards (
-        .d_src1(src_reg1),
-        .d_src2(src_reg2),
-        .ex_regwrite(ex_regwrite),
-        .ex_dest_reg(ex_dest_reg),
-        .m_regwrite(m_regwrite),
-        .m_dest_reg(m_dest_reg),
-        .stall(stall_execution)
-    );
-    
-    //assign pc_write = ~stall_execution;
-    //assign if_id_write = ~stall_execution;
-    assign hazard_stall = stall_execution;
-
 endmodule
 
 `endif
