@@ -481,6 +481,7 @@ module cpu(
    always @* begin
       if (reset) begin
          pc_reset <= 1'b1;
+         pc_write <= 1'b1;
          if_id_reset <= 1'b1;
          if_id_write <= 1'b1;
          id_ex_reset <= 1'b1;
@@ -492,6 +493,7 @@ module cpu(
          //TODO COP RESET
       end else if (dc_stall) begin
          pc_reset <= 1'b0;
+         pc_write <= 1'b0;
          if_id_reset <= 1'b0;
          if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
@@ -504,6 +506,7 @@ module cpu(
       //TODO ex_isjump | ex_exc_ret
       else if (id_hazard_stall) begin
          pc_reset <= 1'b0;
+         pc_write <= 1'b0;
          if_id_reset <= 1'b0;
          if_id_write <= 1'b0;
          id_ex_reset <= 1'b1;
@@ -515,6 +518,7 @@ module cpu(
       end // if (id_hazard_stall)
       else if(ic_stall) begin
          pc_reset <= 1'b0;
+         pc_write <= 1'b0;
          if_id_reset <= 1'b0;
          if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
@@ -526,6 +530,7 @@ module cpu(
       end // if (ic_stall)
       else begin
          pc_reset <= 1'b0;
+         pc_write <= 1'b1;
          if_id_reset <= 1'b0;
          if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
