@@ -82,9 +82,9 @@
 
 //MEMORY AND CACHE
 `define MEMORY_WIDTH 128	  //MEMORY LINE WIDTH
-`define MEMORY_DEPTH 12288	//MEMORY LINES -> 0x3000
+`define MEMORY_DEPTH 16384	//MEMORY LINES -> 2 TO THE 16
 `define WIDTH 128		//CACHE LINE WIDTH
-`define MEMORY_DATA "../memory_init/memory.raw"
+`define MEMORY_DATA "proves/3adds_mem.txt"
 `ifndef MEMORY_LATENCY
 `define MEMORY_LATENCY 1000 //as we want to wait 10 cycles of clock to receive from memory and cpu clock is 100
 `endif

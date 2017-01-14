@@ -79,38 +79,37 @@ module cpu(
    /***************************************************************************
     *  MEMORY                                                                 *
     ***************************************************************************/
-    memory_async memory(
-        .reset(reset),
-        .addr(mem_addr),
-        .enable(mem_enable),
-        .read_write(mem_rw),
-        .data_in(mem_data_out),
-        .data_out(mem_data_in),
-        .ack(mem_ack)
-    );
+   memory_async memory(
+                      .reset(reset),
+                      .addr(mem_addr),
+                      .enable(mem_enable),
+                      .read_write(mem_rw),
+                      .data_in(mem_data_in),
+                      .data_out(mem_data_out),
+                      .ack(mem_ack)
+                      );
 
    /***************************************************************************
     *  FETCH STAGE                                                            *
     ***************************************************************************/
 
     // WRITE BACK STAGE
-    reg [`REG_ADDR-1:0]                wb_wreg; //destination register
-    reg [`REG_SIZE-1:0]                wb_wdata; //result to write
-    reg                                wb_regwrite; //write permission
+    wire [`REG_ADDR-1:0]                wb_wreg; //destination register
+    wire [`REG_SIZE-1:0]                wb_wdata; //result to write
+    wire                                wb_regwrite; //write permission
 
     reg pc_write;
-    reg if_id_write;
     
     wire                                id_is_jump;
     wire [`ADDR_SIZE-1:0]               id_pc_jump;
     
     wire                                mem_is_branch;
-    wire                                if_is_exception;
+    wire                                if_is_exception = 1'b0;
     wire [`ADDR_SIZE-1:0]               mem_branch;
-    wire [`ADDR_SIZE-1:0]               if_old_pc;
+    //wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
-    reg                                 if_id_reset;
+   reg [`INSTR_SIZE-1:0]                if_instruction;
 
     fetch fetch(
         .clk(clk),
@@ -120,7 +119,7 @@ module cpu(
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
         .pc_branch(mem_branch),
-        .old_pc(if_old_pc),
+        .old_pc(if_new_pc),
         .new_pc(if_new_pc),
         .pc_write(pc_write)
     );
@@ -133,8 +132,8 @@ module cpu(
     wire [`REG_SIZE-1:0]                ic_mem_read_addr;
     wire [`WIDTH-1:0]                   ic_mem_read_data;
     wire                                ic_mem_read_ack;
-    
-    reg [`INSTR_SIZE-1:0]               if_instruction;
+
+
 
 
     cache Icache(
@@ -154,8 +153,8 @@ module cpu(
     );
     
     always @(posedge clk) begin
-        if (if_id_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
-        else if (if_id_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
+        if (pc_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
+        else if (pc_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
     end
 
     /**************************************************************************
@@ -170,6 +169,8 @@ module cpu(
     wire [`REG_SIZE-1:0]                ex_result;
     wire [`ADDR_SIZE-1:0]               ex_pc_branch;
      
+    reg                                id_ex_write;
+    reg                                id_ex_reset;
      
     // Wires regfile <-> decode stage
     wire [`REG_SIZE-1:0] data_reg1;
@@ -208,11 +209,11 @@ module cpu(
 
     decode_top decode(
         .clk(clk),
-        .reset(if_id_reset),
+        .reset(id_ex_reset),
         .instruction(if_instruction),
         .pc(if_new_pc),
         .out_pc(id_pc),
-        .we(if_id_write),
+        .we(id_ex_write),
 
         // Regfile wires (asynchronous)
         .src_reg1(addr_reg1),
@@ -234,7 +235,7 @@ module cpu(
         .branch(id_is_branch),	    // M Stage: Govern the Fetch stage mux for PC
         .memwrite(id_memwrite),	// M Stage: If the memory will be written or not
         .memread(id_memread),	    // M Stage: If the memory will be readed or not
-        .byteword(id_byteword),	// M Stage: If it is a byte (0) or world (1) load/store
+        .byteword(id_byteword),	// M Stage: If it is a byte (0) or word (1) load/store
 
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
         .funct_code(id_funct_code),		    // EX stage: FUNCTION code for rtype operation
@@ -260,11 +261,11 @@ module cpu(
    wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
    wire                                ex_memtoreg;
    wire                                ex_do_read;
+   wire                                ex_do_write;
+   wire                                ex_is_byte;
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
    reg                                ex_mem_write;
-   reg                                id_ex_write;
-   reg                                id_ex_reset;
 
 
    exec1 exec1(
@@ -281,6 +282,8 @@ module cpu(
                .old_pc(id_pc),
                .dst_reg_in(id_dest_reg),
                .do_read(id_memread),
+               .do_write(id_memwrite),
+               .is_byte(~id_byteword),
                .memtoreg(id_memtoreg),
                .is_branch_in(id_is_branch),
                
@@ -296,7 +299,9 @@ module cpu(
                .overflow(ex_overflow),
                .alu_result(ex_result),
                .pc_branch(ex_pc_branch),
+               .do_write_out(ex_do_write),
                .do_read_out(ex_do_read),
+               .is_byte_out(ex_is_byte),
                .memtoreg_out(ex_memtoreg),
                .is_branch_out(ex_is_branch),
                .dst_reg(ex_dst_reg)
@@ -449,8 +454,8 @@ module cpu(
         .reset(reset),
         .addr(ex_result),
         .do_read(ex_do_read),
-        .is_byte(dc_is_byte),
-        .do_write(dc_is_write),
+        .is_byte(ex_is_byte),
+        .do_write(ex_do_write),
         .data_in(ex_reg_to_mem),
         .data_out(dc_memresult),
         .hit(dc_hit),
@@ -466,7 +471,11 @@ module cpu(
 
     assign mem_branch = ex_pc_branch;
     assign mem_is_branch = ex_is_branch & ex_zero; //If we branch
-    always @(posedge clk) begin  
+    assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
+    assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
+    assign wb_regwrite = m5_regwrite_out | dc_regwrite;
+   always @(posedge clk) begin
+      
       if (mem_wb_reset) begin
         dc_dst_reg <= {`REG_ADDR{1'b0}};
         dc_regwrite <= 1'b0;
@@ -477,9 +486,6 @@ module cpu(
          dc_regwrite <= ex_regwrite;
          dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
       end
-      wb_wreg <= dc_regwrite? dc_dst_reg : m5_dst_reg;
-      wb_wdata <= dc_regwrite? dc_wdata : m5_result;
-      wb_regwrite <= m5_regwrite_out | dc_regwrite;
    end
 
     //ARBITER
@@ -505,18 +511,18 @@ module cpu(
         .mem_rw(mem_rw),
         .mem_ack(mem_ack),
         .mem_addr(mem_addr),
-        .mem_data_in(mem_data_out),
-        .mem_data_out(mem_data_in)
+        .mem_data_in(mem_data_in),
+        .mem_data_out(mem_data_out)
     );
 
+   wire dc_enable = ex_do_read | ex_do_write;
    wire ic_stall = !ic_hit;
-   wire dc_stall = !dc_hit;
+   wire dc_stall = !dc_hit & dc_enable;
 
    always @* begin
       if (reset) begin
          pc_reset <= 1'b1;
-         if_id_reset <= 1'b1;
-         if_id_write <= 1'b1;
+         pc_write <= 1'b1;
          id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b1;
@@ -526,20 +532,44 @@ module cpu(
          //TODO COP RESET
       end else if (dc_stall) begin
          pc_reset <= 1'b0;
-         if_id_reset <= 1'b0;
-         if_id_write <= 1'b0;
+         pc_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b0;
-         
-         ex_mem_reset <= 1'b0;
-         ex_mem_write <= 1'b0;
-         
-         
-         mem_wb_reset <= 1'b0;
-      end
+         ex_mem_reset <= 1'b1;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b1;
+         mem_wb_write <= 1'b1;
+      end // if (dc_stall)
+      //TODO ex_isjump | ex_exc_ret
       else if (hazard_stall) begin
-        pc_write <= 1'b0;
-        if_id_write <= 1'b0;
+         pc_reset <= 1'b0;
+         pc_write <= 1'b0;
+         id_ex_reset <= 1'b1;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end // if (id_hazard_stall)
+      else if(ic_stall) begin
+         pc_reset <= 1'b0;
+         pc_write <= 1'b0;
+         id_ex_reset <= 1'b0;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end // if (ic_stall)
+      else begin
+         pc_reset <= 1'b0;
+         pc_write <= 1'b1;
+         id_ex_reset <= 1'b0;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
       end
     end
 endmodule

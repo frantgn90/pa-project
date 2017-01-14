@@ -17,15 +17,31 @@ integer i;
 
 reg [`REG_SIZE-1:0] mem [`REG_N-1:0];
 
-// Reading
-always @* 
-begin
-    if (rreg1 == 0) rdata1 <= {`REG_SIZE{1'b0}};
-	else rdata1 <= mem[rreg1]; //[`REG_SIZE-1:0];
-    
-    if (rreg2 == 0) rdata2 <= {`REG_SIZE{1'b0}};
-	else rdata2 <= mem[rreg2]; //[`REG_SIZE-1:0];
+// Reading asynch
+//
+always @* begin
+
+    // Source 1
+    if (rreg1 == 0) begin 
+        rdata1 <= {`REG_SIZE{1'b0}};
+    end
+    else if (rreg1 == wreg && regwrite) begin
+        rdata1 <= wdata;
+    end 
+    else
+        rdata1 <= mem[rreg1][`REG_SIZE-1:0];
+
+    // Source 2
+    if (rreg2 == 0) begin
+        rdata2 <= {`REG_SIZE{1'b0}};
+    end
+    else if (rreg2 == wreg && regwrite) begin
+        rdata2 <= wdata;
+    end 
+    else
+        rdata2 <= mem[rreg2][`REG_SIZE-1:0];
 end
+
 
 // Writing dst register synchronously
 //
