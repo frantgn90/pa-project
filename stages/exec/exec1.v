@@ -55,14 +55,14 @@ module exec1(
     /*************************************************************************
      *               -                                                       *
      *       reg1 --|\|                                          --          *
-     *      wb_fw --| |--[operand1]-----------------------------|   \        *
-     *     mem_fw --|/|                                         |    \       *
+     *     mem_fw --| |--[operand1]-----------------------------|   \        *
+     *      wb_fw --|/|                                         |    \       *
      *               -                                          \     \      *
      *                                                           \     \     *
      *               -                                            |     |--  *
      *       reg2 --|\|                         -                /     /     *
-     *      wb_fw --| |--[reg2_fw_selection]---| |              /     /      *
-     *     mem_fw --|/|                        |\|              |    /       *
+     *     mem_fw --| |--[reg2_fw_selection]---| |              /     /      *
+     *      wb_fw --|/|                        |\|              |    /       *
      *               -                         | |--[operand2]--|   /        *
      *                                         |/|               --          *
      *   immediat -----------------------------| |                           *
@@ -70,12 +70,12 @@ module exec1(
      *************************************************************************/
      
     assign operand1 = (forward_src1 == 0) ? reg1_data
-        : (forward_src1 == 1) ? wb_forward
-        : (forward_src1 == 2) ? mem_forward : 32'bX;
+        : (forward_src1 == 1) ? mem_forward
+        : (forward_src1 == 2) ? wb_forward : 32'bX;
     
-    assign reg2_fw_selection = (forward_src1 == 0) ? reg2_data
-        : (forward_src1 == 1) ? wb_forward
-        : (forward_src1 == 2) ? mem_forward : 32'bX;
+    assign reg2_fw_selection = (forward_src2 == 0) ? reg2_data
+        : (forward_src2 == 1) ? mem_forward
+        : (forward_src2 == 2) ? wb_forward : 32'bX;
     
     assign operand2 = alusrc ? reg2_fw_selection : immediat;
 
