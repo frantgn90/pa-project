@@ -13,9 +13,10 @@
  `include "memory/memory_async.v"
  `include "cache/cache.v"
  `include "stages/decode/decode_top.v"
- `include "stages/decode/regfile.v"
-
- `include "stages/decode/hazard_control.v"
+ 
+ `include "regfile.v"
+ `include "forwarding_control.v"
+ `include "hazard_control.v"
 
 
 module cpu(
@@ -30,6 +31,50 @@ module cpu(
     input wire [`WIDTH-1:0]     mem_data_out,
     output wire [`WIDTH-1:0]    mem_data_in
 );
+
+   /***************************************************************************
+    *  FREE MODULES, NONE STAGE OWNS THEM                                     *
+    ***************************************************************************/
+        
+    // Hazard control
+    wire [`REG_ADDR-1:0] addr_reg1;
+    wire [`REG_ADDR-1:0] addr_reg2;
+    wire                 id_regwrite;
+    wire [`REG_ADDR-1:0] id_dest_reg;
+    wire 		         ex_regwrite;
+    wire [`REG_ADDR-1:0] ex_dst_reg;
+    wire                 id_memread;
+    
+    wire                 hazard_stall;
+    
+    hazard_control hazards (
+        .if_id_reg_addr1(addr_reg1),
+        .if_id_reg_addr2(addr_reg2),
+        .id_ex_memread(id_memread),
+        .id_ex_dst_reg(id_dest_reg),
+        .stall(hazard_stall)
+    );
+    
+    // Forwarding control
+    wire [`REG_ADDR-1:0] id_src1;
+    wire [`REG_ADDR-1:0] id_src2;
+    reg [`REG_ADDR-1:0]  dc_dst_reg; // They are reg because the flip-flop behaviour is coded here
+    reg                  dc_regwrite;
+    
+    wire [1:0]           forward_src1;
+    wire [1:0]           forward_src2;
+    
+    forwarding_control forwarding (
+        .id_ex_src1(id_src1),
+        .id_ex_src2(id_src2),
+        .ex_mem_regwrite(ex_regwrite),
+        .ex_mem_dest_reg(ex_dst_reg),
+        .mem_wb_regwrite(dc_regwrite),
+        .mem_wb_dest_reg(dc_dst_reg),
+        .forward_src1(forward_src1),
+        .forward_src2(forward_src2)
+    );
+    
 
    /***************************************************************************
     *  MEMORY                                                                 *
@@ -53,7 +98,6 @@ module cpu(
     wire [`REG_SIZE-1:0]                wb_wdata; //result to write
     wire                                wb_regwrite; //write permission
 
-    // WIRE FOR HAZARD CONTROL SIGNALS
     reg pc_write;
     
     wire                                id_is_jump;
@@ -119,18 +163,16 @@ module cpu(
 
     //M1 and exec1: Need to be declared here because we need to plug this wires
     // for hazard control.
-    wire 		                ex_regwrite;
+    
     wire                                ex_zero;
     wire                                ex_overflow;
     wire [`REG_SIZE-1:0]                ex_result;
     wire [`ADDR_SIZE-1:0]               ex_pc_branch;
-    wire [`REG_ADDR-1:0]                ex_dst_reg;
+     
     reg                                id_ex_write;
     reg                                id_ex_reset;
      
     // Wires regfile <-> decode stage
-    wire [`REG_ADDR-1:0] addr_reg1;
-    wire [`REG_ADDR-1:0] addr_reg2;
     wire [`REG_SIZE-1:0] data_reg1;
     wire [`REG_SIZE-1:0] data_reg2;
 
@@ -142,23 +184,17 @@ module cpu(
     // NOTE: The outputs of the decode stage are defined as registers, then is not
     // necesary to explicitly manage its behaviour since they will behave as flip-flips
 
-    // Instr decoded signals
-   wire [`REG_ADDR-1:0]  id_dest_reg;
    wire [`ADDR_SIZE-1:0] id_mimmediat;
 
    // Control signals
-   wire                   id_regwrite;
    wire                   id_memtoreg;
    wire                   id_is_branch;
    wire                   id_memwrite;
-   wire                   id_memread;
    wire                   id_byteword;
    wire                   id_alusrc;
    wire [5:0]             id_opcode;
    wire [5:0]             id_funct_code;
    wire                   id_regwrite_mult_in;
-   
-   wire                   id_hazard_stall;
    
     regfile registers(
         .clk(clk),
@@ -179,7 +215,7 @@ module cpu(
         .out_pc(id_pc),
         .we(id_ex_write),
 
-        // Regfile wires
+        // Regfile wires (asynchronous)
         .src_reg1(addr_reg1),
         .src_reg2(addr_reg2),
         .rin_reg1(data_reg1),
@@ -208,17 +244,13 @@ module cpu(
 
         .is_mult(id_regwrite_mult_in),
         
-        // Hazard control
-        .ex_regwrite(id_regwrite),
-        .ex_dest_reg(id_dest_reg),
-        .m_regwrite(ex_regwrite),
-        .m_dest_reg(ex_dst_reg),
-    
-        .hazard_stall(id_hazard_stall),
-        
         // JUMP signals. These signals are async.
         .is_jump(id_is_jump),
-        .jump_addr(id_pc_jump)
+        .jump_addr(id_pc_jump),
+        .stall(hazard_stall),        // If 1, inject bubble to next stage
+        
+        .out_addr_reg1(id_src1),
+        .out_addr_reg2(id_src2)
     );
 
 
@@ -244,8 +276,8 @@ module cpu(
                .we(ex_mem_write),
                .opcode(id_opcode),
                .funct_code(id_funct_code),
-               .src1(id_data_reg1),
-               .reg2(id_data_reg2),
+               .reg1_data(id_data_reg1),
+               .reg2_data(id_data_reg2),
                .immediat(id_mimmediat),
                .old_pc(id_pc),
                .dst_reg_in(id_dest_reg),
@@ -254,6 +286,12 @@ module cpu(
                .is_byte(~id_byteword),
                .memtoreg(id_memtoreg),
                .is_branch_in(id_is_branch),
+               
+               // Forwarding mux control signals
+               .forward_src1(forward_src1),
+               .forward_src2(forward_src2),
+               .wb_forward(wb_wdata),
+               .mem_forward(ex_result), // The registers of boundary are inside the module
 
                .regwrite_out(ex_regwrite),
                .zero(ex_zero),
@@ -391,10 +429,8 @@ module cpu(
    /***************************************************************************
     *   MEMORY STAGE                                                          *
     ***************************************************************************/
-
-   reg [`REG_ADDR-1:0]                 dc_dst_reg;
+   
    reg [`REG_SIZE-1:0]                 dc_wdata;
-   reg                                 dc_regwrite;
 
    wire                                dc_is_byte;
    wire                                dc_is_write;
@@ -411,8 +447,8 @@ module cpu(
    wire [`REG_SIZE-1:0]                dc_mem_read_addr;
    wire [`WIDTH-1:0]                   dc_mem_read_data;
    wire                                dc_mem_read_ack;
-   reg                                mem_wb_reset;
-   reg                                mem_wb_write;
+   reg                                 mem_wb_reset;
+   reg                                 mem_wb_write;
     cache Dcache(
         .clk(clk),
         .reset(reset),
@@ -505,7 +541,7 @@ module cpu(
          mem_wb_write <= 1'b1;
       end // if (dc_stall)
       //TODO ex_isjump | ex_exc_ret
-      else if (id_hazard_stall) begin
+      else if (hazard_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
          id_ex_reset <= 1'b1;
