@@ -106,6 +106,33 @@ module control (
                 byteword 	<= "X";
                 alusrc 		<= "X";
             end
+            `OP_LI: begin
+               regwrite 	<= 1;
+               memtoreg 	<= 0;
+               branch		<= 0;
+               memwrite 	<= 0;
+               memread 	<= 0;
+               byteword 	<= "X";
+               alusrc 		<= 0;
+            end
+            `OP_ADDI: begin
+               regwrite 	<= 1;
+               memtoreg 	<= 0;
+               branch		<= 0;
+               memwrite 	<= 0;
+               memread 	<= 0;
+               byteword 	<= "X";
+               alusrc 		<= 0;
+            end
+/*            OP_ADDIU: begin
+                 regwrite 	<= 1;
+                 memtoreg 	<= 0;
+                 branch		<= 0;
+                 memwrite 	<= 0;
+                 memread 	<= 0;
+                 byteword 	<= "X";
+                 alusrc 		<= 0;
+            end*/
             /*
             JUMP AND IRET NOT DONE
             */

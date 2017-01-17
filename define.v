@@ -30,6 +30,9 @@
 //OPERATIONS CODE
 `define OP_RTYPE 6'h0
 `define OP_LDB 6'h20
+`define OP_ADDI 6'h8
+`define OP_ADDIU 6'h9
+`define OP_LI 6'h9 //SAME CODE THAN ADDIU, so we can't have both at the same implementation
 `define OP_LDW 6'h23
 `define OP_STB 6'h28
 `define OP_STW 6'h2b

@@ -1,0 +1,12 @@
+---First download gcc-5-mips-linux-gnu:
+
+sudo apt-get install gcc-5-mips-linux-gnu
+
+----Compile:
+
+mips-linux-gnu-gcc-5 -c program.s
+
+---See Hexadecimal
+
+mips-linux-gnu-objdump -d program.o
+

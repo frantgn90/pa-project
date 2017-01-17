@@ -11,15 +11,17 @@ module alucontrol(
 
 always @* begin
 		casex (opcode)
-			`OP_LDB:   aluop_out <= `ALUOP_ADD;
-			`OP_LDW:   aluop_out <= `ALUOP_ADD;
-			`OP_STB:   aluop_out <= `ALUOP_ADD;
-      `OP_BEQ:   aluop_out <= `ALUOP_SUB;
-			`OP_STW:   aluop_out <= `ALUOP_ADD;
-			`OP_MOV:  aluop_out <= `ALUOP_MOV;
-			`OP_JUMP: aluop_out <= `ALUOP_JUMP;
+			`OP_LDB:       aluop_out <= `ALUOP_ADD;
+			`OP_LDW:       aluop_out <= `ALUOP_ADD;
+			`OP_STB:       aluop_out <= `ALUOP_ADD;
+			`OP_LI:        aluop_out <= `ALUOP_ADD;
+			`OP_ADDI:      aluop_out <= `ALUOP_ADD;
+      `OP_BEQ:       aluop_out <= `ALUOP_SUB;
+			`OP_STW:       aluop_out <= `ALUOP_ADD;
+			`OP_MOV:       aluop_out <= `ALUOP_MOV;
+			`OP_JUMP:      aluop_out <= `ALUOP_JUMP;
 		  `OP_TLBWRITE:  aluop_out <= aluop_out;
-			`OP_IRET: aluop_out <= aluop_out;
+			`OP_IRET:      aluop_out <= aluop_out;
 			`OP_RTYPE:
 //				`WARN(("ALU Control: Unexpected OP_RTYPE"))
 //			default:
