@@ -123,6 +123,9 @@ module decode_top(
     wire stall_execution;
     wire [`ADDR_SIZE-1:0] jump_imm;
 
+    wire [`ADDR_SIZE-1:0]  uns_mimmediat;
+    wire [`ADDR_SIZE-1:0]  sig_mimmediat;
+
     // Instruction decode
     assign opcode = instruction[31:26];
     assign functcode = instruction[5:0];
@@ -139,6 +142,9 @@ module decode_top(
     assign jump_imm = instruction[25:0];
     assign jump_addr = pc & 32'hf0000000 | (jump_imm << 2);
     assign is_jump = (opcode == `OP_JUMP);
+   
+   assign sig_mimmediat[`ADDR_SIZE-1:0] = {{11{instruction[20]}},instruction[20:0]};
+   assign uns_mimmediat[`ADDR_SIZE-1:0] = {{11{1'b0}},instruction[20:0]};
 
     always @(posedge clk) begin            
         if (we) begin 
@@ -165,7 +171,8 @@ module decode_top(
                 dest_reg <= dst;
             end
             
-            mimmediat[`ADDR_SIZE-1:0] <= {{11{instruction[20]}},instruction[20:0]};
+            mimmediat <= sig_mimmediat;
+
         end
     end
 	 

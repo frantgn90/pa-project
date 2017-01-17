@@ -1,0 +1,11 @@
+#registres
+mem load -i C:/Users/Sergi/Dropbox/MIRI/PA/Project/pa_processor/proves/3adds_regs.txt -format hex /cpu/registers/mem
+#mem
+mem load -i C:/Users/Sergi/Dropbox/MIRI/PA/Project/pa_processor/proves/3adds_mem.txt -format hex /cpu/memory/mem
+
+
+force -freeze sim:/cpu/clk 0 0, 1 {50 ps} -r 100
+force -freeze sim:/cpu/reset 1 0
+run
+run
+force -freeze sim:/cpu/reset 0 0
