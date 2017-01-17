@@ -148,7 +148,6 @@ module decode_top(
             
             out_addr_reg1 <= src_reg1;
             out_addr_reg2 <= src_reg2;
-            dest_reg <= dst;
             rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
             rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
 
@@ -157,6 +156,13 @@ module decode_top(
             end
             else begin
                 is_mult <= 0;
+            end
+            
+            if (opcode == `OP_STB) begin
+                dest_reg <= src_reg2;
+            end
+            else begin
+                dest_reg <= dst;
             end
             
             mimmediat[`ADDR_SIZE-1:0] <= {{11{instruction[20]}},instruction[20:0]};

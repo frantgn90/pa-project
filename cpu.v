@@ -63,6 +63,9 @@ module cpu(
     
     wire [1:0]           forward_src1;
     wire [1:0]           forward_src2;
+    wire [1:0]           forward_mem;
+    
+    wire                 ex_do_write;
     
     forwarding_control forwarding (
         .id_ex_src1(id_src1),
@@ -71,8 +74,10 @@ module cpu(
         .ex_mem_dest_reg(ex_dst_reg),
         .mem_wb_regwrite(dc_regwrite),
         .mem_wb_dest_reg(dc_dst_reg),
+        .ex_mem_writemem(ex_do_write),
         .forward_src1(forward_src1),
-        .forward_src2(forward_src2)
+        .forward_src2(forward_src2),
+        .forward_mem(forward_mem)
     );
     
 
@@ -261,7 +266,6 @@ module cpu(
    wire [`REG_SIZE-1:0]                ex_reg_to_mem;//data to store, directly from regfile
    wire                                ex_memtoreg;
    wire                                ex_do_read;
-   wire                                ex_do_write;
    wire                                ex_is_byte;
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
@@ -449,6 +453,15 @@ module cpu(
    wire                                dc_mem_read_ack;
    reg                                 mem_wb_reset;
    reg                                 mem_wb_write;
+   
+   
+    wire [`REG_SIZE-1:0]                data_to_write;
+   
+    // MUX for forwarding
+    assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
+        : (forward_mem == 1) ? dc_memresult
+        : 32'bX;
+    
     cache Dcache(
         .clk(clk),
         .reset(reset),
@@ -456,7 +469,7 @@ module cpu(
         .do_read(ex_do_read),
         .is_byte(ex_is_byte),
         .do_write(ex_do_write),
-        .data_in(ex_reg_to_mem),
+        .data_in(data_to_write),
         .data_out(dc_memresult),
         .hit(dc_hit),
         .mem_write_req(dc_mem_write_req),

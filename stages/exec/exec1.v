@@ -98,7 +98,7 @@ module exec1(
             is_branch_out <= is_branch_in;
             do_read_out <= do_read;
             memtoreg_out <= memtoreg;
-            data_store <= operand2;
+            data_store <= reg2_data;
             pc_branch <= old_pc + (immediat << 2);
             zero <= alu_zero;
             overflow <= alu_overflow;
