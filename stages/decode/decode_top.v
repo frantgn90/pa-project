@@ -143,8 +143,8 @@ module decode_top(
     assign jump_addr = pc & 32'hf0000000 | (jump_imm << 2);
     assign is_jump = (opcode == `OP_JUMP);
    
-   assign sig_mimmediat[`ADDR_SIZE-1:0] = {{11{instruction[20]}},instruction[20:0]};
-   assign uns_mimmediat[`ADDR_SIZE-1:0] = {{11{1'b0}},instruction[20:0]};
+   assign sig_mimmediat[`ADDR_SIZE-1:0] = {{11{instruction[15]}},instruction[15:0]};
+   assign uns_mimmediat[`ADDR_SIZE-1:0] = {{11{1'b0}},instruction[15:0]};
 
     always @(posedge clk) begin            
         if (we) begin 

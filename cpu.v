@@ -438,7 +438,6 @@ module cpu(
 
    wire                                dc_is_byte;
    wire                                dc_is_write;
-   wire [`REG_SIZE-1:0]                dc_data_out;
    wire [`REG_SIZE-1:0]                dc_memresult;
    wire                                dc_hit;
 
@@ -459,7 +458,7 @@ module cpu(
    
     // MUX for forwarding
     assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
-        : (forward_mem == 1) ? dc_memresult
+        : (forward_mem == 1) ? dc_wdata
         : 32'bX;
     
     cache Dcache(
@@ -497,7 +496,7 @@ module cpu(
       else if (mem_wb_write) begin
          dc_dst_reg <= ex_dst_reg;
          dc_regwrite <= ex_regwrite;
-         dc_wdata <= ex_memtoreg? dc_data_out : ex_result;
+         dc_wdata <= ex_memtoreg? dc_memresult : ex_result;
       end
    end
 
@@ -510,15 +509,15 @@ module cpu(
         .ic_read_addr(ic_mem_read_addr),
         .ic_read_data(ic_mem_read_data),
 
-        .dc_read_req(dc_mem_write_req),
-        .dc_read_ack(dc_mem_write_ack),
-        .dc_read_addr(dc_mem_write_addr),
-        .dc_read_data(dc_mem_write_data),
+        .dc_read_req(dc_mem_read_req),
+        .dc_read_ack(dc_mem_read_ack),
+        .dc_read_addr(dc_mem_read_addr),
+        .dc_read_data(dc_mem_read_data),
 
-        .dc_write_req(dc_mem_read_req),
-        .dc_write_ack(dc_mem_read_ack),
-        .dc_write_addr(dc_mem_read_addr),
-        .dc_write_data(dc_mem_read_data),
+        .dc_write_req(dc_mem_write_req),
+        .dc_write_ack(dc_mem_write_ack),
+        .dc_write_addr(dc_mem_write_addr),
+        .dc_write_data(dc_mem_write_data),
 
         .mem_enable(mem_enable),
         .mem_rw(mem_rw),
@@ -548,8 +547,8 @@ module cpu(
          pc_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b0;
-         ex_mem_reset <= 1'b1;
-         ex_mem_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b0;
          mem_wb_reset <= 1'b1;
          mem_wb_write <= 1'b1;
       end // if (dc_stall)
@@ -567,7 +566,7 @@ module cpu(
       else if(ic_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         id_ex_reset <= 1'b0;
+         id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
          ex_mem_write <= 1'b1;
