@@ -117,6 +117,7 @@ module decode_top(
     wire [5:0]                   functcode;// Code for rtype instructions
     
     wire [`REG_ADDR-1:0] dst;
+    wire [`REG_ADDR-1:0] dst_load;
     wire [`REG_SIZE-1:0] reg1_data;
     wire [`REG_SIZE-1:0] reg2_data;
 
@@ -131,6 +132,7 @@ module decode_top(
     assign functcode = instruction[5:0];
     
     assign dst = instruction[15:11];
+    assign dst_load = instruction[20:16];
     assign src_reg1 = instruction[25:21];
     assign src_reg2 = instruction[20:16];
 
@@ -166,6 +168,9 @@ module decode_top(
             
             if (opcode == `OP_STB) begin
                 dest_reg <= src_reg2;
+            end
+            else if (opcode == `OP_LDW) begin // TODO: Mirar LDI LDB
+                dest_reg <= dst_load;
             end
             else begin
                 dest_reg <= dst;

@@ -9,3 +9,23 @@ force -freeze sim:/cpu/reset 1 0
 run
 run
 force -freeze sim:/cpu/reset 0 0
+mem load -i C:/Users/frant/Repositories/pa_processor/proves/load-store_regs.txt -format hex /cpu/registers/mem
+add wave -position end  sim:/cpu/clk
+add wave -position end  sim:/cpu/if_new_pc
+add wave -position end  sim:/cpu/if_instruction
+add wave -position end  sim:/cpu/ic_memresult
+add wave -position end  sim:/cpu/ic_stall
+add wave -position end  sim:/cpu/id_data_reg1
+add wave -position end  sim:/cpu/id_data_reg2
+add wave -position end  sim:/cpu/id_dest_reg
+add wave -position end  sim:/cpu/ex_reg_to_mem
+add wave -position end  sim:/cpu/ex_result
+add wave -position end  sim:/cpu/dc_memresult
+add wave -position end  sim:/cpu/dc_wdata
+add wave -position end  sim:/cpu/wb_wdata
+add wave -position end  sim:/cpu/wb_regwrite
+add wave -position end  sim:/cpu/wb_wreg
+add wave -position end  sim:/cpu/mem_rw
+add wave -position end  sim:/cpu/mem_ack
+add wave -position end  sim:/cpu/mem_addr
+add wave -position end  sim:/cpu/mem_data_out
