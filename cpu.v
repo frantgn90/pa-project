@@ -458,7 +458,7 @@ module cpu(
    
     // MUX for forwarding
     assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
-        : (forward_mem == 1) ? dc_memresult
+        : (forward_mem == 1) ? dc_wdata
         : 32'bX;
     
     cache Dcache(
