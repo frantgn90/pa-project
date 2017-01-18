@@ -169,7 +169,6 @@ module decode_top(
                 is_mult <= 0;
             end
             if (opcode == `OP_STB | opcode == `OP_STW) begin
-               //dest_reg <= src_reg2;
                dest_reg <= 0;//In stores there is no destination register
             end
             else if (opcode == `OP_LDW) begin // TODO: Mirar LDI LDB
