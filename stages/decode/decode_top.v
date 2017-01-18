@@ -153,7 +153,14 @@ module decode_top(
             funct_code = functcode;
             
             out_addr_reg1 <= src_reg1;
-            out_addr_reg2 <= src_reg2;
+            
+            if (opcode == `OP_LDW) begin
+                out_addr_reg2 <= 32'hXXXXXXXX;
+            end
+            else begin
+                out_addr_reg2 <= src_reg2;
+            end
+            
             rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
             rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
 
