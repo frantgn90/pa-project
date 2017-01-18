@@ -38,7 +38,6 @@ module decode_top(
      // Instruction decoded signals
     dest_reg,	    // Destination register
     mimmediat,	    // Memory type instructions immediat
-
     // Instruction control signals
     regwrite,	    // WB Stage: Permission write
     memtoreg,	    // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
@@ -91,7 +90,6 @@ module decode_top(
 
     output reg [`REG_ADDR-1:0] dest_reg;
     output reg [`ADDR_SIZE-1:0] mimmediat;
-    
     output [`ADDR_SIZE-1:0] jump_addr;
     output is_jump; 
 
@@ -153,28 +151,26 @@ module decode_top(
             out_pc <= pc;
             op_code <= opcode;
             funct_code = functcode;
-            
+            rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
+            rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
             out_addr_reg1 <= src_reg1;
-            
+            mimmediat <= sig_mimmediat;
+
             if (opcode == `OP_LDW) begin
                 out_addr_reg2 <= 32'hXXXXXXXX;
             end
             else begin
                 out_addr_reg2 <= src_reg2;
             end
-            
-            rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
-            rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
-
             if (opcode == `OP_RTYPE && functcode == `FN_MUL) begin
                 is_mult <= 1;
             end
             else begin
                 is_mult <= 0;
             end
-            
-            if (opcode == `OP_STB) begin
-                dest_reg <= src_reg2;
+            if (opcode == `OP_STB | opcode == `OP_STW) begin
+               //dest_reg <= src_reg2;
+               dest_reg <= 0;//In stores there is no destination register
             end
             else if (opcode == `OP_LDW) begin // TODO: Mirar LDI LDB
                 dest_reg <= dst_load;
@@ -182,8 +178,6 @@ module decode_top(
             else begin
                 dest_reg <= dst;
             end
-            
-            mimmediat <= sig_mimmediat;
 
         end
     end

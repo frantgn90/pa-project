@@ -9,7 +9,8 @@ force -freeze sim:/cpu/reset 1 0
 run
 run
 force -freeze sim:/cpu/reset 0 0
-mem load -i C:/Users/frant/Repositories/pa_processor/proves/load-store_regs.txt -format hex /cpu/registers/mem
+mem load -i /home/sergi/Dropbox/MIRI/PA/Project/pa_processor/proves/load-store_regs.txt -format hex /cpu/registers/mem
+#mem load -i C:/Users/frant/Repositories/pa_processor/proves/load-store_regs.txt -format hex /cpu/registers/mem
 add wave -position end  sim:/cpu/clk
 add wave -position end  sim:/cpu/if_new_pc
 add wave -position end  sim:/cpu/if_instruction

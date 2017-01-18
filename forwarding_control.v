@@ -13,7 +13,8 @@
  module forwarding_control(
     id_ex_src1,     // EX stage: register 1
     id_ex_src2,     // EX stage: register 2
-    
+   
+    ex_mem_src2,       // MEM stage: Address from register 2, when we have load RX and after store RX
     ex_mem_regwrite,   // MEM stage: Register write permission 
     ex_mem_dest_reg,   // MEM stage: Register destination address
     ex_mem_writemem,   // MEM stage: Permission of writing
@@ -29,6 +30,7 @@
     input wire [`REG_ADDR-1:0] id_ex_src1;
     input wire [`REG_ADDR-1:0] id_ex_src2;
     input wire                 ex_mem_regwrite;
+    input wire [`REG_ADDR-1:0] ex_mem_src2;
     input wire [`REG_ADDR-1:0] ex_mem_dest_reg;
     input wire                 ex_mem_writemem;
     input wire                 mem_wb_regwrite;
@@ -86,7 +88,7 @@
         // destination reg but the address of the source register. This is because
         // the store is not using this bus since it does not writes to RF.
         if (mem_wb_regwrite && ex_mem_writemem && mem_wb_dest_reg != 0
-            && (mem_wb_dest_reg == ex_mem_dest_reg))
+            && (mem_wb_dest_reg == ex_mem_src2))
         begin
            forward_mem = 2'b01;
         end

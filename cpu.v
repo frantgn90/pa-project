@@ -60,7 +60,7 @@ module cpu(
     wire [`REG_ADDR-1:0] id_src2;
     reg [`REG_ADDR-1:0]  dc_dst_reg; // They are reg because the flip-flop behaviour is coded here
     reg                  dc_regwrite;
-    
+    reg [`REG_ADDR-1:0]   ex_addr_reg2;
     wire [1:0]           forward_src1;
     wire [1:0]           forward_src2;
     wire [1:0]           forward_mem;
@@ -75,6 +75,7 @@ module cpu(
         .mem_wb_regwrite(dc_regwrite),
         .mem_wb_dest_reg(dc_dst_reg),
         .ex_mem_writemem(ex_do_write),
+        .ex_mem_src2(ex_addr_reg2),
         .forward_src1(forward_src1),
         .forward_src2(forward_src2),
         .forward_mem(forward_mem)
@@ -245,15 +246,16 @@ module cpu(
         .alusrc(id_alusrc),	    // EX stage: src2 source mux govern
         .funct_code(id_funct_code),		    // EX stage: FUNCTION code for rtype operation
         .op_code(id_opcode),
-  
+
+
 
         .is_mult(id_regwrite_mult_in),
-        
+
         // JUMP signals. These signals are async.
         .is_jump(id_is_jump),
         .jump_addr(id_pc_jump),
         .stall(hazard_stall),        // If 1, inject bubble to next stage
-        
+
         .out_addr_reg1(id_src1),
         .out_addr_reg2(id_src2)
     );
@@ -454,12 +456,12 @@ module cpu(
    reg                                 mem_wb_write;
    
    
-    wire [`REG_SIZE-1:0]                data_to_write;
+   reg [`REG_SIZE-1:0]                data_to_write;
    
     // MUX for forwarding
-    assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
-        : (forward_mem == 1) ? dc_wdata
-        : 32'bX;
+   // assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
+   //     : (forward_mem == 1) ? dc_wdata
+   //     : 32'bX;
     
     cache Dcache(
         .clk(clk),
@@ -487,7 +489,8 @@ module cpu(
     assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
     assign wb_regwrite = m5_regwrite_out | dc_regwrite;
    always @(posedge clk) begin
-      
+      ex_addr_reg2 <= id_src2;
+      data_to_write <= forward_mem? dc_wdata: ex_reg_to_mem;
       if (mem_wb_reset) begin
         dc_dst_reg <= {`REG_ADDR{1'b0}};
         dc_regwrite <= 1'b0;
