@@ -25,7 +25,7 @@ module arbiter (
 	input wire [`WIDTH-1:0] dc_write_data,
 	// Main memory
 	output reg mem_enable = 0,
-	output reg mem_rw = 0,
+	output reg mem_rw = 1,	//1 means READ, 0 WRITE
 	input wire mem_ack,
 	output reg [`REG_SIZE-1:0] mem_addr = 0,
 	output reg [`WIDTH-1:0] mem_data_in = 0,
