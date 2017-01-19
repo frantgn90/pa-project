@@ -18,6 +18,8 @@ always @* begin
 			`OP_ADDI:      aluop_out <= `ALUOP_ADD;
       `OP_BEQ:       aluop_out <= `ALUOP_SUB;
 			`OP_STW:       aluop_out <= `ALUOP_ADD;
+      `OP_ORI:       aluop_out <= `ALUOP_ORI;
+      `OP_LUI:       aluop_out <= `ALUOP_LUI;
 			`OP_MOV:       aluop_out <= `ALUOP_MOV;
 			`OP_JUMP:      aluop_out <= `ALUOP_JUMP;
 		  `OP_TLBWRITE:  aluop_out <= aluop_out;

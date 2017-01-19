@@ -29,7 +29,17 @@ module alu(
 					out <= src1 - src2;
 					if ((src1[`REG_SIZE-1] != src2[`REG_SIZE-1]) && (out[`REG_SIZE-1] != src1[`REG_SIZE-1])) overflow <= 1;
 					else overflow <= 0;
-			end
+		end
+    `ALUOP_ORI: begin
+       zero <= "x";
+       out <= src1 | src2;
+       overflow <= 0;
+    end
+    `ALUOP_LUI: begin
+       zero <= 0;
+       overflow <= 0;
+       out <= {src2[15:0],{16{1'b0}}};
+    end
 		//`ALUOP_MUL: begin
 		//			zero <= 0;
 		//			temp <= src1 * src2;

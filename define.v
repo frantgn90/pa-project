@@ -31,13 +31,16 @@
 `define OP_RTYPE 6'h0
 `define OP_LDB 6'h20
 `define OP_ADDI 6'h8
-`define OP_ADDIU 6'h9
+//`define OP_ADDIU 6'h9
 `define OP_LI 6'h9 //SAME CODE THAN ADDIU, so we can't have both at the same implementation
 `define OP_LDW 6'h23
 `define OP_STB 6'h28
 `define OP_STW 6'h2b
 `define OP_MOV 6'h10
 `define OP_BEQ 6'h4
+`define OP_BNE 6'h5 //TODO
+`define OP_ORI 6'hD
+`define OP_LUI 6'hF
 `define OP_JUMP 6'h2
 `define OP_TLBWRITE 6'h13
 `define OP_IRET 6'h12 
@@ -63,6 +66,8 @@
 `define ALUOP_MUL 5'h3
 `define ALUOP_MOV 5'h4
 `define ALUOP_JUMP 5'h5
+`define ALUOP_ORI 5'h6
+`define ALUOP_LUI 5'h7
 /*
 `define ALUOP_ADD 7'h00
 `define ALUOP_SUB 7'h01
@@ -87,7 +92,8 @@
 `define MEMORY_WIDTH 128	  //MEMORY LINE WIDTH
 `define MEMORY_DEPTH 16384	//MEMORY LINES -> 2 TO THE 16
 `define WIDTH 128		//CACHE LINE WIDTH
-`define MEMORY_DATA "proves/load-store_mem.txt"
+//`define MEMORY_DATA "proves/load-store_mem.txt"
+`define MEMORY_DATA "benchmarks/buffer_sum.mem"
 `ifndef MEMORY_LATENCY
 `define MEMORY_LATENCY 1000 //as we want to wait 10 cycles of clock to receive from memory and cpu clock is 100
 `endif
