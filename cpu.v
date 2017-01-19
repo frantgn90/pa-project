@@ -103,28 +103,27 @@ module cpu(
     wire [`REG_ADDR-1:0]                wb_wreg; //destination register
     wire [`REG_SIZE-1:0]                wb_wdata; //result to write
     wire                                wb_regwrite; //write permission
+    wire                                 addr_branch;
 
-    reg pc_write;
-    
+    reg                                 pc_write;
     wire                                id_is_jump;
     wire [`ADDR_SIZE-1:0]               id_pc_jump;
-    
-    wire                                mem_is_branch;
+    wire                                is_branch;
     wire                                if_is_exception = 1'b0;
-    wire [`ADDR_SIZE-1:0]               mem_branch;
     //wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
-   reg [`INSTR_SIZE-1:0]                if_instruction;
+    reg [`INSTR_SIZE-1:0]                if_instruction;
+
 
     fetch fetch(
         .clk(clk),
         .is_jump(id_is_jump),
-        .is_branch(mem_is_branch),
+        .is_branch(is_branch ),
         .is_exception(if_is_exception),
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
-        .pc_branch(mem_branch),
+        .pc_branch(addr_branch),
         .old_pc(if_new_pc),
         .new_pc(if_new_pc),
         .pc_write(pc_write)
@@ -157,7 +156,7 @@ module cpu(
         .mem_read_data(ic_mem_read_data),
         .mem_read_ack(ic_mem_read_ack)
     );
-    
+
     always @(posedge clk) begin
         if (pc_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
         else if (pc_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
@@ -173,7 +172,6 @@ module cpu(
     wire                                ex_zero;
     wire                                ex_overflow;
     wire [`REG_SIZE-1:0]                ex_result;
-    wire [`ADDR_SIZE-1:0]               ex_pc_branch;
      
     reg                                id_ex_write;
     reg                                id_ex_reset;
@@ -181,6 +179,7 @@ module cpu(
     // Wires regfile <-> decode stage
     wire [`REG_SIZE-1:0] data_reg1;
     wire [`REG_SIZE-1:0] data_reg2;
+    wire                  id_bne;
 
     // Wires decode stage <-> exec stage
     wire [`ADDR_SIZE-1:0] id_pc;
@@ -260,7 +259,9 @@ module cpu(
         .out_addr_reg2(id_src2)
     );
 
-
+   assign addr_branch = if_new_pc + (id_mimmediat << 2);
+   assign is_branch = id_is_branch & id_bne;
+   assign id_bne = ((id_data_reg1 - id_data_reg2) == {32{1'b0}});
 
     /**************************************************************************
      *  EXEC STAGE                                                            *
@@ -291,7 +292,6 @@ module cpu(
                .do_write(id_memwrite),
                .is_byte(~id_byteword),
                .memtoreg(id_memtoreg),
-               .is_branch_in(id_is_branch),
                
                // Forwarding mux control signals
                .forward_src1(forward_src1),
@@ -304,12 +304,10 @@ module cpu(
                .data_store(ex_reg_to_mem),
                .overflow(ex_overflow),
                .alu_result(ex_result),
-               .pc_branch(ex_pc_branch),
                .do_write_out(ex_do_write),
                .do_read_out(ex_do_read),
                .is_byte_out(ex_is_byte),
                .memtoreg_out(ex_memtoreg),
-               .is_branch_out(ex_is_branch),
                .dst_reg(ex_dst_reg)
                );
 
@@ -483,8 +481,6 @@ module cpu(
         .mem_read_ack(dc_mem_read_ack)
     );
 
-    assign mem_branch = ex_pc_branch;
-    assign mem_is_branch = ex_is_branch & ex_zero; //If we branch
     assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
     assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
     assign wb_regwrite = m5_regwrite_out | dc_regwrite;
@@ -576,6 +572,16 @@ module cpu(
          mem_wb_reset <= 1'b0;
          mem_wb_write <= 1'b1;
       end // if (ic_stall)
+      else if(id_is_branch) begin
+         pc_reset <= 1'b0;
+         pc_write <= 1'b0;
+         id_ex_reset <= 1'b1;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b0;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b0;
+      end
       else begin
          pc_reset <= 1'b0;
          pc_write <= 1'b1;

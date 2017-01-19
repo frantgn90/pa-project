@@ -97,7 +97,7 @@ module decode_top(
     output regwrite;
     output memtoreg;
 
-    output branch;
+   output wire branch;
     output memwrite;
     output memread;
     output byteword;

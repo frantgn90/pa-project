@@ -21,7 +21,6 @@ module exec1(
     input wire                  do_write,//memory write permission
     input wire                  is_byte,
     input wire                  memtoreg,//take data from dcache or exec1
-    input wire                  is_branch_in,//if it is a branch
     input wire [1:0]            forward_src1,  // FORWARD CONTROL: Manages the forward mux 1
     input wire [1:0]            forward_src2,  // FORWARD CONTROL: Manages the forward mux 2
     input wire [`REG_SIZE-1:0]  wb_forward,    // WB stage: The result of the memory stage
@@ -32,13 +31,11 @@ module exec1(
     output reg [`REG_SIZE-1:0]  data_store,
     output reg                  overflow = 1'd0, //Alu oveflow
     output reg [`REG_SIZE-1:0]  alu_result, //Alu result
-    output reg [`ADDR_SIZE-1:0] pc_branch = 32'h0000, //New PC when branch,
     output reg                  do_read_out,
     output reg                  do_write_out,
     output reg                  is_byte_out,
 
     output reg                  memtoreg_out,
-    output reg                  is_branch_out,
     output reg [`REG_ADDR-1:0]  dst_reg //Destination Register
 );
    
@@ -81,11 +78,9 @@ module exec1(
 
     always @(posedge clk) begin
         if (reset) begin
-            is_branch_out <= 1'b0;
             do_read_out <= 1'b0;
             memtoreg_out <= 1'b0;
             data_store <= {`REG_SIZE{1'b0}};
-            pc_branch <= {`ADDR_SIZE{1'b0}};
             zero <= 1'b0;
             overflow <= 1'b0;
             alu_result <= {`REG_SIZE{1'b0}};
@@ -95,11 +90,9 @@ module exec1(
             is_byte_out <= 1'b0;
 
         end else if (we) begin
-            is_branch_out <= is_branch_in;
             do_read_out <= do_read;
             memtoreg_out <= memtoreg;
             data_store <= reg2_data;
-            pc_branch <= old_pc + (immediat << 2);
             zero <= alu_zero;
             overflow <= alu_overflow;
             alu_result <= aluresult;

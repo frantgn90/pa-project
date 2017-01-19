@@ -142,6 +142,15 @@ module control (
                  byteword <= "X";
                  alusrc <= 0;
               end
+              `OP_BNE: begin
+                 regwrite <= 0;
+                 memtoreg <= "X";
+                 branch <= 1;
+                 memwrite <= 0;
+                 memread <= 0;
+                 byteword <= "X";
+                 alusrc <= 1;
+              end
 /*            OP_ADDIU: begin
                  regwrite 	<= 1;
                  memtoreg 	<= 0;
