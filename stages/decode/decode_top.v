@@ -29,11 +29,6 @@ module decode_top(
     // Need to communicate with the external register bank
     src_reg1,		// Address for register 1
     src_reg2,		// Address for register 2
-    rin_reg1,	    // Readed register 1
-    rin_reg2,	    // Readed register 2
-
-    rout_reg1,
-    rout_reg2,
 
      // Instruction decoded signals
     dest_reg,	    // Destination register
@@ -76,8 +71,6 @@ module decode_top(
     // Need to communicate with the external register bank
     output wire [`REG_ADDR-1:0] src_reg1;		// Address for register 1
     output wire [`REG_ADDR-1:0] src_reg2;		// Address for register 2
-    input wire [`REG_SIZE-1:0]  rin_reg1;	// Readed register 1
-    input wire [`REG_SIZE-1:0]  rin_reg2;	// Readed register 2
 
     // Signals for the next stage. There are registers
     // Output signals
@@ -85,8 +78,6 @@ module decode_top(
 
     output reg [`REG_ADDR-1:0] out_addr_reg1;
     output reg [`REG_ADDR-1:0] out_addr_reg2;
-    output reg [`REG_SIZE-1:0] rout_reg1; 
-    output reg [`REG_SIZE-1:0] rout_reg2;
 
     output reg [`REG_ADDR-1:0] dest_reg;
     output reg [`ADDR_SIZE-1:0] mimmediat;
@@ -134,10 +125,6 @@ module decode_top(
     assign src_reg1 = instruction[25:21];
     assign src_reg2 = instruction[20:16];
 
-    // From regfile to boundary registers wire
-    assign reg1_data[`REG_SIZE-1:0] = rin_reg1[`REG_SIZE-1:0];
-    assign reg2_data[`REG_SIZE-1:0] = rin_reg2[`REG_SIZE-1:0];
-    
     // Async signals
     assign jump_imm = instruction[25:0];
     assign jump_addr = pc & 32'hf0000000 | (jump_imm << 2);
@@ -151,8 +138,6 @@ module decode_top(
             out_pc <= pc;
             op_code <= opcode;
             funct_code = functcode;
-            rout_reg1[`REG_SIZE-1:0] <= reg1_data[`REG_SIZE-1:0];
-            rout_reg2[`REG_SIZE-1:0] <= reg2_data[`REG_SIZE-1:0];
             out_addr_reg1 <= src_reg1;
             mimmediat <= sig_mimmediat;
 
@@ -171,7 +156,7 @@ module decode_top(
             if (opcode == `OP_STB | opcode == `OP_STW) begin
                dest_reg <= 0;//In stores there is no destination register
             end
-            else if (opcode == `OP_LDW) begin // TODO: Mirar LDI LDB
+            else if (opcode == `OP_LDW | opcode == `OP_ORI | opcode == `OP_ADDI) begin // TODO: Mirar LDI LDB
                 dest_reg <= dst_load;
             end
             else begin

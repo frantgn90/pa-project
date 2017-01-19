@@ -21,16 +21,17 @@ module exec1(
     input wire                  do_write,//memory write permission
     input wire                  is_byte,
     input wire                  memtoreg,//take data from dcache or exec1
-    input wire [1:0]            forward_src1,  // FORWARD CONTROL: Manages the forward mux 1
-    input wire [1:0]            forward_src2,  // FORWARD CONTROL: Manages the forward mux 2
-    input wire [`REG_SIZE-1:0]  wb_forward,    // WB stage: The result of the memory stage
-    input wire [`REG_SIZE-1:0]  mem_forward,   // MEM stage: The result of the EXE stage 
+    input wire [1:0]            forward_src1, // FORWARD CONTROL: Manages the forward mux 1
+    input wire [1:0]            forward_src2, // FORWARD CONTROL: Manages the forward mux 2
+    input wire [`REG_SIZE-1:0]  wb_forward, // WB stage: The result of the memory stage
+    input wire [`REG_SIZE-1:0]  mem_forward, // MEM stage: The result of the EXE stage 
 
     output reg                  regwrite_out, //Write Permission
     output reg                  zero = 1'd0, //Alu zero
     output reg [`REG_SIZE-1:0]  data_store,
     output reg                  overflow = 1'd0, //Alu oveflow
     output reg [`REG_SIZE-1:0]  alu_result, //Alu result
+    output wire [`REG_SIZE-1:0] wire_alu_result, //Alu result
     output reg                  do_read_out,
     output reg                  do_write_out,
     output reg                  is_byte_out,
@@ -75,6 +76,7 @@ module exec1(
         : (forward_src2 == 2) ? wb_forward : 32'bX;
     
     assign operand2 = alusrc ? reg2_fw_selection : immediat;
+    assign wire_alu_result = aluresult;
 
     always @(posedge clk) begin
         if (reset) begin

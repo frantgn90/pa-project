@@ -9,4 +9,12 @@ mips-linux-gnu-gcc-5 -c program.s
 ---See Hexadecimal
 
 mips-linux-gnu-objdump -d program.o
+-----------------------------------------------IMPORTANT--------------------------
+As we have pseudoinstructions in our codes we must use ase.py
 
+pyhton ase.py program.s
+
+
+RESULTS:
+buffer_sum.s
+At $a0 -> register 4, we should have the valeu 8128

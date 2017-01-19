@@ -41,7 +41,7 @@ module cpu(
     wire [`REG_ADDR-1:0] addr_reg2;
     wire                 id_regwrite;
     wire [`REG_ADDR-1:0] id_dest_reg;
-    wire 		         ex_regwrite;
+    wire 		             ex_regwrite;
     wire [`REG_ADDR-1:0] ex_dst_reg;
     wire                 id_memread;
     
@@ -64,12 +64,17 @@ module cpu(
     wire [1:0]           forward_src1;
     wire [1:0]           forward_src2;
     wire [1:0]           forward_mem;
-    
+    wire                 forward_branch_src1;
+    wire                 forward_branch_src2;
     wire                 ex_do_write;
-    
+    reg [`INSTR_SIZE-1:0] if_instruction;// Fetch stage but needed for forwarding branches
+
     forwarding_control forwarding (
+        .if_id_branch_src1(if_instruction[25:21]),
+        .if_id_branch_src2(if_instruction[20:16]),
         .id_ex_src1(id_src1),
         .id_ex_src2(id_src2),
+        .id_ex_dst_reg(id_dest_reg),
         .ex_mem_regwrite(ex_regwrite),
         .ex_mem_dest_reg(ex_dst_reg),
         .mem_wb_regwrite(dc_regwrite),
@@ -78,7 +83,9 @@ module cpu(
         .ex_mem_src2(ex_addr_reg2),
         .forward_src1(forward_src1),
         .forward_src2(forward_src2),
-        .forward_mem(forward_mem)
+        .forward_mem(forward_mem),
+        .forward_branch_src1(forward_branch_src1),
+        .forward_branch_src2(forward_branch_src2)
     );
     
 
@@ -103,7 +110,7 @@ module cpu(
     wire [`REG_ADDR-1:0]                wb_wreg; //destination register
     wire [`REG_SIZE-1:0]                wb_wdata; //result to write
     wire                                wb_regwrite; //write permission
-    wire                                 addr_branch;
+    wire [`ADDR_SIZE-1:0]               addr_branch;
 
     reg                                 pc_write;
     wire                                id_is_jump;
@@ -113,13 +120,12 @@ module cpu(
     //wire [`ADDR_SIZE-1:0]               if_old_pc;
     wire [`ADDR_SIZE-1:0]               if_new_pc;
     reg                                 pc_reset;
-    reg [`INSTR_SIZE-1:0]                if_instruction;
 
 
     fetch fetch(
         .clk(clk),
         .is_jump(id_is_jump),
-        .is_branch(is_branch ),
+        .is_branch(is_branch),
         .is_exception(if_is_exception),
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
@@ -183,8 +189,9 @@ module cpu(
 
     // Wires decode stage <-> exec stage
     wire [`ADDR_SIZE-1:0] id_pc;
-    wire [`REG_SIZE-1:0] id_data_reg1;
-    wire [`REG_SIZE-1:0] id_data_reg2;
+    //Registers boundary decode <-> exec
+    reg [`REG_SIZE-1:0] id_data_reg1;
+    reg [`REG_SIZE-1:0] id_data_reg2;
 
     // NOTE: The outputs of the decode stage are defined as registers, then is not
     // necesary to explicitly manage its behaviour since they will behave as flip-flips
@@ -200,9 +207,12 @@ module cpu(
    wire [5:0]             id_opcode;
    wire [5:0]             id_funct_code;
    wire                   id_regwrite_mult_in;
-   
+   wire                   id_branch_1;
+   wire                   id_branch_2;
+
     regfile registers(
         .clk(clk),
+        .reset(reset),
         .rreg1(addr_reg1),
         .rreg2(addr_reg2),
         .wreg(wb_wreg),
@@ -212,7 +222,7 @@ module cpu(
         .rdata2(data_reg2)
     );
 
-    decode_top decode(
+   decode_top decode(
         .clk(clk),
         .reset(id_ex_reset),
         .instruction(if_instruction),
@@ -223,11 +233,6 @@ module cpu(
         // Regfile wires (asynchronous)
         .src_reg1(addr_reg1),
         .src_reg2(addr_reg2),
-        .rin_reg1(data_reg1),
-        .rin_reg2(data_reg2),
-
-        .rout_reg1(id_data_reg1),
-        .rout_reg2(id_data_reg2),
 
         // Instruction decoded signals
         .dest_reg(id_dest_reg),	    // Destination register
@@ -258,11 +263,18 @@ module cpu(
         .out_addr_reg1(id_src1),
         .out_addr_reg2(id_src2)
     );
-
-   assign addr_branch = if_new_pc + (id_mimmediat << 2);
+   wire [`REG_SIZE-1:0]   ex_wire_alu_result;//Wire that brings the result of alu directly to decode for calculate the branch
+   assign addr_branch = if_new_pc + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
    assign is_branch = id_is_branch & id_bne;
-   assign id_bne = ((id_data_reg1 - id_data_reg2) == {32{1'b0}});
-
+   assign id_branch_1 = forward_branch_src1? ex_wire_alu_result: data_reg1;
+   assign id_branch_2 = forward_branch_src2? ex_wire_alu_result: data_reg2;
+   assign id_bne = (id_branch_1 != id_branch_2);
+   always @(posedge clk) begin //registers boundary from decode to exec1 and M1
+      id_data_reg1 <= data_reg1;
+//id_internw_data_reg1;//internw -> intern wire
+      id_data_reg2 <= data_reg2;
+//id_internw_data_reg2;//internw -> intern wire
+   end
     /**************************************************************************
      *  EXEC STAGE                                                            *
      **************************************************************************/
@@ -273,6 +285,7 @@ module cpu(
    wire                                ex_is_branch;
    reg                                ex_mem_reset;
    reg                                ex_mem_write;
+   
 
 
    exec1 exec1(
@@ -303,6 +316,7 @@ module cpu(
                .zero(ex_zero),
                .data_store(ex_reg_to_mem),
                .overflow(ex_overflow),
+               .wire_alu_result(ex_wire_alu_result),
                .alu_result(ex_result),
                .do_write_out(ex_do_write),
                .do_read_out(ex_do_read),
