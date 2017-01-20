@@ -474,7 +474,7 @@ module cpu(
    reg                                 mem_wb_write;
    
    
-   reg [`REG_SIZE-1:0]                data_to_write;
+   wire [`REG_SIZE-1:0]                data_to_write;
    
     // MUX for forwarding
    // assign data_to_write = (forward_mem == 0) ? ex_reg_to_mem
@@ -488,7 +488,7 @@ module cpu(
         .do_read(ex_do_read),
         .is_byte(ex_is_byte),
         .do_write(ex_do_write),
-        .data_in(data_to_write),
+        .data_in(ex_reg_to_mem),
         .data_out(dc_memresult),
         .hit(dc_hit),
         .mem_write_req(dc_mem_write_req),
@@ -504,9 +504,11 @@ module cpu(
     assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
     assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
     assign wb_regwrite = m5_regwrite_out | dc_regwrite;
+    assign data_to_write = forward_mem? dc_wdata: ex_reg_to_mem;
+
    always @(posedge clk) begin
       ex_addr_reg2 <= id_src2;
-      data_to_write <= forward_mem? dc_wdata: ex_reg_to_mem;
+//      data_to_write <= forward_mem? dc_wdata: ex_reg_to_mem;
       if (mem_wb_reset) begin
         dc_dst_reg <= {`REG_ADDR{1'b0}};
         dc_regwrite <= 1'b0;
