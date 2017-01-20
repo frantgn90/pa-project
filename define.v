@@ -45,6 +45,9 @@
 `define OP_TLBWRITE 6'h13
 `define OP_IRET 6'h12 
 
+// When bubble is injected from Fetch, the opcode will be 0xFF
+`define OP_STALL 6'hff
+
 /*
 `define OPCODE_ADD 7'h00
 `define OPCODE_SUB 7'h01

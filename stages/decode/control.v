@@ -159,13 +159,21 @@ module control (
             begin
             `WARNING(("[CONTROL] Unknown OPCODE signal %x", opcode))
             end*/
+           `OP_STALL: begin
+              regwrite 	<= 0;
+              memtoreg 	<= "X";
+              memwrite 	<= 0;
+              memread 	<= 0;
+              byteword 	<= "X";
+              alusrc 	<= "X";
+           end
            default: begin
               regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
               byteword 	<= "X";
-              alusrc 		<= "X";
+              alusrc 	<= "X";
            end
          endcase
       end

@@ -167,7 +167,7 @@ module cpu(
 
     always @(posedge clk) begin
         if (if_id_reset) begin
-           if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
+           if_instruction[`INSTR_SIZE-1:0] <= 32'hffffffff; // opcode 0xff
            if_pc <= {`ADDR_SIZE{1'b0}};
         end
         else if (if_id_write) begin
@@ -595,7 +595,7 @@ module cpu(
         // Stall at fetch
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         if_id_reset <= 1'b0;
+         if_id_reset <= 1'b1;
          if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
