@@ -271,15 +271,24 @@ module cpu(
         .out_addr_reg1(id_src1),
         .out_addr_reg2(id_src2)
     );
+    
    wire [`REG_SIZE-1:0]   ex_wire_alu_result;//Wire that brings the result of alu directly to decode for calculate the branch
+   
    assign addr_branch = if_pc+4 + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
    assign is_branch = id_is_branch & id_bne;
    assign id_branch_1 = forward_branch_src1? ex_wire_alu_result: data_reg1;
    assign id_branch_2 = forward_branch_src2? ex_wire_alu_result: data_reg2;
    assign id_bne = (id_branch_1 != id_branch_2);
+   
    always @(posedge clk) begin //registers boundary from decode to exec1 and M1
-      id_data_reg1 <= data_reg1;
-      id_data_reg2 <= data_reg2;
+      if (id_ex_reset) begin
+        id_data_reg1 <= 32'b0;
+        id_data_reg2 <= 32'b0;
+      end
+      else if (id_ex_write) begin 
+        id_data_reg1 <= data_reg1;
+        id_data_reg2 <= data_reg2;
+      end
    end
     /**************************************************************************
      *  EXEC STAGE                                                            *
