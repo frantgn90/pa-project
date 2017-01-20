@@ -215,8 +215,8 @@ module cpu(
    wire [5:0]             id_opcode;
    wire [5:0]             id_funct_code;
    wire                   id_regwrite_mult_in;
-   wire                   id_branch_1;
-   wire                   id_branch_2;
+   wire [`REG_SIZE-1:0]   id_branch_1;
+   wire [`REG_SIZE-1:0]   id_branch_2;
 
     regfile registers(
         .clk(clk),

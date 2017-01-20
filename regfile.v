@@ -6,7 +6,8 @@
 module regfile(
 	             input wire                  clk,
                input wire                  reset,
-	             input wire [`REG_ADDR-1:0]  rreg1, rreg2,
+	             input wire [`REG_ADDR-1:0]  rreg1,
+               input wire [`REG_ADDR-1:0]  rreg2,
 	             output wire [`REG_SIZE-1:0] rdata1,
 	             output wire [`REG_SIZE-1:0] rdata2,
 	             input wire                  regwrite,
@@ -20,8 +21,8 @@ module regfile(
 
    // Reading asynch
    //
-   assign rdata1 = ((rreg1 == wreg) && regwrite)? wdata : mem[rreg1][`REG_SIZE-1:0];
-   assign rdata2 = ((rreg2 == wreg) && regwrite)? wdata : mem[rreg2][`REG_SIZE-1:0];
+   assign rdata1 = ((rreg1 === wreg) && regwrite)? wdata : mem[rreg1][`REG_SIZE-1:0];
+   assign rdata2 = ((rreg2 === wreg) && regwrite)? wdata : mem[rreg2][`REG_SIZE-1:0];
 
    /*   always @* begin
 

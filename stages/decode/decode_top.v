@@ -107,8 +107,6 @@ module decode_top(
     
     wire [`REG_ADDR-1:0] dst;
     wire [`REG_ADDR-1:0] dst_load;
-    wire [`REG_SIZE-1:0] reg1_data;
-    wire [`REG_SIZE-1:0] reg2_data;
 
     wire stall_execution;
     wire [`ADDR_SIZE-1:0] jump_imm;
