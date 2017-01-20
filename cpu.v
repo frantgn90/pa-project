@@ -590,10 +590,11 @@ module cpu(
          mem_wb_write <= 1'b1;
       end // if (id_hazard_stall)
       else if(ic_stall) begin
+        // Stall at fetch
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         if_id_reset <= 1'b1;
-         if_id_write <= 1'b1;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
