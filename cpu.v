@@ -118,7 +118,10 @@ module cpu(
     wire                                is_branch;
     wire                                if_is_exception = 1'b0;
     //wire [`ADDR_SIZE-1:0]               if_old_pc;
-    wire [`ADDR_SIZE-1:0]               if_new_pc;
+    reg [`ADDR_SIZE-1:0]                if_pc;
+   wire [`ADDR_SIZE-1:0]                pc;
+   reg                                  if_id_write;
+   reg                                  if_id_reset;
     reg                                 pc_reset;
 
 
@@ -130,8 +133,7 @@ module cpu(
         .reset(pc_reset),
         .pc_jump(id_pc_jump),
         .pc_branch(addr_branch),
-        .old_pc(if_new_pc),
-        .new_pc(if_new_pc),
+        .pc_out(pc),
         .pc_write(pc_write)
     );
 
@@ -150,7 +152,7 @@ module cpu(
     cache Icache(
         .clk(clk),
         .reset(reset),
-        .addr(if_new_pc),
+        .addr(if_pc),
         .do_read(1'b1),
         .is_byte(ic_is_byte),
         .do_write(1'b0),
@@ -164,8 +166,14 @@ module cpu(
     );
 
     always @(posedge clk) begin
-        if (pc_reset) if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
-        else if (pc_write) if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
+        if (if_id_reset) begin
+           if_instruction[`INSTR_SIZE-1:0] <= 32'h0;
+           if_pc <= {`ADDR_SIZE{1'b0}};
+        end
+        else if (if_id_write) begin
+          if_instruction[`INSTR_SIZE-1:0] <= ic_memresult;
+           if_pc <= pc;
+        end
     end
 
     /**************************************************************************
@@ -226,7 +234,7 @@ module cpu(
         .clk(clk),
         .reset(id_ex_reset),
         .instruction(if_instruction),
-        .pc(if_new_pc),
+        .pc(if_pc),
         .out_pc(id_pc),
         .we(id_ex_write),
 
@@ -264,16 +272,14 @@ module cpu(
         .out_addr_reg2(id_src2)
     );
    wire [`REG_SIZE-1:0]   ex_wire_alu_result;//Wire that brings the result of alu directly to decode for calculate the branch
-   assign addr_branch = if_new_pc + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
+   assign addr_branch = if_pc + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
    assign is_branch = id_is_branch & id_bne;
    assign id_branch_1 = forward_branch_src1? ex_wire_alu_result: data_reg1;
    assign id_branch_2 = forward_branch_src2? ex_wire_alu_result: data_reg2;
    assign id_bne = (id_branch_1 != id_branch_2);
    always @(posedge clk) begin //registers boundary from decode to exec1 and M1
       id_data_reg1 <= data_reg1;
-//id_internw_data_reg1;//internw -> intern wire
       id_data_reg2 <= data_reg2;
-//id_internw_data_reg2;//internw -> intern wire
    end
     /**************************************************************************
      *  EXEC STAGE                                                            *
@@ -548,6 +554,8 @@ module cpu(
       if (reset) begin
          pc_reset <= 1'b1;
          pc_write <= 1'b1;
+         if_id_reset <= 1'b1;
+         if_id_write <= 1'b1;
          id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b1;
@@ -555,9 +563,12 @@ module cpu(
          mem_wb_reset <= 1'b1;
          mem_wb_write <= 1'b1;
          //TODO COP RESET
-      end else if (dc_stall) begin
+      end else if (dc_stall) begin // if (reset)
+         // Stall until wb
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b0;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b0;
          ex_mem_reset <= 1'b0;
@@ -569,6 +580,8 @@ module cpu(
       else if (hazard_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b0;
          id_ex_reset <= 1'b1;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
@@ -579,7 +592,9 @@ module cpu(
       else if(ic_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         id_ex_reset <= 1'b1;
+         if_id_reset <= 1'b1;
+         if_id_write <= 1'b1;
+         id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
          ex_mem_write <= 1'b1;
@@ -589,16 +604,20 @@ module cpu(
       else if(id_is_branch) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
-         id_ex_reset <= 1'b1;
+         if_id_reset <= 1'b1;
+         if_id_write <= 1'b1;
+         id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;
-         ex_mem_write <= 1'b0;
+         ex_mem_write <= 1'b1;
          mem_wb_reset <= 1'b0;
-         mem_wb_write <= 1'b0;
+         mem_wb_write <= 1'b1;
       end
       else begin
          pc_reset <= 1'b0;
          pc_write <= 1'b1;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;

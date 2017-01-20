@@ -11,8 +11,7 @@ module fetch(
 	           input wire                   reset,
 	           input wire [`ADDR_SIZE-1:0]  pc_jump,
 	           input wire [`ADDR_SIZE-1:0]  pc_branch,
-	           input wire [`ADDR_SIZE-1:0]  old_pc,
-	           output wire [`ADDR_SIZE-1:0] new_pc,
+	           output wire [`ADDR_SIZE-1:0] pc_out,
 	           input wire                   pc_write
 	           );
 
@@ -25,9 +24,8 @@ module fetch(
 
 	       .pc_jump(pc_jump),
 	       .pc_branch(pc_branch),
-	       .old_pc(old_pc),
-	       .new_pc(new_pc),
-	       .pc_write(pc_write)
+	       .pc_write(pc_write),
+         .out_pc(pc_out)
 	       );
 endmodule
 `endif
