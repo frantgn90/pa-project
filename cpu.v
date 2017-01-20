@@ -602,7 +602,7 @@ module cpu(
          mem_wb_reset <= 1'b0;
          mem_wb_write <= 1'b1;
       end // if (ic_stall)
-      else if(id_is_branch) begin
+      else if(is_branch) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b1;
          if_id_reset <= 1'b1;
