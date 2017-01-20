@@ -334,7 +334,7 @@ module cpu(
 
     ///// Multiplication pipeline
 
-    wire                                m1_regwrite_out1;
+    wire                                m1_regwrite_out;
     wire                                m1_zero;
     wire                                m1_overflow;
     wire [`REG_ADDR-1:0]                m1_dst_reg;
@@ -351,7 +351,7 @@ module cpu(
         .src1(id_data_reg1),
         .src2(id_data_reg2),
 
-        .regwrite_out(m1_regwrite_out1),
+        .regwrite_out(m1_regwrite_out),
         .m1zero(m1_zero),
         .m1overflow(m1_overflow),
         .dst_reg(m1_dst_reg),
