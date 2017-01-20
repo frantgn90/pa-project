@@ -152,7 +152,7 @@ module cpu(
     cache Icache(
         .clk(clk),
         .reset(reset),
-        .addr(if_pc),
+        .addr(pc),
         .do_read(1'b1),
         .is_byte(ic_is_byte),
         .do_write(1'b0),
@@ -272,7 +272,7 @@ module cpu(
         .out_addr_reg2(id_src2)
     );
    wire [`REG_SIZE-1:0]   ex_wire_alu_result;//Wire that brings the result of alu directly to decode for calculate the branch
-   assign addr_branch = if_pc + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
+   assign addr_branch = if_pc+4 + ({{16{if_instruction[15]}},if_instruction[15:0]} << 2);
    assign is_branch = id_is_branch & id_bne;
    assign id_branch_1 = forward_branch_src1? ex_wire_alu_result: data_reg1;
    assign id_branch_2 = forward_branch_src2? ex_wire_alu_result: data_reg2;
@@ -547,7 +547,7 @@ module cpu(
     );
 
    wire dc_enable = ex_do_read | ex_do_write;
-   wire ic_stall = !ic_hit;
+   wire ic_stall = ~ic_hit & ~reset;
    wire dc_stall = !dc_hit & dc_enable;
 
    always @* begin
@@ -604,7 +604,7 @@ module cpu(
       end // if (ic_stall)
       else if(id_is_branch) begin
          pc_reset <= 1'b0;
-         pc_write <= 1'b0;
+         pc_write <= 1'b1;
          if_id_reset <= 1'b1;
          if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;

@@ -59,7 +59,7 @@ wire [31:0]      word_out = (`WIDTH == 32) ?
 wire [7:0]       byte_out = line_out[(offset+1)*8-1-:8];
 
 // Async hit signal, internal
-wire hit_int = tags[index] == tag && validbits[index];
+wire hit_int = (tags[index] == tag) && validbits[index]? 1: 0;
 wire do_sth = do_read | do_write;
 
 // Handle requests

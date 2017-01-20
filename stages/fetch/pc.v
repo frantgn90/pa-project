@@ -31,7 +31,7 @@ module pc(
 	    else if (pc_write) pc <= in_pc;
    end
 
-   assign out_pc = pc;
+   assign out_pc = reset?`INITIAL_PC: pc;
 
 endmodule
 
