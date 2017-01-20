@@ -5,6 +5,7 @@
 
 module control (
                 clk,
+                we,
                 reset,
                 stall,
                 opcode,
@@ -18,6 +19,7 @@ module control (
                 );
 	 // Input signals
    input clk;
+   input we;
    input reset;
    input stall;
    input [5:0] opcode;
@@ -42,6 +44,7 @@ module control (
 			   alusrc 		<= "X";
       end
       else begin
+         if (we) begin
          case (opcode)
            `OP_RTYPE: begin
               regwrite 	<= 1;
@@ -175,7 +178,8 @@ module control (
               byteword 	<= "X";
               alusrc 	<= "X";
            end
-         endcase
+         endcase // case (opcode)
+         end
       end
 	 end
 endmodule

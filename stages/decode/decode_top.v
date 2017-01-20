@@ -85,7 +85,7 @@ module decode_top(
     output is_jump; 
 
     // Output control signals
-    output regwrite;
+    output wire regwrite;
     output memtoreg;
 
    output wire branch;
@@ -170,6 +170,7 @@ module decode_top(
     
     control control (
         .clk(clk),
+                     .we(we),
         .reset(reset),
         .opcode(opcode),
         .stall(stall),
