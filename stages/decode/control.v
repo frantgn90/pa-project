@@ -35,7 +35,7 @@ module control (
 
    assign branch = (opcode == `OP_BEQ | opcode == `OP_BNE)? 1: 0;
 	 always @(posedge clk) begin
-      if (stall || reset) begin
+      if (reset) begin
          regwrite 	<= 0;
 			   memtoreg 	<= "X";
 			   memwrite 	<= 0;
@@ -44,7 +44,7 @@ module control (
 			   alusrc 		<= "X";
       end
       else begin
-         if (we) begin
+         if (we && !stall) begin
          case (opcode)
            `OP_RTYPE: begin
               regwrite 	<= 1;
