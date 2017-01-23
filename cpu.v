@@ -605,7 +605,7 @@ module cpu(
          pc_reset <= 1'b0;
          pc_write <= 1'b0;
          if_id_reset <= 1'b1;
-         if_id_write <= 1'b0;
+         if_id_write <= 1'b1;
          id_ex_reset <= 1'b0;
          id_ex_write <= 1'b1;
          ex_mem_reset <= 1'b0;

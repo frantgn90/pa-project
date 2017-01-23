@@ -154,7 +154,7 @@ module decode_top(
             if (opcode == `OP_STB | opcode == `OP_STW) begin
                dest_reg <= 0;//In stores there is no destination register
             end
-            else if (opcode == `OP_LDW | opcode == `OP_ORI | opcode == `OP_ADDI) begin // TODO: Mirar LDI LDB
+            else if (opcode == `OP_LDW | opcode == `OP_ORI | opcode == `OP_ADDI | opcode == `OP_LUI) begin // TODO: Mirar LDI LDB
                 dest_reg <= dst_load;
             end
             else begin
