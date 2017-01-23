@@ -44,6 +44,7 @@ module cpu(
     wire 		             ex_regwrite;
     wire [`REG_ADDR-1:0] ex_dst_reg;
     wire                 id_memread;
+    wire                 id_memwrite;
     
     wire                 hazard_stall;
     
@@ -51,6 +52,7 @@ module cpu(
         .if_id_reg_addr1(addr_reg1),
         .if_id_reg_addr2(addr_reg2),
         .id_ex_memread(id_memread),
+        .id_ex_memwrite(id_memwrite),
         .id_ex_dst_reg(id_dest_reg),
         .stall(hazard_stall)
     );
@@ -60,7 +62,6 @@ module cpu(
     wire [`REG_ADDR-1:0] id_src2;
     reg [`REG_ADDR-1:0]  dc_dst_reg; // They are reg because the flip-flop behaviour is coded here
     reg                  dc_regwrite;
-    reg [`REG_ADDR-1:0]   ex_addr_reg2;
     wire [1:0]           forward_src1;
     wire [1:0]           forward_src2;
     wire [1:0]           forward_mem;
@@ -79,8 +80,7 @@ module cpu(
         .ex_mem_dest_reg(ex_dst_reg),
         .mem_wb_regwrite(dc_regwrite),
         .mem_wb_dest_reg(dc_dst_reg),
-        .ex_mem_writemem(ex_do_write),
-        .ex_mem_src2(ex_addr_reg2),
+        .id_ex_writemem(id_memwrite),
         .forward_src1(forward_src1),
         .forward_src2(forward_src2),
         .forward_mem(forward_mem),
@@ -153,7 +153,7 @@ module cpu(
         .clk(clk),
         .reset(reset),
         .addr(pc),
-        .do_read(1'b1),
+        .do_read(1'b1 & (~is_branch)),
         .is_byte(ic_is_byte),
         .do_write(1'b0),
         .data_in(0),
@@ -209,7 +209,6 @@ module cpu(
    // Control signals
    wire                   id_memtoreg;
    wire                   id_is_branch;
-   wire                   id_memwrite;
    wire                   id_byteword;
    wire                   id_alusrc;
    wire [5:0]             id_opcode;
@@ -513,10 +512,9 @@ module cpu(
     assign wb_wreg = dc_regwrite? dc_dst_reg : m5_dst_reg;
     assign wb_wdata = dc_regwrite? dc_wdata : m5_result;
     assign wb_regwrite = m5_regwrite_out | dc_regwrite;
-    assign data_to_write = forward_mem? dc_wdata: ex_reg_to_mem;
+    assign data_to_write = forward_mem == 1? dc_wdata: ex_reg_to_mem;
 
    always @(posedge clk) begin
-      ex_addr_reg2 <= id_src2;
 //      data_to_write <= forward_mem? dc_wdata: ex_reg_to_mem;
       if (mem_wb_reset) begin
         dc_dst_reg <= {`REG_ADDR{1'b0}};
@@ -559,7 +557,7 @@ module cpu(
 
    wire dc_enable = ex_do_read | ex_do_write;
    wire ic_stall = ~ic_hit & ~reset;
-   wire dc_stall = !dc_hit & dc_enable;
+   wire dc_stall = ~dc_hit & dc_enable;
 
    always @* begin
       if (reset) begin
@@ -584,8 +582,8 @@ module cpu(
          id_ex_write <= 1'b0;
          ex_mem_reset <= 1'b0;
          ex_mem_write <= 1'b0;
-         mem_wb_reset <= 1'b1;
-         mem_wb_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b0;
       end // if (dc_stall)
       //TODO ex_isjump | ex_exc_ret
       else if (hazard_stall) begin
@@ -600,6 +598,18 @@ module cpu(
          mem_wb_reset <= 1'b0;
          mem_wb_write <= 1'b1;
       end // if (id_hazard_stall)
+      else if(is_branch) begin
+         pc_reset <= 1'b0;
+         pc_write <= 1'b1;
+         if_id_reset <= 1'b1;
+         if_id_write <= 1'b1;
+         id_ex_reset <= 1'b0;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end
       else if(ic_stall) begin
         // Stall at fetch
          pc_reset <= 1'b0;
@@ -613,18 +623,6 @@ module cpu(
          mem_wb_reset <= 1'b0;
          mem_wb_write <= 1'b1;
       end // if (ic_stall)
-      else if(is_branch) begin
-         pc_reset <= 1'b0;
-         pc_write <= 1'b1;
-         if_id_reset <= 1'b1;
-         if_id_write <= 1'b1;
-         id_ex_reset <= 1'b0;
-         id_ex_write <= 1'b1;
-         ex_mem_reset <= 1'b0;
-         ex_mem_write <= 1'b1;
-         mem_wb_reset <= 1'b0;
-         mem_wb_write <= 1'b1;
-      end
       else begin
          pc_reset <= 1'b0;
          pc_write <= 1'b1;

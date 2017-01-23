@@ -18,10 +18,9 @@ module forwarding_control(
     id_ex_src2,     // EX stage: register 2
     id_ex_dst_reg,  // EX stage: register dst
    
-    ex_mem_src2,       // MEM stage: Address from register 2, when we have load RX and after store RX
     ex_mem_regwrite,   // MEM stage: Register write permission 
     ex_mem_dest_reg,   // MEM stage: Register destination address
-    ex_mem_writemem,   // MEM stage: Permission of writing
+    id_ex_writemem,   // MEM stage: Permission of writing
     
     mem_wb_regwrite,    // WB stage: Register write permission 
     mem_wb_dest_reg,    // WB stage: Register destination address
@@ -39,22 +38,31 @@ module forwarding_control(
     input wire [`REG_ADDR-1:0] id_ex_src2;
     input wire [`REG_ADDR-1:0] id_ex_dst_reg;
     input wire                 ex_mem_regwrite;
-    input wire [`REG_ADDR-1:0] ex_mem_src2;
     input wire [`REG_ADDR-1:0] ex_mem_dest_reg;
-    input wire                 ex_mem_writemem;
+    input wire                 id_ex_writemem;
     input wire                 mem_wb_regwrite;
     input wire [`REG_ADDR-1:0] mem_wb_dest_reg;
 
-    output reg [1:0]          forward_src1;
-    output reg [1:0]          forward_src2;
-    output reg [1:0]          forward_mem;
+    output wire [1:0]          forward_src1;
+    output wire [1:0]          forward_src2;
+    output wire [1:0]          forward_mem;
     output wire               forward_branch_src1;
     output wire               forward_branch_src2;
 
    assign forward_branch_src1 = (ex_mem_regwrite && (id_ex_dst_reg == if_id_branch_src1));
    assign forward_branch_src2 = (ex_mem_regwrite && (id_ex_dst_reg == if_id_branch_src2));
 
-    always @* begin
+   assign forward_src1 = (ex_mem_regwrite && ex_mem_dest_reg != 0
+                         && (ex_mem_dest_reg == id_ex_src1))? 2'b01:
+                          (mem_wb_regwrite && mem_wb_dest_reg != 0
+                           && (mem_wb_dest_reg == id_ex_src1))? 2'b10: 2'b00;
+   assign forward_src2 = (ex_mem_regwrite && ex_mem_dest_reg != 0
+                                                  && (ex_mem_dest_reg == id_ex_src2))? 2'b01:
+                                                  (mem_wb_regwrite && mem_wb_dest_reg != 0
+                                                   && (mem_wb_dest_reg == id_ex_src2))? 2'b10: 2'b00;
+   assign forward_mem = (ex_mem_regwrite && id_ex_writemem && ex_mem_dest_reg != 0
+                         && (ex_mem_dest_reg == id_ex_src2))? 2'b01: 2'b00;
+/*    always @* begin
         // EX Hazard, forward from MEM
         // MEM Hazard, forward from WB
         // When two hazards occur from both stages, we will want to bypass just
@@ -99,8 +107,8 @@ module forwarding_control(
         // NOTE: In case of stores, the value of the ex_mem_dest_reg is not the 
         // destination reg but the address of the source register. This is because
         // the store is not using this bus since it does not writes to RF.
-        if (mem_wb_regwrite && ex_mem_writemem && mem_wb_dest_reg != 0
-            && (mem_wb_dest_reg == ex_mem_src2))
+        if (ex_mem_regwrite && id_ex_writemem && ex_mem_dest_reg != 0
+            && (ex_mem_dest_reg == id_ex_src2))
         begin
            forward_mem = 2'b01;
         end
@@ -108,7 +116,7 @@ module forwarding_control(
            forward_mem = 2'b00;
         end
     end
-
+*/
 endmodule
 
 `endif

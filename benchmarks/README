@@ -18,3 +18,5 @@ pyhton ase.py program.s
 RESULTS:
 buffer_sum.s
 At $a0 -> register 4, we should have the valeu 8128
+memory_copy.s
+Memory full of 5
