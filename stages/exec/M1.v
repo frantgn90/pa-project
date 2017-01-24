@@ -22,8 +22,10 @@ module M1(
           output reg [`REG_SIZE-1:0] m1result
           );
 
-   reg [((`REG_SIZE*2)-1):0] temp; //temporary reg for multiplication
+   wire [((`REG_SIZE*2)-1):0] temp; //temporary reg for multiplication
 
+   assign temp = src1*src2;
+   
    always @(posedge clk) begin
       if (reset) begin
         regwrite_out = 1'd0;
@@ -32,28 +34,29 @@ module M1(
         dst_reg = {`REG_ADDR{1'd0}};
         m1result = {`REG_SIZE{1'd0}};
       end
-      if (we) begin
-        case (opcode)
-  	      `OP_RTYPE: begin
-             case (funct_code)
-               `FN_MUL: begin
-                        temp <= src1*src2;
-  	              m1zero <= 0;
-  	              m1result <= temp[`REG_SIZE-1:0];
-                        if({`REG_SIZE{m1result[`REG_SIZE-1]}} != temp[((`REG_SIZE*2)-1):`REG_SIZE]) m1overflow <= 1;
-                        else m1overflow <= 0;
-                        dst_reg <= wreg_in;
-                        regwrite_out <= regwrite_mult_in;
-  	           end
-               default:
-               ;
-  	     endcase
-               end
-  	      default:
-  	        ;
-  	      //   `WARNING(("[M1] Unknown M1OP signal %x", aluop))
-  	    endcase
-      end
+        if (we) begin
+            case (opcode)
+                `OP_RTYPE: begin
+                    case (funct_code)
+                        `FN_MUL: begin
+                            
+                            m1zero <= 0;
+                            m1result <= temp[`REG_SIZE-1:0];
+                            if({`REG_SIZE{m1result[`REG_SIZE-1]}} != temp[((`REG_SIZE*2)-1):`REG_SIZE]) m1overflow <= 1;
+                            else m1overflow <= 0;
+                        end
+                        default:
+                        ;
+                    endcase
+                end
+            default:
+            ;
+            //   `WARNING(("[M1] Unknown M1OP signal %x", aluop))
+            endcase
+            
+            regwrite_out <= regwrite_mult_in;
+            dst_reg <= wreg_in;
+        end
 	 end
 endmodule
 `endif

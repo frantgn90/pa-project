@@ -17,6 +17,7 @@
  `include "regfile.v"
  `include "forwarding_control.v"
  `include "hazard_control.v"
+ `include "hazard_control_mult.v"
 
 
 module cpu(
@@ -39,18 +40,35 @@ module cpu(
     // Hazard control
     wire [`REG_ADDR-1:0] addr_reg1;
     wire [`REG_ADDR-1:0] addr_reg2;
-    wire                 id_regwrite;
-    wire [`REG_ADDR-1:0] id_dest_reg;
-    wire 		             ex_regwrite;
+    reg  [`REG_ADDR-1:0] id_dest_reg;
+    wire [`REG_ADDR-1:0] id_dest_reg_wire;
+    wire                 id_regwrite_wire;
+    wire                 id_regwrite_mult_in_wire;
+    wire 		         ex_regwrite;
     wire [`REG_ADDR-1:0] ex_dst_reg;
     wire                 id_memread;
     wire                 id_memwrite;
     wire                  ex_do_write;
     wire                  ex_do_read;
     wire                 hazard_stall;
-   reg [`REG_ADDR-1:0]  id_addr_reg1;
-   reg [`REG_ADDR-1:0]  id_addr_reg2;
+    wire                 hazard_stall_mult;
+    
+    reg [`REG_ADDR-1:0]  id_addr_reg1;
+    reg [`REG_ADDR-1:0]  id_addr_reg2;
+    
+    reg                   id_regwrite;
+    reg                   id_regwrite_mult_in;
    
+   wire [`REG_ADDR-1:0]  m1_dst_reg;
+   wire m1_regwrite_out;
+   wire [`REG_ADDR-1:0]  m2_dst_reg;
+   wire m2_regwrite_out;
+   wire [`REG_ADDR-1:0]  m3_dst_reg;
+   wire m3_regwrite_out;
+   wire [`REG_ADDR-1:0]  m4_dst_reg;
+   wire m4_regwrite_out;
+   wire [`REG_ADDR-1:0]  m5_dst_reg;
+   wire m5_regwrite_out;
 
     hazard_control hazards (
         .id_ex_reg_addr1(id_addr_reg1),
@@ -59,6 +77,35 @@ module cpu(
         .id_ex_memwrite(id_memwrite),
         .ex_mem_dst_reg(ex_dst_reg),
         .stall(hazard_stall)
+    );
+    
+    hazard_control_mult hazards_mult (
+        // From decode stage
+        .id_dst_reg(id_dest_reg_wire),
+        .id_src1(addr_reg1),
+        .id_src2(addr_reg2),
+        .id_regwrite(id_regwrite_wire),
+        .id_is_mult(id_regwrite_mult_in_wire),
+        
+        // From M1,M2,M3,M4,M5 stages
+        .m1_dst_reg(id_dest_reg),
+        .m1_regwrite(id_regwrite_mult_in),
+        .m2_dst_reg(m1_dst_reg),
+        .m2_regwrite(m1_regwrite_out),
+        .m3_dst_reg(m2_dst_reg),
+        .m3_regwrite(m2_regwrite_out),
+        .m4_dst_reg(m3_dst_reg),
+        .m4_regwrite(m3_regwrite_out),
+        .m5_dst_reg(m4_dst_reg),
+        .m5_regwrite(m4_regwrite_out),
+        
+        .id_ex_dst_reg(id_dest_reg),
+        .id_ex_regwrite(id_regwrite),
+        .ex_mem_dst_reg(ex_dst_reg),
+        .ex_mem_regwrite(ex_regwrite),
+    
+        // Output: 1 if hazard; 0 otherwhise
+        .stall(hazard_stall_mult)
     );
     
     // Forwarding control
@@ -218,10 +265,10 @@ module cpu(
    wire                   id_alusrc;
    wire [5:0]             id_opcode;
    wire [5:0]             id_funct_code;
-   wire                   id_regwrite_mult_in;
    wire [`REG_SIZE-1:0]   id_branch_1;
    wire [`REG_SIZE-1:0]   id_branch_2;
    wire [4:0]             id_shamt;
+   
 
     regfile registers(
         .clk(clk),
@@ -248,11 +295,11 @@ module cpu(
         .src_reg2(addr_reg2),
 
         // Instruction decoded signals
-        .dest_reg(id_dest_reg),	    // Destination register
+        .dest_reg(id_dest_reg_wire),	    // Destination register
         .mimmediat(id_mimmediat),	    // Memory type instructions immediat
 
         // Instruction control signals
-        .regwrite(id_regwrite),	// WB Stage: Permission write
+        .regwrite(id_regwrite_wire),	// WB Stage: Permission write
         .memtoreg(id_memtoreg),     // WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
 
         .branch(id_is_branch),	    // M Stage: Govern the Fetch stage mux for PC
@@ -266,12 +313,15 @@ module cpu(
 
 
         .shamt(id_shamt), //Shift amount
-        .is_mult(id_regwrite_mult_in),
+        .is_mult(id_regwrite_mult_in_wire),
 
         // JUMP signals. These signals are async.
         .is_jump(id_is_jump),
         .jump_addr(id_pc_jump),
-        .stall(hazard_stall),        // If 1, inject bubble to next stage
+        
+        // Note: Just stall at decode when an stall related to mult is detected
+        // otherwise stall on E stage.
+        //.stall(hazard_stall_mult), 
 
         .out_addr_reg1(id_src1),
         .out_addr_reg2(id_src2)
@@ -291,12 +341,18 @@ module cpu(
         id_data_reg2 <= 32'b0;
         id_addr_reg1 <= 32'b0;
         id_addr_reg2 <= 32'b0;
+        id_dest_reg <= 32'b0;
+        id_regwrite <= 0;
+        id_regwrite_mult_in <= 0;
       end
       else if (id_ex_write) begin 
         id_data_reg1 <= data_reg1;
         id_data_reg2 <= data_reg2;
         id_addr_reg1 <= addr_reg1;
         id_addr_reg2 <= addr_reg2;
+        id_dest_reg <= id_dest_reg_wire;
+        id_regwrite <= id_regwrite_wire;
+        id_regwrite_mult_in <= id_regwrite_mult_in_wire;
       end
    end
     /**************************************************************************
@@ -353,10 +409,8 @@ module cpu(
 
     ///// Multiplication pipeline
 
-    wire                                m1_regwrite_out;
     wire                                m1_zero;
     wire                                m1_overflow;
-    wire [`REG_ADDR-1:0]                m1_dst_reg;
     wire [`REG_SIZE-1:0]                m1_result;
 
     M1 M1(
@@ -377,11 +431,9 @@ module cpu(
         .m1result(m1_result)
     );
 
-   wire                                m2_regwrite_out;
    wire                                m2_zero;
    wire                                m2_overflow;
    wire [`REG_SIZE-1:0]                m2_result;
-   wire [`REG_ADDR-1:0]                m2_dst_reg;
 
    M2 M2(
 	       .clk(clk),
@@ -400,11 +452,9 @@ module cpu(
          .dst_reg(m2_dst_reg)
 	       );
 
-   wire                                m3_regwrite_out;
    wire                                m3_zero;
    wire                                m3_overflow;
    wire [`REG_SIZE-1:0]                m3_result;
-   wire [`REG_ADDR-1:0]                m3_dst_reg;
 
    M3 M3(
 	       .clk(clk),
@@ -420,14 +470,12 @@ module cpu(
          .zero(m3_zero),
          .overflow(m3_overflow),
 	       .m3result(m3_result),
-         .dst_reg(m2_dst_reg)
+         .dst_reg(m3_dst_reg)
 	       );
 
-   wire                                m4_regwrite_out;
    wire                                m4_zero;
    wire                                m4_overflow;
    wire [`REG_SIZE-1:0]                m4_result;
-   wire [`REG_ADDR-1:0]                m4_dst_reg;
 
    M4 M4(
 	       .clk(clk),
@@ -446,11 +494,9 @@ module cpu(
          .dst_reg(m4_dst_reg)
 	       );
 
-   wire                                m5_regwrite_out;
    wire                                m5_zero;
    wire                                m5_overflow;
    wire [`REG_SIZE-1:0]                m5_result;
-   wire [`REG_ADDR-1:0]                m5_dst_reg;
 
    M5 M5(
 	       .clk(clk),
@@ -595,6 +641,18 @@ module cpu(
          mem_wb_write <= 1'b0;
       end // if (dc_stall)
       //TODO ex_isjump | ex_exc_ret
+      else if (hazard_stall_mult) begin
+         pc_reset <= 1'b0;
+         pc_write <= 1'b0;
+         if_id_reset <= 1'b0;
+         if_id_write <= 1'b0;
+         id_ex_reset <= 1'b1;
+         id_ex_write <= 1'b1;
+         ex_mem_reset <= 1'b0;
+         ex_mem_write <= 1'b1;
+         mem_wb_reset <= 1'b0;
+         mem_wb_write <= 1'b1;
+      end // if (id_hazard_stall_mult)
       else if (hazard_stall) begin
          pc_reset <= 1'b0;
          pc_write <= 1'b0;

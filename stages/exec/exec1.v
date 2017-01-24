@@ -118,7 +118,7 @@ module exec1(
         .aluop(aluop),
         .src1(operand1),
         .src2(operand2),
-         .shamt(shamt),
+        .shamt(shamt),
         .zero(alu_zero),
         .overflow(alu_overflow),
         .out(aluresult)

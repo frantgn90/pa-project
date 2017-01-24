@@ -56,8 +56,8 @@ module decode_top(
     is_jump,         // F stage: Is the gobernor of the source mux of PC
     
     out_addr_reg1,
-    out_addr_reg2,
-    stall
+    out_addr_reg2
+    //stall
 );
 
     // Input signals
@@ -67,7 +67,7 @@ module decode_top(
     input wire [`ADDR_SIZE-1:0] pc;
     input wire [`INSTR_SIZE-1:0] instruction;
     
-    input wire stall;
+    //input wire stall;
     
     // Need to communicate with the external register bank
     output wire [`REG_ADDR-1:0] src_reg1;		// Address for register 1
@@ -80,7 +80,7 @@ module decode_top(
     output reg [`REG_ADDR-1:0] out_addr_reg1;
     output reg [`REG_ADDR-1:0] out_addr_reg2;
 
-    output reg [`REG_ADDR-1:0]  dest_reg;
+    output wire [`REG_ADDR-1:0]  dest_reg;
     output reg [4:0]            shamt;
     output reg [`ADDR_SIZE-1:0] mimmediat;
     output [`ADDR_SIZE-1:0] jump_addr;
@@ -90,17 +90,17 @@ module decode_top(
     output wire regwrite;
     output memtoreg;
 
-   output wire branch;
-    output memwrite;
-    output memread;
-    output byteword;
+    output wire branch;
+    output wire memwrite;
+    output wire memread;
+    output wire byteword;
 
-    output alusrc;
+    output wire alusrc;
     output reg[5:0] funct_code;
     output reg[5:0] op_code;
 
 
-    output reg is_mult;
+    output wire is_mult;
 
 
     // Internal wires
@@ -110,7 +110,6 @@ module decode_top(
     wire [`REG_ADDR-1:0] dst;
     wire [`REG_ADDR-1:0] dst_load;
 
-    wire stall_execution;
     wire [`ADDR_SIZE-1:0] jump_imm;
 
     wire [`ADDR_SIZE-1:0]  uns_mimmediat;
@@ -133,6 +132,16 @@ module decode_top(
    assign sig_mimmediat[`ADDR_SIZE-1:0] = {{11{instruction[15]}},instruction[15:0]};
    assign uns_mimmediat[`ADDR_SIZE-1:0] = {{11{1'b0}},instruction[15:0]};
 
+   
+   assign dest_reg = 
+          (opcode == `OP_STB | opcode == `OP_STW) ? 0
+        : (opcode == `OP_LDW | opcode == `OP_ORI | opcode == `OP_ADDI | opcode == `OP_LUI) ? dst_load
+        : (opcode == `OP_STALL) ? {`REG_ADDR{1'b0}}
+        : dst;
+            
+    assign is_mult = (opcode == `OP_RTYPE && functcode == `FN_MUL) ? 1
+        : 0;
+            
     always @(posedge clk) begin            
         if (we) begin
             shamt <= instruction[10:6];
@@ -148,24 +157,6 @@ module decode_top(
             else begin
                 out_addr_reg2 <= src_reg2;
             end
-            if (opcode == `OP_RTYPE && functcode == `FN_MUL) begin
-                is_mult <= 1;
-            end
-            else begin
-                is_mult <= 0;
-            end
-            if (opcode == `OP_STB | opcode == `OP_STW) begin
-               dest_reg <= 0;//In stores there is no destination register
-            end
-            else if (opcode == `OP_LDW | opcode == `OP_ORI | opcode == `OP_ADDI | opcode == `OP_LUI) begin // TODO: Mirar LDI LDB
-               dest_reg <= dst_load;
-            end
-            else if (opcode == `OP_STALL) begin
-               dest_reg = {`REG_ADDR{1'b0}};
-              end
-            else begin
-              dest_reg <= dst;
-            end
         end
     end
 	 
@@ -175,10 +166,10 @@ module decode_top(
     
     control control (
         .clk(clk),
-                     .we(we),
+        .we(we),
         .reset(reset),
         .opcode(opcode),
-        .stall(stall),
+        //.stall(stall),
         .memwrite(memwrite),
         .memread(memread),
         .memtoreg(memtoreg),

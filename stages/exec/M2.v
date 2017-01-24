@@ -31,7 +31,7 @@ module M2(
 		        m2result <= pre_m1result;
 		        zero <= pre_zero;
 		        overflow <= pre_overflow;
-		    regwrite_out <= regwrite_mult_in;
+                regwrite_out <= regwrite_mult_in;
                dst_reg <= wreg_in;
             end
 	 end

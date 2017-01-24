@@ -25,7 +25,7 @@
 `define FN_ADD 6'h20
 `define FN_SUB 6'h22
 `define FN_MUL 6'h18
-`define FN_SLL 6'h8
+`define FN_SLL 6'h0
 
 
 //OPERATIONS CODE
@@ -98,13 +98,13 @@
 `define MEMORY_DEPTH 16384	//MEMORY LINES -> 2 TO THE 16
 `define WIDTH 128		//CACHE LINE WIDTH
 //`define MEMORY_DATA "proves/load-store_mem.txt"
-`define MEMORY_DATA "benchmarks/buffer_sum.mem"
-//`define MEMORY_DATA "benchmarks/mem_copy.mem"
+//`define MEMORY_DATA "benchmarks/buffer_sum.mem"
+`define MEMORY_DATA "benchmarks/matrix_multiply.mem"
 `ifndef MEMORY_LATENCY
 `define MEMORY_LATENCY 1000 //as we want to wait 10 cycles of clock to receive from memory and cpu clock is 100
 `endif
 
-
+`define DEBUG 1
 // Debug macros
 `ifdef DEBUG
 	`define INFO(M) begin $write("%5t ", $time); $display M ; end

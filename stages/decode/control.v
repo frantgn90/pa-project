@@ -7,7 +7,7 @@ module control (
                 clk,
                 we,
                 reset,
-                stall,
+                //stall,
                 opcode,
                 regwrite,	// WB Stage: Register write permission
                 memtoreg,	// WB Stage: Rules the mux that says if the data to the register comes from mem (1) or from the ALU (0)
@@ -21,11 +21,11 @@ module control (
    input clk;
    input we;
    input reset;
-   input stall;
+   //input stall;
    input [5:0] opcode;
 
 	 // Output signals
-	 output reg  regwrite;
+	 output wire regwrite;
 	 output wire branch;
 	 output reg  alusrc;
 	 output reg  byteword;
@@ -34,20 +34,29 @@ module control (
 	 output reg  memtoreg;
 
    assign branch = (opcode == `OP_BEQ | opcode == `OP_BNE)? 1: 0;
+   assign regwrite = (   opcode == `OP_RTYPE 
+                       | opcode == `OP_LDB 
+                       | opcode == `OP_LDW 
+                       | opcode == `OP_LI 
+                       | opcode == `OP_ADDI 
+                       | opcode == `OP_LUI 
+                       | opcode == `OP_ORI & ~reset) ? 1 : 0;
+                       
+                       
 	 always @(posedge clk) begin
       if (reset) begin
-         regwrite 	<= 0;
-			   memtoreg 	<= "X";
-			   memwrite 	<= 0;
-			   memread 	<= 0;
-			   byteword 	<= "X";
-			   alusrc 		<= "X";
+        //regwrite 	<= 0;
+        memtoreg 	<= "X";
+        memwrite 	<= 0;
+        memread 	<= 0;
+        byteword 	<= "X";
+        alusrc 		<= "X";
       end
       else begin
          if (we) begin
          case (opcode)
            `OP_RTYPE: begin
-              regwrite 	<= 1;
+              //regwrite 	<= 1;
               memtoreg 	<= 0;
               memwrite 	<= 0;
               memread 	<= 0;
@@ -55,7 +64,7 @@ module control (
               alusrc 		<= 1;
            end
            `OP_LDB: begin
-              regwrite 	<= 1;
+              //regwrite 	<= 1;
               memtoreg 	<= 1;
               memwrite 	<= 0;
               memread 	<= 1;
@@ -63,7 +72,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_LDW: begin
-              regwrite 	<= 1;
+              //regwrite 	<= 1;
               memtoreg 	<= 1;
               memwrite 	<= 0;
               memread 	<= 1;
@@ -71,7 +80,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_STB: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 1;
               memread 	<= 0;
@@ -79,7 +88,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_STW: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 1;
               memread 	<= 0;
@@ -87,7 +96,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_BEQ: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
@@ -95,7 +104,7 @@ module control (
               alusrc 		<= 1;
            end
            `OP_JUMP: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
@@ -103,7 +112,7 @@ module control (
               alusrc 		<= "X";
            end
            `OP_LI: begin
-              regwrite 	<= 1;
+              //regwrite 	<= 1;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
@@ -111,7 +120,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_ADDI: begin
-              regwrite 	<= 1;
+              //regwrite 	<= 1;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
@@ -119,7 +128,7 @@ module control (
               alusrc 		<= 0;
            end
            `OP_LUI: begin
-              regwrite <= 1;
+              //regwrite <= 1;
               memtoreg <= "X";
               memwrite <= 0;
               memread <= 0;
@@ -127,7 +136,7 @@ module control (
               alusrc <= 0;
            end
            `OP_ORI: begin
-              regwrite <= 1;
+              //regwrite <= 1;
               memtoreg <= "X";
               memwrite <= 0;
               memread <= 0;
@@ -135,7 +144,7 @@ module control (
               alusrc <= 0;
            end
            `OP_BNE: begin
-              regwrite <= 0;
+              //regwrite <= 0;
               memtoreg <= "X";
               memwrite <= 0;
               memread <= 0;
@@ -163,7 +172,7 @@ module control (
             `WARNING(("[CONTROL] Unknown OPCODE signal %x", opcode))
             end*/
            `OP_STALL: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;
@@ -171,7 +180,7 @@ module control (
               alusrc 	<= "X";
            end
            default: begin
-              regwrite 	<= 0;
+              //regwrite 	<= 0;
               memtoreg 	<= "X";
               memwrite 	<= 0;
               memread 	<= 0;

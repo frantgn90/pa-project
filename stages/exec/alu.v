@@ -43,7 +43,7 @@ module alu(
     end
      `ALUOP_SLL: begin
         zero <= 0;
-        out <= src2 << shamt;
+        out <= src1 << shamt;
         overflow <= 0;
      end
 		//`ALUOP_MUL: begin
