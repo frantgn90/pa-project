@@ -4,11 +4,6 @@
 
 `include "define.v"
 
-/////////////////////////////
-//                         //
-//  Circular Store Buffer  //
-//                         //
-/////////////////////////////
 
 //TO connect;
 //need to declare STBUFF_DEPTH that is stbuff size in bytes

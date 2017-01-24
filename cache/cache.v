@@ -3,13 +3,6 @@
 
 `include "define.v"
 
-/////////////////////////////
-//                         //
-//   Direct Mapped Cache   //
-//                         //
-/////////////////////////////
-
-
 module cache (
 	input wire clk,
 	input wire reset,

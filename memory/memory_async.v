@@ -3,8 +3,6 @@
 
  `include "define.v"
 
-// See: http://www.eecg.toronto.edu/~moshovos/ECE243-2009/lec24-external-interface.html
-
 module memory_async (
 	                   input wire              reset,
 	                   input wire [31:0]       addr,

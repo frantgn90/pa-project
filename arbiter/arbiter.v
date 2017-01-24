@@ -40,8 +40,6 @@ reg [1:0] arb_state = 2'b00;
 // 10: D-Cache write
 // 11: D-Cache read
 
-// TODO Coherency between I and D cache
-
 // Handle requests
 always @(posedge clk) begin
 	case (arb_state)
