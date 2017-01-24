@@ -221,6 +221,7 @@ module cpu(
    wire                   id_regwrite_mult_in;
    wire [`REG_SIZE-1:0]   id_branch_1;
    wire [`REG_SIZE-1:0]   id_branch_2;
+   wire [4:0]             id_shamt;
 
     regfile registers(
         .clk(clk),
@@ -264,7 +265,7 @@ module cpu(
         .op_code(id_opcode),
 
 
-
+        .shamt(id_shamt), //Shift amount
         .is_mult(id_regwrite_mult_in),
 
         // JUMP signals. These signals are async.
@@ -322,6 +323,7 @@ module cpu(
                .reg2_data(id_data_reg2),
                .immediat(id_mimmediat),
                .old_pc(id_pc),
+               .shamt(id_shamt),
                .dst_reg_in(id_dest_reg),
                .do_read(id_memread),
                .do_write(id_memwrite),

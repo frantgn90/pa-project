@@ -25,6 +25,7 @@
 `define FN_ADD 6'h20
 `define FN_SUB 6'h22
 `define FN_MUL 6'h18
+`define FN_SLL 6'h8
 
 
 //OPERATIONS CODE
@@ -71,6 +72,7 @@
 `define ALUOP_JUMP 5'h5
 `define ALUOP_ORI 5'h6
 `define ALUOP_LUI 5'h7
+`define ALUOP_SLL 5'h8
 /*
 `define ALUOP_ADD 7'h00
 `define ALUOP_SUB 7'h01

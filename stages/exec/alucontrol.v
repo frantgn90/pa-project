@@ -33,6 +33,7 @@ always @* begin
 			    `FN_ADD: aluop_out <= `ALUOP_ADD;
 			    `FN_MUL: aluop_out <= `ALUOP_MUL;
 			    `FN_SUB: aluop_out <= `ALUOP_SUB;
+          `FN_SLL: aluop_out <= `ALUOP_SLL;
 			    default:
 ;
 				   // `WARN(("ALU Control: Unknown funct signal %x", funct))

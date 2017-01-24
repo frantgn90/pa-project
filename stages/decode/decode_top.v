@@ -45,6 +45,7 @@ module decode_top(
     alusrc,         // EX stage: src2 source mux govern
     funct_code,     // EX stage: FUNCtion code for rtype
     op_code,
+    shamt,          //Shift Amount
     // regdst: This signal is not neede for our ISA
     
     is_mult,         // EX stage: Indicates if the instruction is a multiplication.
@@ -79,7 +80,8 @@ module decode_top(
     output reg [`REG_ADDR-1:0] out_addr_reg1;
     output reg [`REG_ADDR-1:0] out_addr_reg2;
 
-    output reg [`REG_ADDR-1:0] dest_reg;
+    output reg [`REG_ADDR-1:0]  dest_reg;
+    output reg [4:0]            shamt;
     output reg [`ADDR_SIZE-1:0] mimmediat;
     output [`ADDR_SIZE-1:0] jump_addr;
     output is_jump; 
@@ -132,7 +134,8 @@ module decode_top(
    assign uns_mimmediat[`ADDR_SIZE-1:0] = {{11{1'b0}},instruction[15:0]};
 
     always @(posedge clk) begin            
-        if (we) begin 
+        if (we) begin
+            shamt <= instruction[10:6];
             out_pc <= pc;
             op_code <= opcode;
             funct_code = functcode;

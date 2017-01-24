@@ -20,6 +20,7 @@ module exec1(
     input wire                  do_read,//memory read permission
     input wire                  do_write,//memory write permission
     input wire                  is_byte,
+    input wire [4:0]            shamt, //Shift Amount
     input wire                  memtoreg,//take data from dcache or exec1
     input wire [1:0]            forward_src1, // FORWARD CONTROL: Manages the forward mux 1
     input wire [1:0]            forward_src2, // FORWARD CONTROL: Manages the forward mux 2
@@ -117,6 +118,7 @@ module exec1(
         .aluop(aluop),
         .src1(operand1),
         .src2(operand2),
+         .shamt(shamt),
         .zero(alu_zero),
         .overflow(alu_overflow),
         .out(aluresult)

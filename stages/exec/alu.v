@@ -5,11 +5,12 @@
 `include "define.v"
 
 module alu(
-	input wire [4:0] aluop,
+	input wire [4:0]           aluop,
 	input wire [`REG_SIZE-1:0] src1,
 	input wire [`REG_SIZE-1:0] src2,
-	output reg zero = 1'd0,
-	output reg overflow = 1'd0,
+  input wire [4:0]           shamt,//shiftamount
+	output reg                 zero = 1'd0,
+	output reg                 overflow = 1'd0,
 	output reg [`REG_SIZE-1:0] out = {`REG_SIZE{1'b0}}
 	);
 
@@ -31,7 +32,7 @@ module alu(
 					else overflow <= 0;
 		end
     `ALUOP_ORI: begin
-       zero <= "x";
+       zero <= 0;
        out <= src1 | src2;
        overflow <= 0;
     end
@@ -40,6 +41,11 @@ module alu(
        overflow <= 0;
        out <= {src2[15:0],{16{1'b0}}};
     end
+     `ALUOP_SLL: begin
+        zero <= 0;
+        out <= src2 << shamt;
+        overflow <= 0;
+     end
 		//`ALUOP_MUL: begin
 		//			zero <= 0;
 		//			temp <= src1 * src2;
