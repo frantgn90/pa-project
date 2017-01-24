@@ -97,7 +97,7 @@
 `define WIDTH 128		//CACHE LINE WIDTH
 //`define MEMORY_DATA "proves/load-store_mem.txt"
 `define MEMORY_DATA "benchmarks/buffer_sum.mem"
-//`define MEMORY_DATA "benchmarks/memory_copy.mem"
+//`define MEMORY_DATA "benchmarks/mem_copy.mem"
 `ifndef MEMORY_LATENCY
 `define MEMORY_LATENCY 1000 //as we want to wait 10 cycles of clock to receive from memory and cpu clock is 100
 `endif

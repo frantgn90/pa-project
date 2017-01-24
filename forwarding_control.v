@@ -20,7 +20,8 @@ module forwarding_control(
    
     ex_mem_regwrite,   // MEM stage: Register write permission 
     ex_mem_dest_reg,   // MEM stage: Register destination address
-    id_ex_writemem,   // MEM stage: Permission of writing
+    ex_mem_readmem,    // MEM stage: Read from Mem
+    id_ex_writemem,   // EX stage: Permission of writing
     
     mem_wb_regwrite,    // WB stage: Register write permission 
     mem_wb_dest_reg,    // WB stage: Register destination address
@@ -38,6 +39,7 @@ module forwarding_control(
     input wire [`REG_ADDR-1:0] id_ex_src2;
     input wire [`REG_ADDR-1:0] id_ex_dst_reg;
     input wire                 ex_mem_regwrite;
+    input wire                 ex_mem_readmem;
     input wire [`REG_ADDR-1:0] ex_mem_dest_reg;
     input wire                 id_ex_writemem;
     input wire                 mem_wb_regwrite;
@@ -57,9 +59,10 @@ module forwarding_control(
                           (mem_wb_regwrite && mem_wb_dest_reg != 0
                            && (mem_wb_dest_reg == id_ex_src1))? 2'b10: 2'b00;
    assign forward_src2 = (ex_mem_regwrite && ex_mem_dest_reg != 0
-                                                  && (ex_mem_dest_reg == id_ex_src2))? 2'b01:
+                                                  && (ex_mem_dest_reg == id_ex_src2) && ~ex_mem_readmem)? 2'b01:
                                                   (mem_wb_regwrite && mem_wb_dest_reg != 0
-                                                   && (mem_wb_dest_reg == id_ex_src2))? 2'b10: 2'b00;
+                                                   && (mem_wb_dest_reg == id_ex_src2))? 2'b10:
+                         (ex_mem_readmem && ex_mem_dest_reg != 0 && id_ex_writemem && (ex_mem_dest_reg == id_ex_src2))? 2'b11: 2'b00;
    assign forward_mem = (ex_mem_regwrite && id_ex_writemem && ex_mem_dest_reg != 0
                          && (ex_mem_dest_reg == id_ex_src2))? 2'b01: 2'b00;
 /*    always @* begin

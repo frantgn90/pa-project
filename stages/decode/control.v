@@ -44,7 +44,7 @@ module control (
 			   alusrc 		<= "X";
       end
       else begin
-         if (we && !stall) begin
+         if (we) begin
          case (opcode)
            `OP_RTYPE: begin
               regwrite 	<= 1;

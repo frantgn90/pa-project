@@ -24,7 +24,8 @@ module exec1(
     input wire [1:0]            forward_src1, // FORWARD CONTROL: Manages the forward mux 1
     input wire [1:0]            forward_src2, // FORWARD CONTROL: Manages the forward mux 2
     input wire [`REG_SIZE-1:0]  wb_forward, // WB stage: The result of the memory stage
-    input wire [`REG_SIZE-1:0]  mem_forward, // MEM stage: The result of the EXE stage 
+    input wire [`REG_SIZE-1:0]  mem_forward, // MEM stage: The result of the EXE stage
+    input wire [`REG_SIZE-1:0]  dc_memresult_forward, //Forward MEM to MEM, when store after load
 
     output reg                  regwrite_out, //Write Permission
     output reg                  zero = 1'd0, //Alu zero
@@ -73,7 +74,7 @@ module exec1(
     
     assign reg2_fw_selection = (forward_src2 == 0) ? reg2_data
         : (forward_src2 == 1) ? mem_forward
-        : (forward_src2 == 2) ? wb_forward : 32'bX;
+        : (forward_src2 == 2) ? wb_forward : dc_memresult_forward;
     
     assign operand2 = alusrc ? reg2_fw_selection : immediat;
     assign wire_alu_result = aluresult;
@@ -94,7 +95,7 @@ module exec1(
         end else if (we) begin
             do_read_out <= do_read;
             memtoreg_out <= memtoreg;
-            data_store <= reg2_data;
+            data_store <= reg2_fw_selection;
             zero <= alu_zero;
             overflow <= alu_overflow;
             alu_result <= aluresult;

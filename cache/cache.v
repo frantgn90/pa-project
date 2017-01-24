@@ -18,7 +18,7 @@ module cache (
 	input wire is_byte,
 	input wire do_write,
 	input wire [`REG_SIZE-1:0] data_in,
-	output reg [`REG_SIZE-1:0] data_out = 0,
+	output wire [`REG_SIZE-1:0] data_out,
 	output reg hit = 0,
 	
 	// Memory ports
@@ -74,12 +74,13 @@ always @(mem_write_req, mem_write_ack, mem_read_req, mem_read_ack) begin
 		mem_read_req = 1'b0;
 	end
 end
-
+   assign data_out = (hit && is_byte)?{24'h000000, byte_out}: hit? word_out: 32'h00000000;
+   /*
 always @* if (hit) begin
 	if (is_byte) data_out = {24'h000000, byte_out};
 	else data_out <= word_out;
 end else data_out <= 32'h00000000;
-
+*/
 always @* if (~do_sth | reset)
 	hit <= 1'b0;
 else hit <= hit_int;
