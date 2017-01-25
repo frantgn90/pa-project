@@ -74,7 +74,10 @@
             : (id_src2 == m4_dst_reg && m4_regwrite && id_src2 != 0) ? 1
             : (id_src1 == m5_dst_reg && m5_regwrite && id_src2 != 0) ? 1
             : (id_src2 == m5_dst_reg && m5_regwrite && id_src2 != 0) ? 1
-            : (id_dst_reg == m3_dst_reg && id_regwrite && m5_regwrite && id_dst_reg != 0) ? 1 // WAW Dependency
+            
+            : (id_dst_reg == m1_dst_reg && id_regwrite && m1_regwrite && id_dst_reg != 0) ? 1 // WAW Dependency
+            : (id_dst_reg == m2_dst_reg && id_regwrite && m2_regwrite && id_dst_reg != 0) ? 1 // WAW Dependency
+            : (id_dst_reg == m3_dst_reg && id_regwrite && m3_regwrite && id_dst_reg != 0) ? 1 // WAW Dependency
             
             : (id_is_mult && id_src1 == id_ex_dst_reg && id_ex_regwrite && id_src1 != 0) ? 1  // RAW [rtype|load]->mult
             : (id_is_mult && id_src2 == id_ex_dst_reg && id_ex_regwrite && id_src2 != 0) ? 1
