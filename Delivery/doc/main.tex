@@ -1,0 +1,561 @@
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Original author:
+% Ted Pavlic (http://www.tedpavlic.com)
+%
+% Note:
+% The \lipsum[#] commands throughout this template generate dummy text
+% to fill the template out. These commands should all be removed when 
+% writing assignment content.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{adjustbox}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pdflscape}
+\usepackage[utf8]{inputenc}
+%\usepackage{caption}
+%\usepackage{subcaption} %Used to insert subfigures
+%\usepackage[catalan]{babel} %Catalan language
+\usepackage[english]{babel}
+%\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage{titlesec}
+%\usepackage[subfigure]{tocloft} 
+%\usepackage{subfigure}
+\usepackage{subfig}
+%\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{tablefootnote}
+\usepackage{float}
+%\usepackage{floatrow} %caption under figures
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{minted} %put code
+\usepackage{ragged2e} %posar el  justify
+\usepackage{array}% permet alinear verticalment
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{relsize}
+\usepackage[bottom]{footmisc}
+\usepackage{tabu}
+\usepackage{color}
+\usepackage{mips}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in 
+
+
+%%MIPS ASSEMBLY
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+%\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkHeader\ : \hmwkTitle} % Top left header
+%\chead{\hmwkClass\ : \hmwkTitle} % Top center header
+\rhead{\hmwkAuthorName} % Top right header
+%\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+\lstset{language=[mips]Assembler}
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT STRUCTURE COMMANDS
+%	Skip this unless you know what you're doing
+%----------------------------------------------------------------------------------------
+
+% Header and footer for when a page split occurs within a problem environment
+\newcommand{\enterProblemHeader}[1]{
+\nobreak\extramarks{#1}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+}
+
+% Header and footer for when a page split occurs between problem environments
+\newcommand{\exitProblemHeader}[1]{
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1}{}\nobreak
+}
+
+\setcounter{secnumdepth}{0} % Removes default section numbers
+%\newcounter{homeworkProblemCounter} % Creates a counter to keep track of the number of problems
+
+\newcommand{\homeworkProblemName}{}
+\newenvironment{homeworkProblem}[1][Problem \arabic{homeworkProblemCounter}]{ % Makes a new environment called homeworkProblem which takes 1 argument (custom name) but the default is "Problem #"
+\stepcounter{homeworkProblemCounter} % Increase counter for number of problems
+\renewcommand{\homeworkProblemName}{#1} % Assign \homeworkProblemName the name of the problem
+\section{\homeworkProblemName} % Make a section in the document with the custom problem count
+\enterProblemHeader{\homeworkProblemName} % Header and footer within the environment
+}{
+\exitProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+\newcommand{\problemAnswer}[1]{ % Defines the problem answer command with the content as the only argument
+\noindent\framebox[\columnwidth][c]{
+	\begin{minipage}{0.98\columnwidth}
+		#1
+	\end{minipage}
+	} % Makes the box around the problem answer and puts the content inside
+}
+
+\newcommand{\homeworkSectionName}{}
+\newenvironment{homeworkSection}[1]{ % New environment for sections within homework problems, takes 1 argument - the name of the section
+\renewcommand{\homeworkSectionName}{#1} % Assign \homeworkSectionName to the name of the section from the environment argument
+\subsection{\homeworkSectionName} % Make a subsection with the custom name of the subsection
+\enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]} % Header and footer within the environment
+}{
+\enterProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  language=[mips]Assembler,       % the language of the code
+  basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+  tabsize=4,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                 % show the filename of files included with \lstinputlisting;
+                                  % also try caption instead of title
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\color{dkgreen},       % comment style
+  stringstyle=\color{mauve},         % string literal style
+  escapeinside={\%*}{*)},            % if you want to add a comment within your code
+  morekeywords={*,...}               % if you want to add more keywords to the set
+}
+
+   
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Course Project} % Assignment title
+\newcommand{\hmwkDueDate}{\today} % Due date
+\newcommand{\hmwkClass}{Processor Architecture} % Course/class
+\newcommand{\hmwkHeader}{PA}
+%\newcommand{\hmwkClassTime}{10:30am} % Class/lecture time
+\newcommand{\hmwkClassInstructor}{Eugen Bertolt Friedrich Brecht} % Teacher/lecturer
+\newcommand{\hmwkAuthorName}{Francisco Martinez, Sergi Alcaide and Jordi Cardona} % Your name
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\title{
+\vspace{1in}
+\textmd{\textbf{\hmwkClass:\ \vspace{0.5in\huge\hmwkTitle}}}\\
+%\normalsize\vspace{0.1in}\small{\hmwkDueDate}\\
+%\vspace{0.1in}\large{\textit{\hmwkClassInstructor}}
+\vspace{4.5in}
+}
+
+\author{\textbf{\hmwkAuthorName}\vspace{0in}\\
+	PA - MIRI - HPC\\
+	Facultat d'Informàtica de Barcelona}
+
+\date{\vspace{0.2in}\normalsize\small{\hmwkDueDate}} % Insert date here if you want it to appear below your name
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+%\setcounter{tocdepth}{1} % Uncomment this line if you don't want subsections listed in the ToC
+
+\newpage
+\tableofcontents
+%\listoftables
+\listoffigures
+\newpage
+	
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+\section{Processor brief explanation}
+In this project we have build a MIPS pipelined and multicycle processor with 2 pipelines paths (the first one executes the R-type, M-type and B-type instructions and the second one executes the multiplication instruction). We have implemented this processor from scratch and the decisions that we have taken we have sought to be the most similar as possible to the MIPS reference standard manual (instructions encoding, signals,...).\\
+
+The first pipeline is composed by the following stages: Fetch(F), Decode(D), Execute(E) and Write Back (WB).\\
+
+The second pipeline is composed by the following stages: Fetch(F), Decode(D), Multiply 1 to Multiply 5 (M1, M2, M3, M4, M5) and Write Back (WB).
+The processor build contains the following features \footnote{You can also consult all the hazard and bypasses taken into account in this project attached in a excel file}:
+
+\subsection{Processor particularities:}
+The processor designed in this project includes the branch checking condition in the Decoder stage not in the ALU stage as usual in order to save one cycle in case of jumping (the instruction fetched that continues the execution has to be removed from the pipeline). So, we can say that our processor includes a worst branch penalty than processors that has a branch predictor engine in the fetch stage but a better penalty that the ones that has the prediction checking in the Execution stage.\\
+In order to make this architectural improvement efficient, we have had to implement a full set of bypasses from Execution(ALU)$\rightarrow$Decode and also from MEM(Data Cache)$\rightarrow$Decode to receive as soon as possible the result of the register computed in these stages to the checking part in the decode. In addition, we have had to include an adder and a comparator in the Decode stage so as to evaluate if we have to branch (branch not equal or equal) and also to compute the branch address where we have to jump.
+
+\subsection{Bypasses:}
+The processor implemented in this project includes all set of bypasses in the fist path pipeline (ALU$\rightarrow$ALU, Mem$\rightarrow$ALU, Mem$\rightarrow$Mem) but not the bypasses between the first and second pipeline. Furthermore, we also have the additional bypasses implemented from all stages of the first pipeline path to the Decoder mentioned in the previous section to improve the branch penalty as we do not have a branch predictor.\\
+So as to make our processor work, we have also implemented the logic bound to these bypasses taking into account the stalls due to instructions and data misses, structural risks (Write Back stages of different pipelines path length) and data dependencies (WAW and RAW).
+
+\subsection{Cache and memory managing:}
+This processor also has cache memory inclusion (icache for instructions and dcache for data) that follows a write-back policy that updates the cache values to the memory when a cache line is replaced with dirty bit 1. Both caches are direct mapped caches that have 4 lines of 128 bits. Even though we do not manage unaligned accesses to memory, we manage the arbitration (Arbiter.v) between caches when we have a icache and dcache petition at the same time or when we have a data petition when a icache miss is in progress or inside out. As a principal memory we have used a 3KByte memory with lines also of 128 bits in order to establish easy mapping between caches and memory.\\
+
+\newpage
+\begin{landscape}
+\centering
+\vspace{25pt}
+\subsection{Instruction Set}
+\vspace{75pt}
+{\tabulinesep=2mm
+\begin{adjustbox}{width=1.2\textwidth,center}
+\centering
+\begin{tabu}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{Instruction/ Syntax} & \multicolumn{1}{c|}{Encoding}           & \multicolumn{1}{c|}{Description}                                                                                                            \\ \hline
+Add \$rd,\$rt,\$rs                        & 0000 00ss ssst tttt dddd d000 0010 0000 & Adds two registers and stores the result in a register                                                                                      \\ \hline
+sub \$rd,\$rt,\$rs                        & 0000 00ss ssst tttt dddd d000 0010 0010 & Subtracts two registers and stores the result in a register                                                                                 \\ \hline
+sll \$d, \$s, h                           & 0000 00ss ssst tttt dddd dhhh hh00 0000 & Shifts a register value left by the shift amount listed in the instruction and places the result in a third register. Zeroes are shifted in \\ \hline
+mult \$d,\$s, \$t                         & 0000 00ss ssst tttt 0000 0000 0001 1000 & Multiplies \$s by \$t and stores the result in \$d                                                                                          \\ \hline
+lb \$t, offset(\$s)                       & 1000 00ss ssst tttt iiii iiii iiii iiii & A byte is loaded into a register from the specified address                                                                                 \\ \hline
+lw \$t, offset(\$s)                       & 1000 11ss ssst tttt iiii iiii iiii iiii & A word is loaded into a register from the specified address                                                                                 \\ \hline
+sb \$t, offset(\$s)                       & 1010 00ss ssst tttt iiii iiii iiii iiii & The least significant byte of \$t is stored at the specified address                                                                        \\ \hline
+sw \$t, offset(\$s)                       & 1010 11ss ssst tttt iiii iiii iiii iiii & The contents of \$t is stored at the specified address                                                                                      \\ \hline
+addi \$t, \$s, imm                        & 0010 00ss ssst tttt iiii iiii iiii iiii & Adds a register and a sign-extended immediate value and stores the result in a register.                                                    \\ \hline
+addiu \$t, \$s, imm                       & 0010 01ss ssst tttt iiii iiii iiii iiii & Adds a register and a sign-extended immediate value and stores the result in a register.(Works also as pseudoinstrucion LI)                 \\ \hline
+beq \$s, \$t, offset                      & 0001 00ss ssst tttt iiii iiii iiii iiii & Branches if the two registers are equal                                                                                                     \\ \hline
+ori \$t, \$s, imm                         & 0011 01ss ssst tttt iiii iiii iiii iiii & Bitwise ors a register and an immediate value and stores the result in a register                                                           \\ \hline
+lui \$t, imm                              & 0011 11-- ---t tttt iiii iiii iiii iiii & The immediate value is shifted left 16 bits and stored in the register. The lower 16 bits are zeroes                                        \\ \hline
+\end{tabu}
+\end{adjustbox}}
+\end{landscape}
+\section{Instructions Behavior}
+\subsection{Load (LW)}
+\textbf{Fetch:}
+Instruction is fetched from the Instruction cache using the address contained in the program counter register. After a reset of the processor this instruction is loading from 0x1000 address. In case of icache miss, we will inject a bubble to the decode stage and stall the current address of the PC.\\
+
+\textbf{Decode:}
+Here the instruction is decoded, as is a Load, we get the register (bits 25:21) from to calculate the address of the data, the register 2(bits 20:16), where we will write the data and finally the signed immediate value (bits 15:0) which we will need to extend the sign up to 32 bits. Control logic is present in order to check that all the sources are correctly updated.\\
+
+\textbf{Execute:}
+As explained before in the Execute stage we have the multiplexer for the operands of the ALU. In the case of the Load we will select the data correctly.
+
+3 different cases can appear:
+\begin{itemize}
+\item 00: Default case, get the value directly from the Decode stage
+\item 01: We get the value from the previous instruction : ALU-ALU bypass
+\item 10: We get the value from a previous load: MEM-ALU bypass
+\end{itemize}
+
+In the case of the second operand of the ALU, as it is an intermediate we cannot have any dependency, but we must select between the value coming from the reg2 bypass or the immediate. A obvious we will select the second.
+We will simply add these two operands to obtain the address.\\
+
+\textbf{Memory:}
+At this stage we will bring two operands, the destination register and the ALU result (address). We will request the value of the address to the Dcache. In case of Dcache miss we will stall all the previous pipeline (F,D,Exec) and inject bubbles to the WB stage until the Dcache hits. Now we must select the data that comes from the Dcache instead of the data that comes directly from Exec stage.\\
+
+\textbf{WB:}
+Now we must select the data coming from the M stage instead of the one coming from the bottom pipeline. We will have also to select the destination register and the write permission that we have been bringing during all the pipeline. Finally we can now write the values to the RegisterFile.\\
+
+\newpage
+\subsection{Store (SW)}
+\textbf{Fetch:}
+The same behaviour than the Load.\\
+
+\textbf{Decode:}
+In this case we select with the same bits the register 1 and register 2, but in this case we must set the destiation register to 0 and the write permission for RegisterFile to 0 and write permission for Mem to 1. Register 2 will be sent as we will need it to write to MEM.\\
+
+\textbf{Execute:}
+Here we will find the same multiplexer than the Load, but we also need to take care of the bypasses to register 2. First of all the ALU will add the result of the muliplexer for register 1 and the immediate, which will be the data where to store the value of the multiplexer of register 2.\\
+The muliplexer of register 2 is almost the same than for the register 1:\\
+\begin{itemize}
+\item 00: Default case, get the value directly from the Decode stage
+\item 01: We get the value from the previous instruction : ALU-ALU bypass
+\item 10: We get the value from a previous load: MEM-ALU bypass
+\item 11: In the case that previous instruction is a Load that writes into our register 2 we must use this bypass
+\end{itemize}
+
+\textbf{Memory:}
+We will use the Write Permission of Memory to write into Dcache the register 2 (bypassed or not).\\
+
+\textbf{WB:}
+Store does not do anything in this stage.
+
+\subsection{Branch (BNE)}
+\textbf{Fetch:} The Branch not equal is fetched as the previous explained instructions.\\
+
+\textbf{Decode:} In this case, the decoder selects the source registers 1 and 2 and the immediate that will be the offset to the address where we want to branch. After that, we ask for these values in register file, provide the results using bypasses (for example ALU$\rightarrow$Decode(branch)) or stall until we got the values and then we check if src1 and src2 are not equal. In parallel we also calculate the possible next pc address in case of branch. If they are not equal, the z signal is activated and at the same time the branch destination is provided to the pc. If z signal (in our case called $is\_branch$) is activated, we have to remove the fetched instruction (only correct if we do not jump) and inject a bubble to the next decode stage and fetch the new correct branch address calculated in the decoder stage of the BNE instruction.\\
+
+\textbf{Execution:} This instruction does not have nothing to do in the execution stage (all the calculus and checks have been already done in the previous stage).\\
+
+\textbf{Memory:} This instruction does not access to memory.\\
+
+\textbf{Write Back:} This instruction does not write any value in the register file at the end of the pipeline.\\
+
+\newpage
+\subsection{Multiply (MUL)}
+
+\textbf{Fetch:} The same behaviour as in the previous instructions.\\
+
+\textbf{Decode:} In this instruction, the decoder picks up the src1, src2 and destination register and takes the values from the decoder (as in the R-Type instructions).\\
+
+\textbf{M stages:} In this case, instead of using the "normal pipeline path" we will use the alternative path M1, M2, M3, M4, M5, WB. The two data values for the src1 and src2 registers are provided also with the id of the destination value and the wb\_write permission that it will be used in the WB stage. In the implemented processor the multiplication is really performed in the M1 stage and the result of this multiplication goes down to the pipeline as long as the cycles go by. For this reason, we do not pass the src1 and src2 values down the M2 to M5 stages because we directly use the multiplication result.\\
+
+\textbf{Write Back:} Now we must select the data coming from the "bottom pipeline" stage instead of the one coming from the bottom the M stage. We will have also to select the destination register and the write permission that we have been bringing during all the pipeline. Finally, we can now write the value to the RegisterFile.\\
+
+\vspace{5pt}
+
+\newpage
+\section{Performance Tests}
+We executed the following benchmarks in order to measure the number of cycles our processor needs to execute these typical codes, the clock used is 100ps.
+
+\subsection{Buffer Sum:}
+\vspace{5pt}
+\begin{lstlisting} 
+.data
+
+vector: .space 512      # Elements*4
+
+.text
+
+main:
+	la $t0, vector
+	li $t1, 0           # Counter
+	li $t2, 128         # Elements
+
+# Let's initialize
+loop:
+	sw $t1, 0($t0)
+	addi $t0, $t0, 4
+	addi $t1, $t1, 1
+	bne $t1, $t2, loop
+    la $t0, vector
+	li $t1, 0           # Counter
+	li $a0, 0           # Sum
+
+#Summatory
+sum:
+	lw $t3, 0($t0)
+	add $a0, $a0, $t3
+	addi $t0, $t0, 4
+	addi $t1, $t1, 1
+	bne $t1, $t2, sum
+	li $v0, 1           # Show result and finish
+    syscall
+    li $v0, 11
+    li $a0, 10
+    syscall
+	li $v0, 10
+	syscall
+\end{lstlisting}
+The result of the benchmark is that in register \$4 is stored the number 8128.\\
+Time to complete the benchmark: 282100ps\\
+Cycles to complete the benchmark: 2821 cycles
+
+\subsection{Mem Copy:}
+\vspace{5pt}
+
+Executing this benchmark we have figured out that as we are coping an array from one memory position to another (load followed to store) in addresses that are mapped in the same cache line, we have in every loop iteration 2 data misses (LD miss evicts previous modified line and brings the line, ST miss evicts a non modified line brings the new line). The timing results provided below are using padding in the C matrix (A and B replace the same line but not C).
+
+\begin{lstlisting} 
+.data
+#N_ELEMENTS = 128
+#T_ELEMENT = 4
+#.align 2
+vector_a: .space 512 #N_ELEMENTS*T_ELEMENT
+vector_b: .space 512 #N_ELEMENTS*T_ELEMENT
+
+.text
+main: 	la $t0, vector_a
+		li $t1, 0 #Counter
+		li $t2, 128 #N_ELEMENTS
+		li $t3, 5
+
+#Let's initialize a
+loop:	
+		sw $t3, 0($t0)
+		addi $t0, $t0, 4
+		addi $t1, $t1, 1
+		bne $t1, $t2, loop
+
+        la $t0, vector_a
+		la $t1, vector_b
+		li $t2, 0 #Counter
+		li $t3, 128 #N_ELEMENTS
+
+#Let's initialize b
+bloop:	
+		lw $t4, 0($t0)
+		sw $t4, 0($t1)
+		addi $t0, $t0, 4
+		addi $t1, $t1, 4
+		addi $t2, $t2, 1
+		bne $t2, $t3, bloop
+
+        li $v0, 10
+		syscall
+\end{lstlisting}
+The result of the benchmark is that we created the vector b in memory, except the last line which is in cache, full of 5's.\\
+Time to complete the benchmark: 362500ps\\
+Cycles to complete the benchmark: 3625 cycles
+
+
+\subsection{Matrix Multiply:}
+\vspace{5pt}
+\begin{lstlisting} 
+.data
+#ROWS = 5
+#COLUMNS = 5
+#T_ELEMENT = 4
+
+matrix_a: .space 100
+matrix_b: .space 100
+matrix_c: .space 100 # 5 * 5 * 4
+
+.text
+main:	la $t0, matrix_a
+		la $t1, matrix_b
+		la $t2, matrix_c
+		li $t3, 16 #ROWS
+		li $t4, 16 #COLUMNS
+
+		li $t5, 0 # i = 0
+		
+loop_i:	
+		li $t6, 0 # j = 0
+
+loop_j:	
+		li $t7, 0 # k = 0
+		li $s0, 0 # c[i][j]
+
+loop_k:	
+        # Let's get a[i][k]
+		mul $t8, $t5, $t4 # ROW * NCOLUMNS
+		add $t8, $t8, $t7 # (ROW * NCOLUMNS) +COLUMN
+		sll $t8, $t8, 2 # ((ROW * NCOLUMNS) +COLUMN)* T_ELEMENT
+		add $t8, $t0, $t8 # @ + ((ROW * NCOLUMNS) +COLUMN)* T_ELEMENT		
+		lw $s1, 0($t8) # a[i][k]
+        
+		# Let's get b[k][j]
+		mul $t8, $t7, $t4  # ROW * NCOLUMNS  
+		add $t8, $t8, $t6 # (ROW * NCOLUMNS) + COLUMN
+		sll $t8, $t8, 2 # ((ROW * NCOLUMNS) + COLUMN)* T_ELEMENT
+		add $t8, $t1, $t8 # @ + ((ROW * NCOLUMNS) +COLUMN)* T_ELEMENT		
+		lw $s2, 0($t8) # b[k][j]
+        
+		mul $s1, $s1, $s2 # a[i][k] * b[k][j]
+		add $s0, $s0, $s1 # c[i][j] = c[i][j] + a[i][k] * b[k][j]
+        
+		addi $t7, $t7, 1 # k++
+		bne $t7, $t4, loop_k
+
+done_k:	mul $t8, $t5, $t4 # ROW * NCOLUMNS
+		add $t8, $t8, $t6 # (ROW * NCOLUMNS)  +COLUMN
+		sll $t8, $t8, 2 # ((ROW * NCOLUMNS)  +COLUMN)* T_ELEMENT
+		add $t8, $t2, $t8 # @ + ((ROW * NCOLUMNS) +COLUMN)* T_ELEMENT
+
+		sw $s0, 0($t8) # c[i][j] = c[i][j] + a[i][k] * b[k][j]
+		
+		addi $t6, $t6, 1 # j++
+		beq $t6, $t4, loop_j
+
+done_j:	addi $t5, $t5, 1 # i++
+		bne $t5, $t3, loop_i
+
+done_i: li $v0, 10
+		syscall
+\end{lstlisting}
+Explanation and Results:\\
+\begin{figure}[H]
+	\caption{Matrix multiply dataset $A*B=C$}
+	\centering
+		\subfloat[]{
+		\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\cellcolor[HTML]{C0C0C0}Input matrix A} \\ \hline
+1       & 2       & 3       & 4      & 5     \\ \hline
+6       & 7      & 8       & 9      & 10     \\ \hline
+11      & 12      & 13      & 14     & 15     \\ \hline
+16      & 17      & 18      & 19     & 20     \\ \hline
+21      & 22      & 23      & 24     & 25     \\ \hline
+\end{tabular}
+	}
+	\subfloat[]{
+		\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\cellcolor[HTML]{C0C0C0}Input matrix B} \\ \hline
+1      & 3      & 2      & 6     & 4     \\ \hline
+4      & 8      & 5      & 3     & 2     \\ \hline
+5      & 6      & 9      & 80    & 4     \\ \hline
+1      & 2      & 3      & 5     & 8     \\ \hline
+8      & 9      & 4      & 6     & 3     \\ \hline
+\end{tabular}
+	}
+		\subfloat[]{
+		\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\cellcolor[HTML]{C0C0C0}Input matrix C} \\ \hline
+68       & 90       & 71       & 86      & 67      \\ \hline
+163      & 230      & 186      & 226     & 172     \\ \hline
+258      & 370      & 301      & 366     & 277     \\ \hline
+353      & 510      & 416      & 506     & 382     \\ \hline
+448      & 650      & 531      & 646     & 487     \\ \hline
+\end{tabular}git
+	}
+	\label{fig:medium}
+\end{figure}
+Time to complete the benchmark: 1049800ps\\
+Cycles to complete the benchmark: 10498 cycles\\
+
+
+\section{Future Work:}
+Because of the limited time We still have things to implement in our processor:
+\begin{itemize}
+\item Store Buffer (not included in the processor project even is implemented).
+\item Reorder Buffer (ROB) or History File (HF)
+\item Precise exceptions
+\item Virtual Memory and syscalls
+\end{itemize}
+
+\end{document}
